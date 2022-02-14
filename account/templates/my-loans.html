@@ -1,0 +1,124 @@
+<html>
+    {% load static %}
+    <head>
+        <meta charset="UTF-8">
+            <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-touch-fullscreen" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="default">
+            <title>Money Access Uganda</title>
+            <link rel="icon" type="image/x-icon" href="{% static 'assets/img/logo.svg' %}"/>
+            <link rel="icon" href="{% static 'assets/img/logo.svg' %}" type="image/png" sizes="16x16">
+            <link rel='stylesheet' href="{% static 'assets1/vendor/pace/pace.css' %}"/>
+            <script src="{% static 'assets/vendor/pace/pace.min.js' %}"></script>
+            <!--vendors-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/291bbeead57f19651f311362abe809b67adc3fb5.css" %}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/28c909f8c5939b3b29991049355ad3050be56f71.css" %}'/>
+            <link rel='stylesheet' href='{% static "assets1/css/bundles/dcd1663bd4b40ee5b03564aeb0245515dd3277b0.css" %}'/>
+            <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+            <link rel='stylesheet' href='{% static "assets1/fonts/jost/jost.css" %}'/>
+            <!--Material Icons-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/fonts/materialdesignicons/materialdesignicons.min.css" %}'/>
+            <!--Bootstrap + atmos Admin CSS-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/atmos.min.css" %}'/>
+            <!-- Additional library for page -->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/13fc3abb600e389b43865b1fa1697fc8f5ebf063.css" %}'/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    </head>
+    <body>
+
+        <section class="admin-content">
+            <div class=" bg-dark m-b-30 bg-stars">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+
+                            <h1>Manage Loans</h1>
+                            <p class="opacity-75">
+                                keep track of your loans.
+                            </p>
+
+                        </div>
+                        <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                            
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="container pull-up">
+                <div class="row">
+
+                    <!-- Content goes here -->
+                    <div class="col-lg-8">
+                        <nav class="nav nav-pills nav-justified m-b-80">
+                        <a class="nav-item nav-link text-white active" href="/">Back to home</a>
+                        </nav>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            
+                                <div class="col-md-12 m-b-30">
+                                    <h5>Applied Loans</h5>
+                                    <div class="table-responsive">
+                                        <table class="table align-td-middle table-card table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Loan ID</th>
+                                                <th>first name</th>
+                                                <th>last name</th>
+                                                <th>telephone</th>
+                                                <th>application fee</th>
+                                                <th>Application Date</th>
+                                                <th>loan amount</th>
+                                                <th>payback</th>
+                                                <th>status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if my_loans %}
+                                                {% for loan in my_loans %}
+                                                        <tr>
+                                                            <td>
+                                                                {{loan.loan_id}}
+                                                            </td>
+                                                            <td>{{loan.first_name}}</td>
+                                                            <td>{{loan.last_name}}</td>
+                                                            <td>{{loan.telephone}}</td>
+                                                            <td>{{loan.transction_id}}</td>
+                                                            <td>{{loan.date}}</td>
+                                                            <td>ugx {{loan.loan_amount}}</td>
+                                                            <td>ugx {{loan.payback}}</td>
+                                                            <td>{{loan.status}}</td>
+                                                            
+                                                        </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                    <tr>
+                                                        <td><h6>No record in DB</h6></td>
+                                                    </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                                            
+                        </div>
+            </div>
+
+        </section>
+
+    </body>
+    <script src='{% static "assets1/js/bundles/9556cd6744b0b19628598270bd385082cda6a269.js" %}'></script>
+    <!--page specific scripts for demo-->
+    <script src='{% static "assets1/js/bundles/85bd871e04eb889b6141c1aba0fedfa1a2215991.js" %}'></script>
+    <script src='{% static "assets1/js/bundles/ba78fede76f682cd388ed2abbfd1e1568e76f8a4.js" %}'></script>
+    <script src='{% static "assets1/js/bundles/a5c528ebd70097577937a146c587ed9dda0f7f70.js" %}'></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</html>

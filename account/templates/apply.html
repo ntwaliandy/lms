@@ -1,0 +1,210 @@
+<html>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+            <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-touch-fullscreen" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="default">
+            <title>Money Access Uganda</title>
+            <link rel="icon" type="image/x-icon" href="{% static 'assets/img/logo.svg' %}"/>
+            <link rel="icon" href="{% static 'assets/img/logo.svg' %}" type="image/png" sizes="16x16">
+            <link rel='stylesheet' href="{% static 'assets1/vendor/pace/pace.css' %}"/>
+            <script src="{% static 'assets/vendor/pace/pace.min.js' %}"></script>
+            <!--vendors-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/291bbeead57f19651f311362abe809b67adc3fb5.css" %}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/28c909f8c5939b3b29991049355ad3050be56f71.css" %}'/>
+            <link rel='stylesheet' href='{% static "assets1/css/bundles/dcd1663bd4b40ee5b03564aeb0245515dd3277b0.css" %}'/>
+            <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+            <link rel='stylesheet' href='{% static "assets1/fonts/jost/jost.css" %}'/>
+            <!--Material Icons-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/fonts/materialdesignicons/materialdesignicons.min.css" %}'/>
+            <!--Bootstrap + atmos Admin CSS-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/atmos.min.css" %}'/>
+            <!-- Additional library for page -->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/13fc3abb600e389b43865b1fa1697fc8f5ebf063.css" %}'/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    </head>
+    <body>
+        <section class="admin-content">
+            <div class=" bg-dark m-b-30 bg-stars">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+
+                            <h1>Loan Application.</h1>
+                            <p class="opacity-75">
+                                Use this page to apply for a loan.
+                            </p>
+
+                        </div>
+                        <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Content goes here -->
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!--widget card begin-->
+                        <div class="m-b-30">
+                            <div class="card-header">
+                                <p class="m-b-0 text-muted">
+                                    All fields marked with <span class="text-danger">*</span> are required
+                                </p>
+                            </div>
+                            <div class="card-body">
+                                
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">first name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="first_name">
+                                            <small class="text-muted">Enter your first name.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">second name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="last_name">
+                                            <small class="text-muted">Enter your second name.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">National ID (NIN) <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="national_id">
+                                            <small class="text-muted">Enter your NIN number</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">Telephone number <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="telephone">
+                                            <small class="text-muted">Enter your Telephone number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-10">
+                                            <label for="thumbnail">Picture ID <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control" required accept=".jpg, .jpeg, .png" name="pic_id" id="pic_id">
+                                            <small class="text-muted">A front picture of your national id</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-10">
+                                            <label for="thumbnail">Person picture <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control" required accept=".jpg, .jpeg, .png" name="person_pic" id="person_pic">
+                                            <small class="text-muted">A picture of yourself</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">first guarrante full names <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="first_guarrante_full_names">
+                                            <small class="text-muted">Enter your first guarrante full names.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">first guarrante national id (NIN) <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="first_guarrante_national_id">
+                                            <small class="text-muted">Enter your first guarrante NIN number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">first guarrante telephone number <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="first_guarrante_telephone">
+                                            <small class="text-muted">Enter your first guarrante phone number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-10">
+                                            <label for="thumbnail">first guarrante picture ID <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control" required accept=".jpg, .jpeg, .png" name="first_guarrante_pic_id" id="first_guarrante_pic_id">
+                                            <small class="text-muted">A front picture of your first guarrante ID</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">second guarrante full names <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="second_guarrante_full_names">
+                                            <small class="text-muted">Enter your second guarrante full names.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">second guarrante national ID (NIN) <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="second_guarrante_national_id">
+                                            <small class="text-muted">Enter your second guarrante NIN number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">second guarrante phone number <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="second_guarrante_telephone">
+                                            <small class="text-muted">Enter your second guarrante phone number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-10">
+                                            <label for="thumbnail">second guarrante picture ID <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control" required accept=".jpg, .jpeg, .png" name="second_guarrante_pic_id" id="second_guarrante_pic_id">
+                                            <small class="text-muted">A front picture of your second guarrante ID</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">Transaction ID for 5k application fee <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="transction_id">
+                                            <small class="text-muted">Enter the Transaction id of your 5,000 ugx payment.</small>
+                                        </div>
+                                    </div>
+                                    
+                                    
+
+                                    <div class="mb-3">
+                                        <p class="font-secondary">Loan Amount <span class="text-danger">*</span></p>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupFileAddon01">ugx</span>
+                                            </div>
+                                            <div class="custom-file col-md-3 pl-md-0">
+                                                <input type="number" class="form-control" required id="inputGroupFile01" name="loan_amount">
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">A minimum of <strong>80,000 ugx</strong> and a maximum of <strong>200,000ugx</strong></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        
+                                        <button class="btn btn-success" type="submit">Apply</button>
+                                    </div>
+                                </form>
+                                <a href="{% url 'home:index' %}"><button class="btn btn-secondary">Back</button></a>
+
+
+                            </div>
+                        </div>
+                        <!--widget card ends-->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </body>
+    <script src='{% static "assets1/js/bundles/9556cd6744b0b19628598270bd385082cda6a269.js" %}'></script>
+<!--page specific scripts for demo-->
+<script src='{% static "assets1/js/bundles/85bd871e04eb889b6141c1aba0fedfa1a2215991.js" %}'></script>
+<script src='{% static "assets1/js/bundles/ba78fede76f682cd388ed2abbfd1e1568e76f8a4.js" %}'></script>
+<script src='{% static "assets1/js/bundles/a5c528ebd70097577937a146c587ed9dda0f7f70.js" %}'></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</html>

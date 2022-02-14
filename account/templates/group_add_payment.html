@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <h1><span class="js-greeting"></span>, {{ user }} </h1>
+                                <p class="opacity-75">
+                                    Add Today's payment for a specific loan ID <br>
+                                </p>
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container pull-up">
+
+                    <!-- // Normal content -->
+                   
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card m-b-30">
+                                    <div class="card-header">
+                                        <h5 class="m-b-0">
+                                            Add a Group Payment Loan
+                                        </h5>
+                                        <p class="m-b-0 text-muted">
+                                            Standard form
+                                        </p>
+                                    </div>
+                                    <div class="card-body ">
+                                        <form action="" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+                                                <div class="m-b-15">
+                                                    <p class="font-secondary mb-2">
+                                                        Loan ID <span class="text-danger">*</span>
+                                                    </p>
+                                                    <select class="custom-select" name="loan_id" required="">
+                                                        <option value="">select</option>
+                                                        {% for loan in loans %}
+                                                        {% if loan.status == 'approved' %}
+                                                        <option value="{{ loan.loan_id }}">{{ loan.loan_id }}</option>
+                                                        
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                    </select>
+                                                    <small class="text-muted">these loan ID's are under approved ones.</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">payment fee *</label>
+                                                    <input type="text" class="form-control" name="payment_fee" required placeholder="forexample:- 3000">
+                                                    <small class="text-muted">even if he/she didn't pay, put the amount he/she was supposed to pay.</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">transaction ID *</label>
+                                                    <input type="text" class="form-control" name="transaction_id" required placeholder="forexample:- 2930AP323">
+                                                    <small class="text-muted">put 'null' if he/she didn't pay.</small>
+                                                </div>
+                                                <div class="m-b-15">
+                                                    <p class="font-secondary mb-2">
+                                                        PAID ? <span class="text-danger">*</span>
+                                                    </p>
+                                                    <select class="custom-select" name="paid" required="">
+                                                        <option value="">select</option>
+                                                        
+                                                        <option value="YES">YES</option>
+                                                        <option value="NO">NO</option>
+                                                        
+                                                    </select>
+                                                    <small class="text-muted">did he/she pay ?.</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Add</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                </div>
+
+            </section>
+    
+    {% endblock %}

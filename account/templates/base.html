@@ -1,0 +1,246 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <title>Money Access Uganda</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/img/logo.svg' %}"/>
+        <link rel="icon" href="{% static 'assets/img/logo.svg' %}" type="image/png" sizes="16x16">
+        <link rel='stylesheet' href="{% static 'assets1/vendor/pace/pace.css' %}"/>
+        <script src="{% static 'assets1/vendor/pace/pace.min.js' %}"></script>
+        <!--vendors-->
+        <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/291bbeead57f19651f311362abe809b67adc3fb5.css" %}'/>
+        <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/28c909f8c5939b3b29991049355ad3050be56f71.css" %}'/>
+        <link rel='stylesheet' href='{% static "assets1/css/bundles/dcd1663bd4b40ee5b03564aeb0245515dd3277b0.css" %}'/>
+        <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+        <link rel='stylesheet' href='{% static "assets1/fonts/jost/jost.css" %}'/>
+        <!--Material Icons-->
+        <link rel='stylesheet' type='text/css' href='{% static "assets1/fonts/materialdesignicons/materialdesignicons.min.css" %}'/>
+        <!--Bootstrap + atmos Admin CSS-->
+        <link rel='stylesheet' type='text/css' href='{% static "assets1/css/atmos.min.css" %}'/>
+        <!-- Additional library for page -->
+        <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/13fc3abb600e389b43865b1fa1697fc8f5ebf063.css" %}'/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<body class="">
+<aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+        <!-- begin sidebar branding-->
+        <img class="admin-brand-logo" src="{% static 'assets/img/logo.svg' %}" width="40" alt="atmos Logo">
+        <span class="admin-brand-content font-secondary"><a href=''>  Money Access Uganda</a></span>
+        <!-- end sidebar branding-->
+        <div class="ml-auto">
+            <!-- sidebar pin-->
+            <a href="#" class="admin-pin-sidebar btn-ghost btn btn-rounded-circle"></a>
+            <!-- sidebar close for mobile device-->
+            <a href="#" class="admin-close-sidebar"></a>
+        </div>
+    </div>
+    <div class="admin-sidebar-wrapper js-scrollbar">
+        <ul class="menu">
+            <li class="menu-item ">
+                <a href="{% url 'loan:dashboard' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Dashboard</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a href="{% url 'loan:manage-loans' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Manage Single Loans</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item ">
+                <a href="{% url 'loan:manage_group_loans' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Manage Group Loans</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a href="{% url 'loan:add-payment' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name"> single Add payments</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="{% url 'loan:payment-record' %}" aria-disabled="true" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">single payments Records</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item ">
+                <a href="{% url 'loan:group-add-payment' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name"> group Add payments</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item ">
+                <a href="{% url 'loan:group-payment-record' %}" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name"> group payments records</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="{% url 'loan:all-clients' %}" aria-disabled="true" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">All Clients</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+            <li class="menu-item ">
+                <a href="#" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Settings</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a href="#" class="menu-link">
+                    <span class="menu-label">
+                        <span class="menu-name">Help/ FAQ</span>
+                    </span>
+                    <span class="menu-icon">
+                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+</aside>
+<main class="admin-main">
+    <!--site header begins-->
+<header class="admin-header">
+
+    <a href="#" class="sidebar-toggle" data-toggleclass="sidebar-open" data-target="body"> </a>
+
+    <nav class=" ml-auto">
+        <ul class="nav align-items-center">
+            
+
+            <li class="nav-item">
+                <div class="dropdown">
+                    <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-bell-outline"></i>
+                        <span class="notification-counter"></span>
+                    </a>
+
+                    <div class="dropdown-menu notification-container dropdown-menu-right">
+                        <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
+                            <a href="#!" class="mdi mdi-18px mdi-settings text-muted"></a>
+                            <span class="h5 m-0">Notifications</span>
+                            <a href="#!" class="mdi mdi-18px mdi-notification-clear-all text-muted"></a>
+                        </div>
+                        <div class="notification-events bg-gray-300">
+                            <div class="text-overline m-b-5">today</div>
+                            <a href="#" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-circle text-success"></i> All systems operational.</div>
+                                </div>
+                            </a>
+                            <a href="#" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-upload-multiple "></i> File upload successful.</div>
+                                </div>
+                            </a>
+                            <a href="#" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <i class="mdi mdi-cancel text-danger"></i> Your holiday has been denied
+                                    </div>
+                                </div>
+                            </a>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item dropdown ">
+                <a class="nav-link dropdown-toggle" href="#"   role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <div class="avatar avatar-sm avatar-online">
+                        <span class="avatar-title rounded-circle bg-dark">{{user}}</span>
+                    </div>
+                </a>
+                <div class="dropdown-menu  dropdown-menu-right"   >
+                    <a class="dropdown-item" href="#">  Profile
+                    </a>
+                    <a class="dropdown-item" href="#">  Reset Password</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'account:admin-logout' %}"> Logout</a>
+                </div>
+            </li>
+
+        </ul>
+
+    </nav>
+</header>
+
+    {% block content %}
+
+
+
+    {% endblock %}
+
+</main>
+
+
+<script src='{% static "assets1/js/bundles/9556cd6744b0b19628598270bd385082cda6a269.js" %}'></script>
+<!--page specific scripts for demo-->
+<script src='{% static "assets1/js/bundles/85bd871e04eb889b6141c1aba0fedfa1a2215991.js" %}'></script>
+<script src='{% static "assets1/js/bundles/ba78fede76f682cd388ed2abbfd1e1568e76f8a4.js" %}'></script>
+<script src='{% static "assets1/js/bundles/a5c528ebd70097577937a146c587ed9dda0f7f70.js" %}'></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

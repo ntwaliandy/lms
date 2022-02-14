@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+    {% load static %}
+
+    {% block content %}
+    <center>
+    <div>
+        <h3>Loan Details</h3>
+    </div>
+        <div>
+            <label>first name:</label>
+            <h6>{{loan.first_name}}</h6>
+
+            <label>last name:</label>
+            <h6>{{loan.last_name}}</h6>
+
+            <label>National ID:</label>
+            <h6>{{loan.national_id}}</h6>
+
+            <label>Telephone:</label>
+            <h6>{{loan.telephone}}</h6>
+
+            <label>Picture ID:</label><br>
+            <img src="{{ loan.pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+
+            <label>Person Picture</label><br>
+            <img src="{{ loan.person_pic.url }}" width="300px" height="300px" alt="picture id"><br>
+
+            <label>first guarrante full names:</label>
+            <h6>{{loan.first_guarrante_full_names}}</h6>
+
+            <label>first guarrante national ID:</label>
+            <h6>{{loan.first_guarrante_national_id}}</h6>
+
+            <label>first guarrante telephone:</label>
+            <h6>{{loan.first_guarrante_telephone}}</h6>
+
+            <label>first guarrante ID picture:</label><br>
+            <img src="{{ loan.first_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+
+
+            <label>second guarrante full names:</label>
+            <h6>{{loan.second_guarrante_full_names}}</h6>
+
+            <label>second guarrante national ID:</label>
+            <h6>{{loan.second_guarrante_national_id}}</h6>
+
+            <label>second guarrante telephone:</label>
+            <h6>{{loan.second_guarrante_telephone}}</h6>
+
+            <label>second guarrante ID picture:</label><br>
+            <img src="{{ loan.second_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+
+            <label>5k application fee:</label>
+            <h6>{{loan.transction_id}}</h6>
+
+            <label>loan Amount:</label>
+            <h6>Ugx {{loan.loan_amount}}</h6>
+
+            <label>loan_id:</label>
+            <h6>{{loan.loan_id}}</h6>
+
+            <label>Date of Application:</label>
+            <h6>{{loan.date}}</h6>
+
+            <label>payback Amount</label>
+            <h6>Ugx {{loan.payback}}</h6>
+        </div>
+    </center>
+
+    {% endblock %}
