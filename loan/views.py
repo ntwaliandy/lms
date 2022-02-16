@@ -12,12 +12,14 @@ def dashboard(request):
     if request.user.is_superuser:
         applied_loans = Apply.objects.count()
         total_loans = Apply.objects.aggregate(Sum('loan_amount'))
+        total_sales = Apply.objects.filter(status='completed').aggregate(Sum('payback'))
         recent_loans = reversed(Apply.objects.order_by('date')[:3])
 
         context = {
             'applied_loans': applied_loans,
             'total_loans': total_loans,
-            'recent_loans': recent_loans
+            'recent_loans': recent_loans,
+            'total_sales': total_sales
         }
         return render(request, 'dashboard.html', context)
     else:
