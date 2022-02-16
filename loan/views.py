@@ -1,7 +1,6 @@
 from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from matplotlib.style import context
 from home.models import Apply, GroupApply
 from .models import AddPayment, GroupAddPayment
 from django.db.models import Sum
@@ -294,5 +293,16 @@ def all_clients(request):
             'users': users,
         }
         return render(request, 'all-clients.html', context)
+    else:
+        return redirect('account:admin-login')
+    
+def staff(request):
+    if request.user.is_superuser:
+        User = get_user_model()
+        users = User.objects.all()
+        context = {
+            'users': users,
+        }
+        return render(request, 'staff.html', context)
     else:
         return redirect('account:admin-login')

@@ -1,7 +1,6 @@
 
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from matplotlib.style import context
 from .models import Apply, GroupApply
 from loan.models import AddPayment
 from datetime import datetime

@@ -18,6 +18,7 @@ urlpatterns = [
     path('payment-record', views.payment_record, name='payment-record'),
     path('group-payment-record', views.group_payment_record, name='group-payment-record'),
     re_path(r'^(?P<loan_id>[0-9]+)/$', views.loan_details, name='loan-details'),
-    path('all-clients', views.all_clients, name='all-clients')
+    path('all-clients', views.all_clients, name='all-clients'),
+    path('staff', views.staff, name='staff')
 
 ]

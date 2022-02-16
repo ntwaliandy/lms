@@ -2,7 +2,6 @@ from django.db import models
 import random
 from datetime import datetime
 
-from numpy import maximum
 # Create your models here.
 def random_string():
     return str(random.randint(1000, 9999))
