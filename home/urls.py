@@ -8,5 +8,6 @@ urlpatterns = [
     path('apply', views.user_apply, name='user_apply'),
     path('group-apply', views.group_apply, name='group-apply'),
     path('my-loans', views.my_loans, name='my-loans'),
-    path('my-payments', views.my_payments, name='my-payments')
+    path('my-payments', views.my_payments, name='my-payments'),
+    path('support', views.support, name='support')
 ]

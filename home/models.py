@@ -30,7 +30,7 @@ class Apply(models.Model):
     payback = models.DecimalField(max_digits=12, decimal_places=2, default='0.00')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.payback = 20.00/100.00 * int(self.loan_amount) + int(self.loan_amount)
+        self.payback = 10.00/100.00 * int(self.loan_amount) + int(self.loan_amount)
         return super(Apply, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
@@ -72,6 +72,17 @@ class GroupApply(models.Model):
 
     def __str__(self):
         return 'Group loan, amout of :- ' + str(self.loan_amount) + ' ' + ' with a loan ID of ' + ' ' + str(self.loan_id)
+
+
+
+class Support(models.Model):
+    user = models.CharField(max_length=100)
+    email = models.CharField(max_length=1000)
+    question = models.CharField(max_length=10000)
+
+    def __str__(self):
+        return self.user
+
 
     
 

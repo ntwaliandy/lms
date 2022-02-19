@@ -1,7 +1,7 @@
 
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from .models import Apply, GroupApply
+from .models import Apply, GroupApply, Support
 from loan.models import AddPayment
 from datetime import datetime
 
@@ -191,6 +191,26 @@ def my_payments(request):
             'my_payments': my_payments
         }
         return render(request, 'my_payments.html', context)
+    else:
+        return redirect('account:user_login')
+
+
+def support(request):
+    if request.user.is_authenticated:
+        username = request.user.username
+        if request.method == 'POST':
+            data = request.POST
+            email = data['email']
+            question = data['question']
+
+            #inserting them to the db
+            Support.objects.create(
+                user = username,
+                email = email,
+                question = question,
+            )
+            return redirect('home:index')
+        return render(request, 'support.html')
     else:
         return redirect('account:user_login')
 
