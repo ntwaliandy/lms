@@ -8,10 +8,7 @@ from datetime import datetime
 # Create your views here.
 
 def index(request):
-    if request.user.is_authenticated:
         return render(request, 'index.html')
-    else:
-        return redirect('account:user_login')
 
 # single application
 def user_apply(request):
