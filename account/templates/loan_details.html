@@ -20,10 +20,10 @@
             <h6>{{loan.telephone}}</h6>
 
             <label>Picture ID:</label><br>
-            <img src="{{ loan.pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+            <a href='{{loan.pic_id.url}}' target='_blank'><img src="{{ loan.pic_id.url }}" width="300px" height="300px" alt="picture id"><a><br>
 
             <label>Person Picture</label><br>
-            <img src="{{ loan.person_pic.url }}" width="300px" height="300px" alt="picture id"><br>
+            <a href='{{loan.person_pic.url}}' target='_blank'><img src="{{ loan.person_pic.url }}" width="300px" height="300px" alt="picture id"></a><br>
 
             <label>first guarrante full names:</label>
             <h6>{{loan.first_guarrante_full_names}}</h6>
@@ -35,7 +35,7 @@
             <h6>{{loan.first_guarrante_telephone}}</h6>
 
             <label>first guarrante ID picture:</label><br>
-            <img src="{{ loan.first_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+            <a href='{{loan.first_guarrante_pic_id.url}}' target='_blank'><img src="{{ loan.first_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
 
 
             <label>second guarrante full names:</label>
@@ -48,7 +48,7 @@
             <h6>{{loan.second_guarrante_telephone}}</h6>
 
             <label>second guarrante ID picture:</label><br>
-            <img src="{{ loan.second_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
+            <a href='{{loan.second_guarrante_pic_id.url}}' target='_blank'><img src="{{ loan.second_guarrante_pic_id.url }}" width="300px" height="300px" alt="picture id"><br>
 
             <label>5k application fee:</label>
             <h6>{{loan.transction_id}}</h6>

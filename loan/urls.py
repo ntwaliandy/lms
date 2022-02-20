@@ -19,6 +19,11 @@ urlpatterns = [
     path('group-payment-record', views.group_payment_record, name='group-payment-record'),
     re_path(r'^(?P<loan_id>[0-9]+)/$', views.loan_details, name='loan-details'),
     path('all-clients', views.all_clients, name='all-clients'),
-    path('staff', views.staff, name='staff')
+    path('staff', views.staff, name='staff'),
+    path('complaints', views.complaints, name='complaints'),
+    re_path(r'^view_reply/(?P<error_id>[0-9]+)/$', views.reply, name='reply'),
+    re_path(r'^done/(?P<quest_id>[0-9]+)/$', views.done, name='done'),
+    re_path(r'^group/(?P<group_l_id>[0-9]+)/$', views.group_details, name='group-details'),
+    path('send-report', views.send_report, name='send-report')
 
 ]

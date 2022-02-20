@@ -50,8 +50,9 @@
                         <span class="menu-name">Dashboard</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-monitor-multiple "></i>
                     </span>
+
                 </a>
             </li>
             <li class="menu-item ">
@@ -60,7 +61,7 @@
                         <span class="menu-name">Manage Single Loans</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-convert "></i>
                     </span>
                 </a>
             </li>
@@ -71,7 +72,7 @@
                         <span class="menu-name">Manage Group Loans</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-switch "></i>
                     </span>
                 </a>
             </li>
@@ -81,7 +82,7 @@
                         <span class="menu-name"> single Add payments</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-plus "></i>
                     </span>
                 </a>
             </li>
@@ -92,7 +93,7 @@
                         <span class="menu-name">single payments Records</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-check "></i>
                     </span>
                 </a>
             </li>
@@ -103,7 +104,7 @@
                         <span class="menu-name"> group Add payments</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-multiple-plus "></i>
                     </span>
                 </a>
             </li>
@@ -114,7 +115,7 @@
                         <span class="menu-name"> group payments records</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-multiple-check "></i>
                     </span>
                 </a>
             </li>
@@ -125,7 +126,7 @@
                         <span class="menu-name">All Clients</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-card-details "></i>
                     </span>
                 </a>
             </li>
@@ -136,17 +137,17 @@
                         <span class="menu-name">Staff contacts</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-account-network "></i>
                     </span>
                 </a>
             </li>
             <li class="menu-item ">
-                <a href="" class="menu-link">
+                <a href="{% url 'loan:complaints' %}" class="menu-link">
                     <span class="menu-label">
                         <span class="menu-name">Help</span>
                     </span>
                     <span class="menu-icon">
-                        <i class="icon-placeholder mdi mdi-shape-outline "></i>
+                        <i class="mdi mdi-airballoon "></i>
                     </span>
                 </a>
             </li>
@@ -160,7 +161,6 @@
     <!--site header begins-->
 <header class="admin-header">
 
-    <a href="#" class="sidebar-toggle" data-toggleclass="sidebar-open" data-target="body"> </a>
 
     <nav class=" ml-auto">
         <ul class="nav align-items-center">
@@ -168,35 +168,84 @@
 
             <li class="nav-item">
                 <div class="dropdown">
-                    <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-bell-outline"></i>
+                    <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-format-list-bulleted"></i>
                         <span class="notification-counter"></span>
                     </a>
 
                     <div class="dropdown-menu notification-container dropdown-menu-right">
                         <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
-                            <a href="#!" class="mdi mdi-18px mdi-settings text-muted"></a>
-                            <span class="h5 m-0">Notifications</span>
-                            <a href="#!" class="mdi mdi-18px mdi-notification-clear-all text-muted"></a>
+                            <span class="h5 m-0">Categories</span>
                         </div>
                         <div class="notification-events bg-gray-300">
-                            <div class="text-overline m-b-5">today</div>
-                            <a href="#" class="d-block m-b-10">
+                            <div class="text-overline m-b-5">All categories</div>
+                            <a href="{% url 'loan:dashboard' %}" class="d-block m-b-10">
                                 <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-circle text-success"></i> All systems operational.</div>
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Dashboard</div>
                                 </div>
                             </a>
-                            <a href="#" class="d-block m-b-10">
+
+                            <a href="{% url 'loan:manage-loans' %}" class="d-block m-b-10">
                                 <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-upload-multiple "></i> File upload successful.</div>
+                                    <div class="card-body"> <i class="mdi mdi-account-convert"></i> Manage Single Loans</div>
                                 </div>
                             </a>
-                            <a href="#" class="d-block m-b-10">
+
+                            <a href="{% url 'loan:manage_group_loans' %}" class="d-block m-b-10">
                                 <div class="card">
-                                    <div class="card-body">
-                                        <i class="mdi mdi-cancel text-danger"></i> Your holiday has been denied
-                                    </div>
+                                    <div class="card-body"> <i class="mdi mdi-account-switch "></i> Manage Group Loans</div>
                                 </div>
                             </a>
+
+                            <a href="{% url 'loan:add-payment' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-plus "></i> Single Add payments</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:payment-record' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-check "></i> single payments Records</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:group-add-payment' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-multiple-plus"></i> group Add payments</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:group-payment-record' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-multiple-check "></i> group payments records</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:all-clients' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-card-details "></i> All clients</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:staff' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-network "></i> Staff contacts</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:complaints' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-airballoon "></i> Help</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:send-report' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-airballoon "></i> Export</div>
+                                </div>
+                            </a>
+
+
+                            
 
 
                         </div>
@@ -213,8 +262,7 @@
                 </a>
                 <div class="dropdown-menu  dropdown-menu-right"   >
                     <a class="dropdown-item" href="#">  Profile
-                    </a>
-                    <a class="dropdown-item" href="#">  Reset Password</a>
+                    
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'account:admin-logout' %}"> Logout</a>
                 </div>

@@ -10,4 +10,5 @@ urlpatterns = [
     path('admin-login', views.admin_login, name='admin-login'),
     path('reg/2/5/0/admin', views.admin_reg, name='admin-reg'),
     path('logout-admin', views.admin_logout, name='admin-logout')
+    
 ]

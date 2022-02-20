@@ -79,6 +79,7 @@ class Support(models.Model):
     user = models.CharField(max_length=100)
     email = models.CharField(max_length=1000)
     question = models.CharField(max_length=10000)
+    answered = models.CharField(max_length=10, default='NO')
 
     def __str__(self):
         return self.user

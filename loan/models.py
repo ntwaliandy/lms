@@ -23,4 +23,11 @@ class GroupAddPayment(models.Model):
 
     def __str__(self):
         return self.loan_id + ' ' + 'paid ' + str(self.payment_fee)
+    
+class Replies(models.Model):
+    question_id = models.IntegerField()
+    feedback = models.TextField(max_length=100000)
+    
+    def __str__(self):
+        return self.feedback
 

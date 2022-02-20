@@ -40,11 +40,13 @@
                                     <table class="table align-td-middle table-card table-striped">
                                         <thead>
                                         <tr>
+                                            <th>Profile</th>
                                             <th>User ID</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
+                                            <th>Full Name</th>
+                                            <th>Telephone Name</th>
                                             <th>USERNAME</th>
                                             <th>Email</th>
+                                            <th>Status</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -53,12 +55,26 @@
                                                 {% if user.is_superuser == False %}
                                                     <tr>
                                                         <td>
-                                                            {{user.id}}
+                                                            <div class="avatar avatar-sm avatar-online">
+                                                                <span class="avatar-title rounded-circle bg-dark">{{user.username.0}}</span>
+                                                            </div>
                                                         </td>
+                                                        <td>{{user.id}}</td>
                                                         <td>{{user.first_name}}</td>
                                                         <td>{{user.last_name}}</td>
                                                         <td>{{user.username}}</td>
                                                         <td>{{user.email}}</td>
+                                                        {% for persons in person %}
+                                                            {% for payments in payment %}
+                                                                {% if persons.loan_id == payments.loan_id %}
+                                                                    {% if persons.user == user.username %}
+                                                                        <td>Inconsistence</td>
+                                                                    {% else %}
+                                                                        <td>consistence</td>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endfor %}
                                                         
                                                     </tr>
                                                 {% endif %}

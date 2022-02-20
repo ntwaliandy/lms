@@ -8,9 +8,9 @@
                 <div class="row">
                     <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
 
-                        <h1>Company Clients</h1>
+                        <h1>Clients' Complaints</h1>
                         <p class="opacity-75">
-                            Client's details
+                            Support and Help
                         </p>
 
                     </div>
@@ -35,39 +35,27 @@
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         
                             <div class="col-md-12 m-b-30">
-                                <h5>Payments</h5>
+                                <h5>Issues</h5>
                                 <div class="table-responsive">
                                     <table class="table align-td-middle table-card table-striped">
                                         <thead>
                                         <tr>
-                                            <th>Profile</th>
-                                            <th>User ID</th>
-                                            <th>Full Name</th>
-                                            <th>Phone Number</th>
-                                            <th>USERNAME</th>
+                                            <th>Name</th>
                                             <th>Email</th>
+                                            <th>Question</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% if users %}
-                                            {% for user in users %}
-                                                {% if user.is_superuser == True %}
+                                        {% if errors %}
+                                            {% for issue in errors %}
                                                     <tr>
                                                         <td>
-                                                            <div class="avatar avatar-sm avatar-online">
-                                                                <span class="avatar-title rounded-circle bg-dark">{{user.username.0}}</span>
-                                                            </div>
+                                                            {{issue.user}}
                                                         </td>
-                                                        <td>
-                                                            {{user.id}}
-                                                        </td>
-                                                        <td>{{user.first_name}}</td>
-                                                        <td>{{user.last_name}}</td>
-                                                        <td>{{user.username}}</td>
-                                                        <td>{{user.email}}</td>
+                                                        <td>{{issue.email}}</td>
+                                                        <td><button class='btn btn-primary'><a href="/loan/view_reply/{{issue.id}}">Check</a></button></td>
                                                         
                                                     </tr>
-                                                {% endif %}
                                             {% endfor %}
                                         {% else %}
                                                 <tr>

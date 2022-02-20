@@ -2,7 +2,7 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Apply, GroupApply, Support
-from loan.models import AddPayment
+from loan.models import AddPayment, Replies
 from datetime import datetime
 
 # Create your views here.
@@ -198,6 +198,12 @@ def my_payments(request):
 def support(request):
     if request.user.is_authenticated:
         username = request.user.username
+        replies = Replies.objects.all()
+        support = Support.objects.filter(user = username).all()
+        context = {
+            'replies': replies,
+            'support': support,
+        }
         if request.method == 'POST':
             data = request.POST
             email = data['email']
@@ -210,7 +216,11 @@ def support(request):
                 question = question,
             )
             return redirect('home:index')
-        return render(request, 'support.html')
+        return render(request, 'support.html', context)
     else:
         return redirect('account:user_login')
+    
+    
+def about(request):
+    return render(request, 'about.html')
 

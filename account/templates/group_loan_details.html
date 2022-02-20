@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+    {% load static %}
+
+    {% block content %}
+    <center>
+    <div>
+        <h3>Loan Details</h3>
+    </div>
+        <div>
+            <label>LOAN ID: </label><br>
+            <h6>{{loan.loan_id}}</h6><br>
+            <label>General Number:</label><br>
+            <h6>{{loan.general_number}}</h6><br>
+            <label>first person full name:</label><br>
+            <h6>{{loan.first_person_full_names}}</h6><br>
+
+            <label>First Person National ID:</label><br>
+            <h6>{{loan.first_person_national_id}}</h6><br>
+
+            <label>First Person Telephone:</label><br>
+            <h6>{{loan.first_person_telephone}}</h6><br>
+
+            <label>First person National ID Picture:</label><br>
+            <a href='{{loan.first_person_national_id_pic.url}}' target='_blank'><img src="{{loan.first_person_national_id_pic.url}}" width="300px" height="300px" alt="picture id"><a><br>
+
+            <label>First Person Picture</label><br>
+            <a href='{{loan.first_person_pic.url}}' target='_blank'><img src="{{ loan.first_person_pic.url }}" width="300px" height="300px" alt="picture id"></a><br>
+
+            
+            <label>second person full name:</label>
+            <h6>{{loan.second_person_full_names}}</h6>
+
+            <label>second Person National ID:</label>
+            <h6>{{loan.second_person_national_id}}</h6>
+
+            <label>second Person Telephone:</label>
+            <h6>{{loan.second_person_telephone}}</h6>
+
+            <label>second person National ID Picture:</label><br>
+            <a href='{{loan.second_person_national_id_pic.url}}' target='_blank'><img src="{{loan.second_person_national_id_pic.url}}" width="300px" height="300px" alt="picture id"><a><br>
+
+            <label>second Person Picture</label><br>
+            <a href='{{loan.second_person_pic.url}}' target='_blank'><img src="{{ loan.second_person_pic.url }}" width="300px" height="300px" alt="picture id"></a><br>
+            
+
+            <label>third person full name:</label>
+            <h6>{{loan.third_person_full_names}}</h6>
+
+            <label>third Person National ID:</label>
+            <h6>{{loan.third_person_national_id}}</h6>
+
+            <label>third Person Telephone:</label>
+            <h6>{{loan.third_person_telephone}}</h6>
+
+            <label>third person National ID Picture:</label><br>
+            <a href='{{loan.third_person_national_id_pic.url}}' target='_blank'><img src="{{loan.third_person_national_id_pic.url}}" width="300px" height="300px" alt="picture id"><a><br>
+
+            <label>third Person Picture</label><br>
+            <a href='{{loan.third_person_pic.url}}' target='_blank'><img src="{{ loan.third_person_pic.url }}" width="300px" height="300px" alt="picture id"></a><br>
+
+
+            <label>fourth person full name:</label>
+            <h6>{{loan.fourth_person_full_names}}</h6>
+
+            <label>Fourth Person National ID:</label>
+            <h6>{{loan.fourth_person_national_id}}</h6>
+
+            <label>Fourth Person Telephone:</label>
+            <h6>{{loan.fourth_person_telephone}}</h6>
+
+            <label>Fourth person National ID Picture:</label><br>
+            <a href='{{loan.fourth_person_national_id_pic.url}}' target='_blank'><img src="{{loan.fourth_person_national_id_pic.url}}" width="300px" height="300px" alt="picture id"><a><br>
+
+            <label>Fourth Person Picture</label><br>
+            <a href='{{loan.fourth_person_pic.url}}' target='_blank'><img src="{{ loan.fourth_person_pic.url }}" width="300px" height="300px" alt="picture id"></a><br>
+
+            <label>Account Username:</label><br>    
+            <h6>{{loan.user}}</h6><br>
+
+            <label>Date</label><br>
+            <h6>{{loan.date}}</h6><br>
+
+            <label>Loan Amount:</label><br>
+            <h6>{{loan.loan_amount}} Ugx<h6><br>
+            
+            <label>Loan PayBack</label><br>
+            <h6>{{loan.payback}} Ugx</h6><br>
+           
+           
+           
+        </div>
+    </center>
+
+    {% endblock %}

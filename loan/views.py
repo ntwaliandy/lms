@@ -1,25 +1,29 @@
 from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from home.models import Apply, GroupApply
-from .models import AddPayment, GroupAddPayment
+from home.models import Apply, GroupApply, Support
+from .models import AddPayment, GroupAddPayment, Replies
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 # Create your views here.
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 def dashboard(request):
     if request.user.is_superuser:
         applied_loans = Apply.objects.count()
         total_loans = Apply.objects.aggregate(Sum('loan_amount'))
         total_sales = Apply.objects.filter(status='completed').aggregate(Sum('payback'))
-        recent_loans = reversed(Apply.objects.order_by('date')[:3])
+        recent_loans = reversed(Apply.objects.filter(status = 'pending').order_by('date')[:3])
+        loans = Apply.objects.all()
 
         context = {
             'applied_loans': applied_loans,
             'total_loans': total_loans,
             'recent_loans': recent_loans,
-            'total_sales': total_sales
+            'total_sales': total_sales,
+            'loans': loans
         }
         return render(request, 'dashboard.html', context)
     else:
@@ -291,8 +295,12 @@ def all_clients(request):
     if request.user.is_superuser:
         User = get_user_model()
         users = User.objects.all()
+        payment = AddPayment.objects.filter(paid = 'NO').all()
+        person = Apply.objects.all()
         context = {
             'users': users,
+            'person': person,
+            'payment': payment,
         }
         return render(request, 'all-clients.html', context)
     else:
@@ -308,3 +316,77 @@ def staff(request):
         return render(request, 'staff.html', context)
     else:
         return redirect('account:admin-login')
+    
+def complaints(request):
+    if request.user.is_superuser:
+        errors = Support.objects.filter(answered='NO').all()
+        context = {
+            'errors': errors
+        }
+        return render(request, 'complaints.html', context)
+    else:
+        return redirect('account:admin-login')
+    
+def reply(request, error_id):
+    if request.user.is_superuser:
+        error = get_object_or_404(Support, pk=error_id)
+        
+        context ={
+            'error': error
+        }
+        if request.method == 'POST':
+            data = request.POST
+            feedback = data['feedback']
+            
+            # inserting them to the database
+            Replies.objects.create(
+                question_id = error.id,
+                feedback = feedback,
+            )
+            messages.error(request, 'successfuly replied')
+            return render(request, 'reply_error.html', {'error': error, 'done': 'done'})
+        return render(request, 'reply_error.html', context)
+    else:
+        return redirect('account:admin-login')
+    
+def done(request, quest_id):
+    Support.objects.filter(id=quest_id).update(
+        answered = 'YES'
+    )
+    return redirect('loan:complaints')
+
+
+def group_details(request, group_l_id):
+    if request.user.is_superuser:
+        loan = get_object_or_404(GroupApply, pk=group_l_id)
+        context = {
+            'loan': loan
+        }
+        return render(request, 'group_loan_details.html', context)
+    else:
+        return redirect('account:admin-login')
+    
+    
+def send_report(request):
+    
+    payments = AddPayment.objects.all()
+    
+    for payment in payments:
+        single_loan_id = payment.loan_id
+        payments = payment.payment_fee
+        transaction = payment.transaction_id
+        paid = payment.paid,
+        dateofpay = payment.date,
+        admin = payment.admin
+    subject = 'hello everyone'
+    recipient = 'ntwaliandy90@gmail.com'
+    sender = 'ntwaliandrew00@gmail.com'
+    message = '{ <br>' + 'LOAN ID: ' + str(single_loan_id) + '<br> Payments: ugx ' + str(payments) + '<br> Transaction ID: ' + str(transaction) + '<br> PAID? : ' + str(paid) + '<br> DATE of Pay: ' + str(dateofpay) + '<br> Approved By: ' + str(admin) + '<br> }'
+    
+    msg = EmailMessage(subject, message, sender, [recipient])
+    msg.content_subtype = "html"
+    msg.send()
+    
+    return redirect('loan:dashboard')
+    
+     

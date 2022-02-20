@@ -39,8 +39,9 @@
                                     <li class="active"><a href="/">Home</a></li>
                                     <li><a href="{% url 'home:my-loans' %}">My Loans</a></li>
                                     <li><a href="{% url 'home:my-payments' %}">My Payments</a></li>
-                                    <li><a href="">Contact Us</a></li>
+                                    <li><a href="{% url 'home:about' %}">About Us</a></li>
                                     <li><a href="{% url 'home:support' %}">Help/Support</a></li>
+                                    <li><a href='{% url 'account:logout_user' %}'>Logout</a></li>
                                 </ul>
                             </div>
                         </div>

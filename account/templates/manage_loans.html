@@ -184,6 +184,7 @@
                                                     <th>loan amount</th>
                                                     <th>loan payback</th>
                                                     <th>status</th>
+                                                    <th>View</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -201,6 +202,10 @@
                                                                 <td>{{loan.loan_amount}}</td>
                                                                 <td>{{loan.payback }}</td>
                                                                 <td>{{loan.status}}</td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:loan-details' loan.id %}">View</a>
+                                                                
+                                                            </td>
                                                             </tr>
                                                         {% endif %}
                                                     {% endfor %}
