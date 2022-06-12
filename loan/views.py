@@ -9,6 +9,9 @@ from django.contrib.auth import get_user_model
 # Create your views here.
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+import http.client
+import json
+from django.http import JsonResponse
 
 def dashboard(request):
     if request.user.is_superuser:
@@ -121,31 +124,47 @@ def add_payment(request):
         username = request.user.username
         if request.method == 'POST':
             data = request.POST
-            loan_id = request.POST.get('loan_id', 'none')
+            loanId = request.POST.get('loan_id', 'none')
             payment_fee = data['payment_fee']
-            transaction_id = data['transaction_id']
-            paid = request.POST.get('paid', 'no')
-            date = request.POST.get('date', datetime.now())
+            loan_details = Apply.objects.filter(loan_id=loanId).all()
+            for loanDt in loan_details:
+                phoneNumber = loanDt.telephone
+            phone_number = phoneNumber
+            print(phone_number)
 
             #form validation
-            if loan_id == '':
+            if loanId == '':
                 messages.info(request, 'loan ID cant be null')
             elif payment_fee == '':
                 messages.info(request, 'payment fee cant be null')
-            elif transaction_id == '':
-                messages.info(request, 'transaction id cant be empty')
-            elif paid == '':
-                messages.info(request, 'paid section cant be null')
             else:
-                # insert records the database
-                AddPayment.objects.create(
-                    loan_id = loan_id,
-                    payment_fee = payment_fee,
-                    transaction_id = transaction_id,
-                    paid = paid,
-                    date = date,
-                    admin = username
-                )
+                conn = http.client.HTTPSConnection("api.cissytech.com")
+                payload = json.dumps({
+                "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+                "phone": phone_number,
+                "amount": payment_fee,
+                "reference": "Money Access Uganda"
+                })
+                headers = {
+                'Content-Type': 'application/json'
+                }
+                conn.request("POST", "/pay/moneyaccess/requestToPay", payload, headers)
+                res = conn.getresponse()
+                data = json.load(res)
+                # response = data.decode("utf-8")
+                result = data['data']['requestToPay']
+                transId = data['data']['transactionId']
+                if result == True:
+                    print(result)
+                    date = request.POST.get('date', datetime.now())
+                    AddPayment.objects.create(
+                        loan_id = loanId,
+                        payment_fee = payment_fee,
+                        transaction_id = transId,
+                        status = 'pending',
+                        date = date,
+                        admin = username
+                    )
                 return redirect('loan:dashboard')
         else:
             return render(request, 'add_payment.html', context)
@@ -154,6 +173,40 @@ def add_payment(request):
         return redirect('account:admin-login')
 
 
+# check daily payment
+def pay_details(request, loan_id):
+    if request.user.is_superuser:
+        record = AddPayment.objects.filter(loan_id=loan_id)
+        for recd in record:
+            fee = recd.payment_fee
+        print(fee)
+        loan_details = Apply.objects.filter(loan_id=loan_id).all()
+        for loanDt in loan_details:
+            phoneNumber = loanDt.telephone
+        phone_number = phoneNumber
+        conn = http.client.HTTPSConnection("api.cissytech.com")
+        payload = json.dumps({
+        "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+        "phone": phone_number,
+        "amount": str(fee),
+        "reference": "Money Access Uganda"
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+        conn.request("POST", "/pay/moneyaccess/requestToPayStatus", payload, headers)
+        res = conn.getresponse()
+        data = json.load(res)
+        result = data['data']['requestToPayStatus']
+        if result == True:
+            AddPayment.objects.filter(loan_id=loan_id).update(status = 'paid')
+            messages.info(request, "user paid successfully")
+            return redirect('loan:payment-record')    
+        else:
+            messages.info(request, "user haven't paid yet for a day")
+            return redirect('loan:payment-record')
+    else:
+        return redirect('account:admin-login')
 # single loan daily payment view
 def payment_record(request):
     if request.user.is_superuser:
@@ -370,18 +423,12 @@ def group_details(request, group_l_id):
 def send_report(request):
     
     payments = AddPayment.objects.all()
-    
-    for payment in payments:
-        single_loan_id = payment.loan_id
-        payments = payment.payment_fee
-        transaction = payment.transaction_id
-        paid = payment.paid,
-        dateofpay = payment.date,
-        admin = payment.admin
+    for pay in payments:
+        loan_ID = pay.loan_id
     subject = 'hello everyone'
-    recipient = 'ntwaliandy90@gmail.com'
-    sender = 'ntwaliandrew00@gmail.com'
-    message = '{ <br>' + 'LOAN ID: ' + str(single_loan_id) + '<br> Payments: ugx ' + str(payments) + '<br> Transaction ID: ' + str(transaction) + '<br> PAID? : ' + str(paid) + '<br> DATE of Pay: ' + str(dateofpay) + '<br> Approved By: ' + str(admin) + '<br> }'
+    recipient = 'rankunda48@gmail.com'
+    sender = 'ntwaliandy90@gmail.com'
+    message = 'amount ' + str(payments[1])
     
     msg = EmailMessage(subject, message, sender, [recipient])
     msg.content_subtype = "html"

@@ -4,9 +4,9 @@ from datetime import datetime
 
 class AddPayment(models.Model):
     loan_id = models.CharField(max_length=200)
-    payment_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_fee = models.DecimalField(max_digits=10, decimal_places=0)
     transaction_id = models.CharField(max_length=200)
-    paid = models.CharField(max_length=200)
+    status = models.CharField(max_length=200)
     date = models.DateTimeField(default=datetime.now, blank=True)
     admin = models.CharField(max_length=200)
 
