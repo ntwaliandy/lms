@@ -1,4 +1,6 @@
-
+import http.client
+import json
+from random import randint
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Apply, GroupApply, Support
@@ -31,7 +33,6 @@ def user_apply(request):
             second_guarrante_national_id = data['second_guarrante_national_id']
             second_guarrante_telephone = data['second_guarrante_telephone']
             second_guarrante_pic_id = request.FILES.get('second_guarrante_pic_id')
-            transction_id = request.POST.get('transction_id', 'null')
             loan_amount = data['loan_amount']
             date = request.POST.get('date', datetime.now())
             
@@ -65,32 +66,50 @@ def user_apply(request):
                 messages.info(request, 'user field empty')
             elif second_guarrante_pic_id == '':
                 messages.info(request, 'user field empty')
-            elif transction_id == '':
-                messages.info(request, 'user field empty')
             elif loan_amount == '':
                 messages.info(request, 'user field empty')
             else:
+                ref = randint(00000,99999)
+                conn = http.client.HTTPSConnection("api.cissytech.com")
+                payload = json.dumps({
+                "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+                "phone": telephone,
+                "amount": 5000,
+                "reference": str(ref)
+                })
+                headers = {
+                'Content-Type': 'application/json'
+                }
+                conn.request("POST", "/pay/moneyaccess/requestToPay", payload, headers)
+                res = conn.getresponse()
+                data = json.load(res)
+                # response = data.decode("utf-8")
+                result = data['data']['requestToPay']
+                transId = data['data']['transactionId']
+                if result == True:
                 # insert the records to the database
-                Apply.objects.create(
-                    first_name = first_name,
-                    last_name = last_name,
-                    national_id = national_id,
-                    telephone = telephone,
-                    pic_id = pic_id,
-                    person_pic = person_pic,
-                    first_guarrante_full_names = first_guarrante_full_names,
-                    first_guarrante_national_id = first_guarrante_national_id,
-                    first_guarrante_telephone = first_guarrante_telephone,
-                    first_guarrante_pic_id = first_guarrante_pic_id,
-                    second_guarrante_full_names = second_guarrante_full_names,
-                    second_guarrante_national_id = second_guarrante_national_id,
-                    second_guarrante_telephone = second_guarrante_telephone,
-                    second_guarrante_pic_id = second_guarrante_pic_id,
-                    transction_id = transction_id,
-                    loan_amount = loan_amount,
-                    user = username,
-                    date = date,
-                )
+                    Apply.objects.create(
+                        first_name = first_name,
+                        last_name = last_name,
+                        national_id = national_id,
+                        telephone = telephone,
+                        pic_id = pic_id,
+                        person_pic = person_pic,
+                        first_guarrante_full_names = first_guarrante_full_names,
+                        first_guarrante_national_id = first_guarrante_national_id,
+                        first_guarrante_telephone = first_guarrante_telephone,
+                        first_guarrante_pic_id = first_guarrante_pic_id,
+                        second_guarrante_full_names = second_guarrante_full_names,
+                        second_guarrante_national_id = second_guarrante_national_id,
+                        second_guarrante_telephone = second_guarrante_telephone,
+                        second_guarrante_pic_id = second_guarrante_pic_id,
+                        transction_id = transId,
+                        loan_amount = loan_amount,
+                        reference = ref,
+                        status = "fee_not_paid",
+                        user = username,
+                        date = date,
+                    )
                 return redirect('home:index')
         else:
             return render(request, 'apply.html')

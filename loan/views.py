@@ -1,4 +1,6 @@
 from datetime import datetime
+import json
+from random import randint
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, Support
@@ -10,8 +12,6 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 import http.client
-import json
-from django.http import JsonResponse
 
 def dashboard(request):
     if request.user.is_superuser:
@@ -138,12 +138,13 @@ def add_payment(request):
             elif payment_fee == '':
                 messages.info(request, 'payment fee cant be null')
             else:
+                ref = randint(00000,99999)
                 conn = http.client.HTTPSConnection("api.cissytech.com")
                 payload = json.dumps({
                 "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
                 "phone": phone_number,
                 "amount": payment_fee,
-                "reference": "Money Access Uganda"
+                "reference": str(ref)
                 })
                 headers = {
                 'Content-Type': 'application/json'
@@ -162,6 +163,7 @@ def add_payment(request):
                         payment_fee = payment_fee,
                         transaction_id = transId,
                         status = 'pending',
+                        reference = str(ref),
                         date = date,
                         admin = username
                     )
@@ -179,6 +181,7 @@ def pay_details(request, loan_id):
         record = AddPayment.objects.filter(loan_id=loan_id)
         for recd in record:
             fee = recd.payment_fee
+            ref = recd.reference
         print(fee)
         loan_details = Apply.objects.filter(loan_id=loan_id).all()
         for loanDt in loan_details:
@@ -188,8 +191,8 @@ def pay_details(request, loan_id):
         payload = json.dumps({
         "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
         "phone": phone_number,
-        "amount": str(fee),
-        "reference": "Money Access Uganda"
+        "amount": fee,
+        "reference": str(ref)
         })
         headers = {
         'Content-Type': 'application/json'
@@ -207,6 +210,39 @@ def pay_details(request, loan_id):
             return redirect('loan:payment-record')
     else:
         return redirect('account:admin-login')
+
+# check loan application fee
+def fee_details(request, loan_id):
+    if request.user.is_superuser:
+        record = Apply.objects.filter(loan_id=loan_id)
+        for recd in record:
+            ref = recd.reference
+            phoneNumber = recd.telephone
+        phone_number = phoneNumber
+        conn = http.client.HTTPSConnection("api.cissytech.com")
+        payload = json.dumps({
+        "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+        "phone": phone_number,
+        "amount": 5000,
+        "reference": str(ref)
+        })
+        headers = {
+        'Content-Type': 'application/json'
+        }
+        conn.request("POST", "/pay/moneyaccess/requestToPayStatus", payload, headers)
+        res = conn.getresponse()
+        data = json.load(res)
+        result = data['data']['requestToPayStatus']
+        if result == True:
+            Apply.objects.filter(loan_id=loan_id).update(status = 'pending')
+            messages.info(request, "user paid application fee successfully")
+            return redirect('loan:manage-loans')    
+        else:
+            messages.info(request, "user haven't paid application fee")
+            return redirect('loan:manage-loans')
+    else:
+        return redirect('account:admin-login')
+
 # single loan daily payment view
 def payment_record(request):
     if request.user.is_superuser:

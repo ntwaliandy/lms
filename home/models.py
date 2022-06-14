@@ -24,8 +24,9 @@ class Apply(models.Model):
     transction_id = models.CharField(max_length=200)
     loan_amount = models.DecimalField(max_digits=8, decimal_places=2)
     loan_id = models.CharField(default= random_string, max_length=10000000000)
+    reference = models.CharField(max_length=200)
     date = models.DateTimeField(default=datetime.now, blank=True)
-    status = models.CharField(max_length=50, default='pending')
+    status = models.CharField(max_length=50, default='fee_not_paid')
     user = models.CharField(max_length=200)
     payback = models.DecimalField(max_digits=12, decimal_places=2, default='0.00')
 

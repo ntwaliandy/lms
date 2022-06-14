@@ -9,7 +9,21 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
-
+                                {% for message in messages %}
+                                <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                    <div class="d-flex">
+                                        <div class="icon">
+                                            <i class="icon mdi mdi-alert-octagram"></i>
+                                        </div>
+                                        <div class="content text-dark">
+                                            {{message}}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                                 <h1>Manage Loans</h1>
                                 <p class="opacity-75">
                                     Edit, Update or Remove loans from your dashboard.
@@ -32,6 +46,7 @@
                             <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Approved</a>
                             <a class="nav-item nav-link text-white" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Pending</a>
                             <a class="nav-item nav-link text-white" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Completed</a>
+                            <a class="nav-item nav-link text-white" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="new" aria-selected="false">New Loans</a>
                             
                         </nav>
                         </div>
@@ -207,6 +222,62 @@
                                                                 
                                                             </td>
                                                             </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                        <tr>
+                                                            <td><h4>No record in DB</h4></td>
+                                                        </tr>
+                                                {% endif %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+                                
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>New Loans</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>Loan ID</th>
+                                                    <th>first name</th>
+                                                    <th>last name</th>
+                                                    <th>telephone</th>
+                                                    <th>application fee</th>
+                                                    <th>loan amount</th>
+                                                    <th>payback</th>
+                                                    <th>paid fee ?</th>
+                                                </tr>
+                                                </thead>
+                                              
+                                                <tbody>
+                                                {% if loans %}
+                                                    {% for loan in loans %}
+                                                        {% if loan.status == 'fee_not_paid' %}
+                                                        
+                                                            <tr>
+                                                                <td>
+                                                                    {{loan.loan_id}}
+                                                                </td>
+                                                                <td>{{loan.first_name}}</td>
+                                                                <td>{{loan.last_name}}</td>
+                                                                <td>{{loan.telephone}}</td>
+                                                                <td>{{loan.transction_id}}</td>
+                                                                <td>ugx {{loan.loan_amount}}</td>
+                                                                <td>ugx {{loan.payback}}</td>
+                                                                <td>
+                                                                        <a class='btn hvr-hover' href="{% url 'loan:fee-details' loan.loan_id %}">Check</a>
+                                                                    
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% else %}

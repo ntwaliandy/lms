@@ -13,6 +13,7 @@ urlpatterns = [
     path('loan-remove/', views.loan_remove, name='loan-remove'),
     path('loan-complete/', views.loan_complete, name='loan-complete'),
     re_path(r'^pay-details/(?P<loan_id>[0-9]+)/$', views.pay_details, name='pay-details'),
+    re_path(r'^fee-details/(?P<loan_id>[0-9]+)/$', views.fee_details, name='fee-details'),
     path('group-loan-complete', views.group_loan_complete, name='group-loan-complete'),
     path('add-payment', views.add_payment, name='add-payment'),
     path('group-add-payment', views.group_add_payment, name='group-add-payment'),
