@@ -17,15 +17,17 @@ def dashboard(request):
     if request.user.is_superuser:
         applied_loans = Apply.objects.count()
         total_loans = Apply.objects.aggregate(Sum('loan_amount'))
+        totalLoans = total_loans['loan_amount__sum']
         total_sales = Apply.objects.filter(status='completed').aggregate(Sum('payback'))
+        totalSales = total_sales['payback__sum']
         recent_loans = reversed(Apply.objects.filter(status = 'pending').order_by('date')[:3])
         loans = Apply.objects.all()
 
         context = {
             'applied_loans': applied_loans,
-            'total_loans': total_loans,
+            'total_loans': totalLoans,
             'recent_loans': recent_loans,
-            'total_sales': total_sales,
+            'total_sales': totalSales,
             'loans': loans
         }
         return render(request, 'dashboard.html', context)
@@ -191,7 +193,7 @@ def pay_details(request, loan_id):
         payload = json.dumps({
         "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
         "phone": phone_number,
-        "amount": fee,
+        "amount": str(fee),
         "reference": str(ref)
         })
         headers = {
@@ -203,10 +205,10 @@ def pay_details(request, loan_id):
         result = data['data']['requestToPayStatus']
         if result == True:
             AddPayment.objects.filter(loan_id=loan_id).update(status = 'paid')
-            messages.info(request, "user paid successfully")
+            messages.info(request, "user with Loan ID " + loan_id + " paid " + str(fee) + " successfully!")
             return redirect('loan:payment-record')    
         else:
-            messages.info(request, "user haven't paid yet for a day")
+            messages.info(request, "user with Loan ID " + loan_id + " haven't paid yet for the specific day")
             return redirect('loan:payment-record')
     else:
         return redirect('account:admin-login')
@@ -238,7 +240,7 @@ def fee_details(request, loan_id):
             messages.info(request, "user paid application fee successfully")
             return redirect('loan:manage-loans')    
         else:
-            messages.info(request, "user haven't paid application fee")
+            messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
             return redirect('loan:manage-loans')
     else:
         return redirect('account:admin-login')
