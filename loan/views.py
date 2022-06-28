@@ -1,4 +1,5 @@
 from datetime import datetime
+import imp
 import json
 from random import randint
 from django.http import HttpResponse
@@ -11,7 +12,9 @@ from django.contrib.auth import get_user_model
 # Create your views here.
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+import requests
 import http.client
+
 
 def dashboard(request):
     if request.user.is_superuser:
@@ -189,19 +192,17 @@ def pay_details(request, loan_id):
         for loanDt in loan_details:
             phoneNumber = loanDt.telephone
         phone_number = phoneNumber
-        conn = http.client.HTTPSConnection("api.cissytech.com")
-        payload = json.dumps({
+        payload = {
         "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
         "phone": phone_number,
         "amount": str(fee),
         "reference": str(ref)
-        })
-        headers = {
+        }
+        headerss = {
         'Content-Type': 'application/json'
         }
-        conn.request("POST", "/pay/moneyaccess/requestToPayStatus", payload, headers)
-        res = conn.getresponse()
-        data = json.load(res)
+        res = requests.post("https://api.cissytech.com/pay/moneyaccess/requestToPayStatus", headers=headerss, json=payload)
+        data = res.json()
         result = data['data']['requestToPayStatus']
         if result == True:
             AddPayment.objects.filter(loan_id=loan_id).update(status = 'paid')
