@@ -27,7 +27,7 @@ class GroupAddPayment(models.Model):
     
 class Replies(models.Model):
     question_id = models.IntegerField()
-    feedback = models.TextField(max_length=100000)
+    feedback = models.TextField(max_length=200)
     
     def __str__(self):
         return self.feedback

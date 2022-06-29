@@ -23,7 +23,7 @@ class Apply(models.Model):
     second_guarrante_pic_id = models.FileField()
     transction_id = models.CharField(max_length=200)
     loan_amount = models.DecimalField(max_digits=8, decimal_places=2)
-    loan_id = models.CharField(default= random_string, max_length=10000000000)
+    loan_id = models.CharField(default= random_string, max_length=200)
     reference = models.CharField(max_length=200)
     date = models.DateTimeField(default=datetime.now, blank=True)
     status = models.CharField(max_length=50, default='fee_not_paid')
@@ -39,7 +39,7 @@ class Apply(models.Model):
 
 
 class GroupApply(models.Model):
-    loan_id = models.CharField(default= random_string, max_length=1000000000)
+    loan_id = models.CharField(default= random_string, max_length=200)
     general_number = models.CharField(max_length=20, default='xxx')
     first_person_full_names = models.CharField(max_length=200, default='null')
     first_person_telephone = models.CharField(max_length=200, default='xxx')
@@ -78,8 +78,8 @@ class GroupApply(models.Model):
 
 class Support(models.Model):
     user = models.CharField(max_length=100)
-    email = models.CharField(max_length=1000)
-    question = models.CharField(max_length=10000)
+    email = models.CharField(max_length=200)
+    question = models.CharField(max_length=200)
     answered = models.CharField(max_length=10, default='NO')
 
     def __str__(self):
