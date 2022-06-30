@@ -181,35 +181,35 @@ def add_payment(request):
 
 
 # check daily payment
-def pay_details(request, loan_id):
+def pay_details(request, ref):
     if request.user.is_superuser:
-        record = AddPayment.objects.filter(loan_id=loan_id)
+        record = AddPayment.objects.filter(reference=ref)
         for recd in record:
             fee = recd.payment_fee
-            ref = recd.reference
+            loanId = recd.loan_id
+            trans_id = recd.transaction_id
         print(fee)
-        loan_details = Apply.objects.filter(loan_id=loan_id).all()
-        for loanDt in loan_details:
-            phoneNumber = loanDt.telephone
-        phone_number = phoneNumber
+        print(ref)
+        print(trans_id)
         payload = {
         "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
-        "phone": phone_number,
-        "amount": str(fee),
-        "reference": str(ref)
+        "transactionId": str(trans_id)
         }
         headerss = {
         'Content-Type': 'application/json'
         }
         res = requests.post("https://api.cissytech.com/pay/moneyaccess/requestToPayStatus", headers=headerss, json=payload)
         data = res.json()
-        result = data['data']['requestToPayStatus']
-        if result == True:
-            AddPayment.objects.filter(loan_id=loan_id).update(status = 'paid')
-            messages.info(request, "user with Loan ID " + loan_id + " paid " + str(fee) + " successfully!")
+        result = data['data']['data']['status']
+        print(data)
+        print(result)
+        if result == 'FAILED':
+            AddPayment.objects.filter(reference=ref).update(status = 'pending')
+            messages.info(request, "user with Loan ID " + loanId + " haven't paid yet for the specific day")
             return redirect('loan:payment-record')    
         else:
-            messages.info(request, "user with Loan ID " + loan_id + " haven't paid yet for the specific day")
+            AddPayment.objects.filter(reference=ref).update(status = 'paid')
+            messages.info(request, "user with Loan ID " + loanId + " paid " + str(fee) + " successfully!")
             return redirect('loan:payment-record')
     else:
         return redirect('account:admin-login')
@@ -219,15 +219,11 @@ def fee_details(request, loan_id):
     if request.user.is_superuser:
         record = Apply.objects.filter(loan_id=loan_id)
         for recd in record:
-            ref = recd.reference
-            phoneNumber = recd.telephone
-        phone_number = phoneNumber
+            trans_id = recd.transction_id
         conn = http.client.HTTPSConnection("api.cissytech.com")
         payload = json.dumps({
         "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
-        "phone": phone_number,
-        "amount": 5000,
-        "reference": str(ref)
+        "transactionId": str(trans_id)
         })
         headers = {
         'Content-Type': 'application/json'
@@ -235,13 +231,14 @@ def fee_details(request, loan_id):
         conn.request("POST", "/pay/moneyaccess/requestToPayStatus", payload, headers)
         res = conn.getresponse()
         data = json.load(res)
-        result = data['data']['requestToPayStatus']
-        if result == True:
-            Apply.objects.filter(loan_id=loan_id).update(status = 'pending')
-            messages.info(request, "user paid application fee successfully")
+        result = data['data']['data']['status']
+        if result == 'FAILED':
+            Apply.objects.filter(loan_id=loan_id).update(status = 'fee_not_paid')
+            messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
             return redirect('loan:manage-loans')    
         else:
-            messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
+            Apply.objects.filter(loan_id=loan_id).update(status = 'pending')
+            messages.info(request, "user paid application fee successfully, check in pending loans to approve")
             return redirect('loan:manage-loans')
     else:
         return redirect('account:admin-login')
