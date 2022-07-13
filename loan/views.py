@@ -1,11 +1,12 @@
+from contextlib import redirect_stderr
 from datetime import datetime
 import imp
 import json
 from random import randint
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from home.models import Apply, GroupApply, Support
-from .models import AddPayment, GroupAddPayment, Replies
+from home.models import Apply, GroupApply, PermitApply, Support
+from .models import AddPayment, AddPermitPayment, GroupAddPayment, Replies
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -131,10 +132,7 @@ def add_payment(request):
             data = request.POST
             loanId = request.POST.get('loan_id', 'none')
             payment_fee = data['payment_fee']
-            loan_details = Apply.objects.filter(loan_id=loanId).all()
-            for loanDt in loan_details:
-                phoneNumber = loanDt.telephone
-            phone_number = phoneNumber
+            phone_number = data['phone_number']
             print(phone_number)
 
             #form validation
@@ -203,13 +201,17 @@ def pay_details(request, ref):
         result = data['data']['data']['status']
         print(data)
         print(result)
-        if result == 'FAILED':
+        if result == 'INPROCESS' or result == 'FAILED':
             AddPayment.objects.filter(reference=ref).update(status = 'pending')
             messages.info(request, "user with Loan ID " + loanId + " haven't paid yet for the specific day")
             return redirect('loan:payment-record')    
-        else:
+        elif result == 'SUCCESSFUL':
             AddPayment.objects.filter(reference=ref).update(status = 'paid')
             messages.info(request, "user with Loan ID " + loanId + " paid " + str(fee) + " successfully!")
+            return redirect('loan:payment-record')
+        else:
+            AddPayment.objects.filter(reference=ref).update(status = 'pending')
+            messages.info(request, "user with Loan ID " + loanId + " haven't paid yet for the specific day")
             return redirect('loan:payment-record')
     else:
         return redirect('account:admin-login')
@@ -232,13 +234,17 @@ def fee_details(request, loan_id):
         res = conn.getresponse()
         data = json.load(res)
         result = data['data']['data']['status']
-        if result == 'FAILED':
+        if result == 'FAILED' or result == 'INPROCESS':
             Apply.objects.filter(loan_id=loan_id).update(status = 'fee_not_paid')
             messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
             return redirect('loan:manage-loans')    
-        else:
+        elif result == 'SUCCESSFUL':
             Apply.objects.filter(loan_id=loan_id).update(status = 'pending')
             messages.info(request, "user paid application fee successfully, check in pending loans to approve")
+            return redirect('loan:manage-loans')
+        else:
+            Apply.objects.filter(loan_id=loan_id).update(status = 'fee_not_paid')
+            messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
             return redirect('loan:manage-loans')
     else:
         return redirect('account:admin-login')
@@ -384,7 +390,7 @@ def all_clients(request):
     if request.user.is_superuser:
         User = get_user_model()
         users = User.objects.all()
-        payment = AddPayment.objects.filter(paid = 'NO').all()
+        payment = AddPayment.objects.filter(status = 'pending').all()
         person = Apply.objects.all()
         context = {
             'users': users,
@@ -471,5 +477,133 @@ def send_report(request):
     msg.send()
     
     return redirect('loan:dashboard')
+
+
+# PERMIT SECTION
+
+def permit_dashboard(request):
+    if request.user.is_superuser:
+        permits = PermitApply.objects.all()
+        context = {
+            'permits': permits
+        }
+        return render(request, 'permit_dashboard.html', context)
+
+    else:
+        return redirect('accounts:admin-login')
+
+
+def permit_add_payment(request):
+    if request.user.is_superuser:
+        permits = PermitApply.objects.exclude(balance = 0).all()
+        context = {
+            "permits": permits
+        }
+        username = request.user.username
+        if request.method == 'POST':
+            data = request.POST
+            permitId = data.get('permit_id', 'none')
+            paymentFee = data['payment_fee']
+            phoneNumber = data['phone_number']
+
+
+            ref = randint(00000,99999)
+            conn = http.client.HTTPSConnection("api.cissytech.com")
+            payload = json.dumps({
+            "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+            "phone": phoneNumber,
+            "amount": paymentFee,
+            "reference": str(ref)
+            })
+            headers = {
+            'Content-Type': 'application/json'
+            }
+            conn.request("POST", "/pay/moneyaccess/requestToPay", payload, headers)
+            res = conn.getresponse()
+            data = json.load(res)
+            # response = data.decode("utf-8")
+            result = data['data']['requestToPay']
+            transId = data['data']['transactionId']
+            if result == True:
+                print(result)
+                AddPermitPayment.objects.create(
+                    permit_id = permitId,
+                    payment_fee = paymentFee,
+                    phone_number = phoneNumber,
+                    reference = ref,
+                    transaction_id = transId,
+                    status = 'not paid',
+                    admin = username
+                )
+            return redirect('loan:permit-dashboard')
+        else:
+            return render(request, 'add_permit_payment.html', context)
+    else:
+        return redirect('accounts:admin-login')
+
+
+def permit_payment_details(request):
+    if request.user.is_superuser:
+        payments = AddPermitPayment.objects.all()
+        context = {
+            'payments': payments
+        }
+        return render(request, 'permit_payment_details.html', context)
+    else:
+        return redirect('account:admin-login')
+
+
+def permit_pay_details(request, ref):
+    if request.user.is_superuser:
+        record = AddPermitPayment.objects.filter(reference=ref)
+        for recd in record:
+            fee = recd.payment_fee
+            permitId = recd.permit_id
+            trans_id = recd.transaction_id
+            statuss = recd.status
+        print(fee)
+        print(ref)
+        print(trans_id)
+        payload = {
+        "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
+        "transactionId": str(trans_id)
+        }
+        headerss = {
+        'Content-Type': 'application/json'
+        }
+        res = requests.post("https://api.cissytech.com/pay/moneyaccess/requestToPayStatus", headers=headerss, json=payload)
+        data = res.json()
+        result = data['data']['data']['status']
+        print(data)
+        print(result)
+        if result == 'INPROCESS' or result == 'FAILED':
+            AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
+            messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
+            return redirect('loan:permit-payment-details')    
+        elif result == 'SUCCESSFUL' or statuss == 'not paid':
+            AddPermitPayment.objects.filter(reference=ref).update(status = 'paid')
+            single_permit = get_object_or_404(PermitApply, permit_id=permitId)
+            latest_deposit = single_permit.deposits + fee
+            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit)
+            messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
+            return redirect('loan:payment-record')
+        else:
+            AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
+            messages.info(request, "user with permit ID " + permitId + " haven't paid yet for the specific day")
+            return redirect('loan:payment-record')
+    else:
+        return redirect('account:admin-login')
+
+def permit_clients(request):
+    if request.user.is_superuser:
+        clients = PermitApply.objects.all()
+        context = {
+            "clients": clients
+        }
+        return render(request, "permit_clients.html", context)
+    else:
+        return redirect('accounts:admin-login')
+            
+
     
      

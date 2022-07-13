@@ -165,7 +165,7 @@
     <nav class=" ml-auto">
         <ul class="nav align-items-center">
             
-
+            <!-- Permit Category -->
             <li class="nav-item">
                 <div class="dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-format-list-bulleted"></i>
@@ -174,7 +174,61 @@
 
                     <div class="dropdown-menu notification-container dropdown-menu-right">
                         <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
-                            <span class="h5 m-0">Categories</span>
+                            <span class="h5 m-0">Permit Categories</span>
+                        </div>
+                        <div class="notification-events bg-gray-300">
+                            <div class="text-overline m-b-5">All categories</div>
+                            <a href="{% url 'loan:permit-dashboard' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i>Permit Dashboard</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:permit-add-payment' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-convert"></i> Permit Payment</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:permit-payment-details' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-switch "></i> Permit Details</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:permit-clients' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-account-plus "></i>Permit Clients</div>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'loan:send-report' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-airballoon "></i> Export</div>
+                                </div>
+                            </a>
+
+
+                            
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+
+
+            <!-- loan category -->
+            <li class="nav-item">
+                <div class="dropdown">
+                    <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-format-list-bulleted"></i>
+                        <span class="notification-counter"></span>
+                    </a>
+
+                    <div class="dropdown-menu notification-container dropdown-menu-right">
+                        <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
+                            <span class="h5 m-0">Loan Categories</span>
                         </div>
                         <div class="notification-events bg-gray-300">
                             <div class="text-overline m-b-5">All categories</div>
@@ -253,6 +307,7 @@
                     </div>
                 </div>
             </li>
+
             <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle" href="#"   role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">

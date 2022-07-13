@@ -1,0 +1,361 @@
+<html>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+            <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+            <meta name="apple-touch-fullscreen" content="yes">
+            <meta name="apple-mobile-web-app-status-bar-style" content="default">
+            <title>Money Access Uganda</title>
+            <link rel="icon" type="image/x-icon" href="{% static 'assets/img/logo.svg' %}"/>
+            <link rel="icon" href="{% static 'assets/img/logo.svg' %}" type="image/png" sizes="16x16">
+            <link rel='stylesheet' href="{% static 'assets1/vendor/pace/pace.css' %}"/>
+            <script src="{% static 'assets/vendor/pace/pace.min.js' %}"></script>
+            <!--vendors-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/291bbeead57f19651f311362abe809b67adc3fb5.css" %}'/>
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/28c909f8c5939b3b29991049355ad3050be56f71.css" %}'/>
+            <link rel='stylesheet' href='{% static "assets1/css/bundles/dcd1663bd4b40ee5b03564aeb0245515dd3277b0.css" %}'/>
+            <link href="https://fonts.googleapis.com/css?family=Hind+Vadodara:400,500,600" rel="stylesheet">
+            <link rel='stylesheet' href='{% static "assets1/fonts/jost/jost.css" %}'/>
+            <!--Material Icons-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/fonts/materialdesignicons/materialdesignicons.min.css" %}'/>
+            <!--Bootstrap + atmos Admin CSS-->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/atmos.min.css" %}'/>
+            <!-- Additional library for page -->
+            <link rel='stylesheet' type='text/css' href='{% static "assets1/css/bundles/13fc3abb600e389b43865b1fa1697fc8f5ebf063.css" %}'/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    </head>
+    <body>
+        <section class="admin-content">
+            <div class=" bg-dark m-b-30 bg-stars">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+
+                            <h1>Permit Application.</h1>
+                            <p class="opacity-75">
+                                Use this page to apply for a permit.
+                            </p>
+
+                        </div>
+                        <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Content goes here -->
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <!--widget card begin-->
+                        <div class="m-b-30">
+                            <div class="card-header">
+                                <p class="m-b-0 text-muted">
+                                    All fields marked with <span class="text-danger">*</span> are required
+                                </p>
+                            </div>
+                            <div class="card-body">
+                                
+                                <form action="" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">first name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="first_name">
+                                            <small class="text-muted">Enter your first name.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">last name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="last_name">
+                                            <small class="text-muted">Enter your second name.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">Telephone number <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="telephone">
+                                            <small class="text-muted">Enter your Telephone number.</small>
+                                        </div>
+                                    </div>
+                                    <div class="m-b-15">
+                                        <p class="font-secondary mb-2">
+                                            Service Prices <span class="text-danger">*</span>
+                                        </p>
+                                        <select class="custom-select" id="service" name="service" required="">
+                                            <option value="">Select Option</option>
+                                                        <option data-code="56" value="290000">Already has IOV (290000)</option>
+                                                        <option data-code="119" value="660000">Cancelled A &amp; EXT B (3YRS)) (660000)</option>
+                                                        <option data-code="8" value="780000">Cancelled A &amp; EXT B (5YRS) (780000)</option>
+                                                        <option data-code="115" value="550000">Cancelled A and B (3YRS) (550000)</option>
+                                                        <option data-code="50" value="650000">Cancelled A and B (5YRS) (650000)</option>
+                                                        <option data-code="208" value="655000">CANCELLED A, B &amp; CM (3YRS) (655000)</option>
+                                                        <option data-code="209" value="785000">CANCELLED A, B &amp; CM (5YRS) (785000)</option>
+                                                        <option data-code="245" value="520000">Cancelled A, B &amp; G (1YR) (520000)</option>
+                                                        <option data-code="243" value="650000">Cancelled A, B &amp; G (3YRS)) (650000)</option>
+                                                        <option data-code="244" value="770000">Cancelled A, B &amp; G (5YRS) (770000)</option>
+                                                        <option data-code="210" value="770000">CANCELLED A,B, CM,DL (3 YRS) (770000)</option>
+                                                        <option data-code="211" value="880000">CANCELLED A,B, CM,DL (5 YRS) (880000)</option>
+                                                        <option data-code="251" value="1000000">Cancelled B  (3YRS)&amp; EXT CM &amp; EXT CH (1000000)</option>
+                                                        <option data-code="252" value="1120000">Cancelled B  (5YRS)&amp; EXT CM &amp; EXT CH (1120000)</option>
+                                                        <option data-code="168" value="950000">Cancelled B &amp; CM EXT DL (950000)</option>
+                                                        <option data-code="106" value="700000">Cancelled B &amp; EXT DL (3YRS) (700000)</option>
+                                                        <option data-code="90" value="820000">Cancelled B &amp; EXT DL (5YRS) (820000)</option>
+                                                        <option data-code="220" value="750000">Cancelled B (3YRS) &amp; Ext CH (750000)</option>
+                                                        <option data-code="236" value="750000">Cancelled B (3YRS) &amp; EXT F (750000)</option>
+                                                        <option data-code="221" value="750000">Cancelled B (3YRS) &amp; EXTG (750000)</option>
+                                                        <option data-code="219" value="900000">Cancelled B (5YRS) &amp; Ext CH (900000)</option>
+                                                        <option data-code="203" value="1130000">CANCELLED B (5YRS) &amp; EXTCM, EXTCH (1130000)</option>
+                                                        <option data-code="222" value="870000">Cancelled B (5YRS) &amp; EXTG (870000)</option>
+                                                        <option data-code="174" value="950000">Cancelled B + EXT DH (950000)</option>
+                                                        <option data-code="189" value="620000">Cancelled B and CH (3YRS) (620000)</option>
+                                                        <option data-code="190" value="750000">Cancelled B and CH (5YRS) (750000)</option>
+                                                        <option data-code="114" value="700000">Cancelled B and Ext CM (3YRS) (700000)</option>
+                                                        <option data-code="57" value="820000">Cancelled B and Ext CM (5YRS) (820000)</option>
+                                                        <option data-code="121" value="420000">Cancelled B and Valid A (420000)</option>
+                                                        <option data-code="79" value="790000">Cancelled B, CM, CH &amp; G (1YR) (790000)</option>
+                                                        <option data-code="61" value="900000">Cancelled B, CM, CH &amp; G (3YRS) (900000)</option>
+                                                        <option data-code="94" value="1020000">Cancelled B, CM, CH &amp; G (5YRS) (1020000)</option>
+                                                        <option data-code="38" value="750000">Cancelled G (3yrs) &amp; EXT B (750000)</option>
+                                                        <option data-code="99" value="870000">Cancelled G (5yrs) &amp; EXT B (870000)</option>
+                                                        <option data-code="78" value="550000">Cancelled Permit A &amp; B (3YRS) (550000)</option>
+                                                        <option data-code="105" value="405000">Cancelled Permit A (3YRS) (405000)</option>
+                                                        <option data-code="75" value="555000">Cancelled Permit A (5YRS) (555000)</option>
+                                                        <option data-code="86" value="600000">Cancelled permit B &amp; CM (600000)</option>
+                                                        <option data-code="250" value="520000">Cancelled permit B &amp; CM (1YR) (520000)</option>
+                                                        <option data-code="87" value="600000">Cancelled permit B &amp; DL (600000)</option>
+                                                        <option data-code="82" value="750000">Cancelled permit B &amp; EXT A (750000)</option>
+                                                        <option data-code="242" value="380000">Cancelled permit B (1YR) (380000)</option>
+                                                        <option data-code="91" value="480000">Cancelled permit B (3YRS) (480000)</option>
+                                                        <option data-code="140" value="575000">Cancelled permit B (5YRS) (575000)</option>
+                                                        <option data-code="85" value="800000">Cancelled permit B , CM &amp; CH (800000)</option>
+                                                        <option data-code="95" value="750000">Cancelled Permit B and EXT CM and EXT DL (750000)</option>
+                                                        <option data-code="89" value="780000">Cancelled permit B, DL &amp; DM (780000)</option>
+                                                        <option data-code="101" value="1180000">Cancelled Permit B, G ,CM ,CH ,DL ,DM (3YRS) (1180000)</option>
+                                                        <option data-code="186" value="1200000">Cancelled Permit B, G ,CM ,CH ,DL ,DM (5YRS) (1200000)</option>
+                                                        <option data-code="97" value="705000">Cancelled Permit B,CM &amp; DL (705000)</option>
+                                                        <option data-code="88" value="900000">Cancelled permit B,CM,CH &amp; DL (900000)</option>
+                                                        <option data-code="93" value="1245000">Cancelled Permit B,G,CM,CH,DL,DM,DH (1245000)</option>
+                                                        <option data-code="20" value="440000">Centenary Bank Client (440000)</option>
+                                                        <option data-code="49" value="290000">Change of Name/Duplicate Permit (290000)</option>
+                                                        <option data-code="122" value="2000000">Change of Names and Renewal/Deed Poll (2000000)</option>
+                                                        <option data-code="35" value="565000">CLASS A &amp; B (1YR) (565000)</option>
+                                                        <option data-code="3" value="750000">Class A &amp; B (3YRS) (750000)</option>
+                                                        <option data-code="124" value="890000">Class A &amp; B (5YRS) (890000)</option>
+                                                        <option data-code="43" value="365000">Class A (1YR) (365000)</option>
+                                                        <option data-code="1" value="440000">Class A (3YRS) (440000)</option>
+                                                        <option data-code="135" value="570000">Class A (5 YRS) (570000)</option>
+                                                        <option data-code="21" value="520000">Class A +Insurance (520000)</option>
+                                                        <option data-code="233" value="990000">Class A&amp;B Express (5yrs) (990000)</option>
+                                                        <option data-code="199" value="860000">Class B  &amp; EXT CH (3YRS) (860000)</option>
+                                                        <option data-code="200" value="980000">Class B  &amp; EXT CH (5YRS) (980000)</option>
+                                                        <option data-code="235" value="840000">Class B &amp; Ext CM (3yrs) (840000)</option>
+                                                        <option data-code="238" value="660000">Class B &amp; EXT F (1YR) (660000)</option>
+                                                        <option data-code="239" value="780000">Class B &amp; EXT F (3YRs) (780000)</option>
+                                                        <option data-code="240" value="910000">Class B &amp; EXT F (5YRS) (910000)</option>
+                                                        <option data-code="42" value="395000">Class B (1YR) (395000)</option>
+                                                        <option data-code="2" value="490000">Class B (3YRS) (490000)</option>
+                                                        <option data-code="204" value="610000">CLASS B (3YRS) &amp; Defensive Certificate (610000)</option>
+                                                        <option data-code="31" value="690000">Class B (3Yrs) &amp; Training (690000)</option>
+                                                        <option data-code="134" value="610000">Class B (5YRS) (610000)</option>
+                                                        <option data-code="205" value="715000">CLASS B (5YRS) &amp; Defensive Certificate (715000)</option>
+                                                        <option data-code="167" value="810000">Class B (5YRS) &amp; Training (810000)</option>
+                                                        <option data-code="255" value="800000">Class B + 3Weeks Training (800000)</option>
+                                                        <option data-code="142" value="610000">Class B 5yrs (610000)</option>
+                                                        <option data-code="256" value="710000">CLASS B 5YRS + 0NE WEEK TRAINING (710000)</option>
+                                                        <option data-code="146" value="910000">Class B and A and 2 weeks Training (910000)</option>
+                                                        <option data-code="147" value="910000">Class B and A and 2 weeks Training (910000)</option>
+                                                        <option data-code="197" value="760000">CLASS B and B1 (760000)</option>
+                                                        <option data-code="201" value="590000">Class B and One Week Training (590000)</option>
+                                                        <option data-code="144" value="450000">Class B discounted (450000)</option>
+                                                        <option data-code="172" value="660000">Class B Express (3YRS) (660000)</option>
+                                                        <option data-code="84" value="785000">Class B Express (5YRS) (785000)</option>
+                                                        <option data-code="212" value="370000">Class B1 (1YR) (370000)</option>
+                                                        <option data-code="213" value="450000">Class B1 (3YRS) (450000)</option>
+                                                        <option data-code="214" value="585000">Class B1 (5YRS) (585000)</option>
+                                                        <option data-code="96" value="600000">Class DH Valid Permit (600000)</option>
+                                                        <option data-code="136" value="450000">Class F EXT (Engineering Plants) (450000)</option>
+                                                        <option data-code="54" value="850000">Class G &amp; Ext B (3YRS) (850000)</option>
+                                                        <option data-code="17" value="980000">Class G &amp; Ext B (5YRS) (980000)</option>
+                                                        <option data-code="67" value="515000">CLASS G 3YRS (Agric Tractors) (515000)</option>
+                                                        <option data-code="104" value="625000">CLASS G 5YRS (Agric Tractors) (625000)</option>
+                                                        <option data-code="103" value="450000">Class G EXT (Agric plants) (450000)</option>
+                                                        <option data-code="55" value="200000">Defensive Driving Certificate (200000)</option>
+                                                        <option data-code="102" value="380000">EXT A (380000)</option>
+                                                        <option data-code="77" value="820000">EXT A &amp; DL (820000)</option>
+                                                        <option data-code="23" value="660000">EXT A + CM (660000)</option>
+                                                        <option data-code="180" value="940000">EXT A, CM, DL (940000)</option>
+                                                        <option data-code="18" value="445000">EXT B to DL (445000)</option>
+                                                        <option data-code="215" value="365000">EXT B1 (365000)</option>
+                                                        <option data-code="66" value="450000">EXT CH (450000)</option>
+                                                        <option data-code="128" value="700000">Ext CH and DL valid permit (700000)</option>
+                                                        <option data-code="24" value="705000">EXT CH Expired permit (3YRS) (705000)</option>
+                                                        <option data-code="22" value="850000">EXT CH Expired permit (5YRS) (850000)</option>
+                                                        <option data-code="216" value="1050000">EXT CH, DL &amp; DM (1050000)</option>
+                                                        <option data-code="170" value="750000">EXT CM &amp; CH (750000)</option>
+                                                        <option data-code="198" value="750000">EXT CM &amp; CH VALID PERMIT (750000)</option>
+                                                        <option data-code="230" value="700000">Ext CM &amp; EXT G (700000)</option>
+                                                        <option data-code="127" value="1000000">Ext CM and DH and Renewal (1000000)</option>
+                                                        <option data-code="125" value="800000">Ext CM and DH valid permit (800000)</option>
+                                                        <option data-code="126" value="800000">Ext CM and DH valid permit (800000)</option>
+                                                        <option data-code="141" value="700000">Ext CM and G (700000)</option>
+                                                        <option data-code="28" value="420000">EXT CM valid permit (420000)</option>
+                                                        <option data-code="29" value="785000">EXT CM without valid permit (785000)</option>
+                                                        <option data-code="133" value="600000">Ext DH valid permit (600000)</option>
+                                                        <option data-code="117" value="685000">EXT DL &amp; DEFENSIVE DRIVING CERTIFICATE (685000)</option>
+                                                        <option data-code="138" value="740000">Ext F and CH (740000)</option>
+                                                        <option data-code="137" value="740000">Ext G and CH (740000)</option>
+                                                        <option data-code="16" value="720000">EXT of DL and CM (720000)</option>
+                                                        <option data-code="59" value="850000">EXT to A and DM (850000)</option>
+                                                        <option data-code="7" value="415000">EXT to B (415000)</option>
+                                                        <option data-code="47" value="500000">EXT to DM (500000)</option>
+                                                        <option data-code="154" value="450000">FOREIGN EXCHANGE  (3YRS) (450000)</option>
+                                                        <option data-code="155" value="560000">FOREIGN EXCHANGE  (5YRS) (560000)</option>
+                                                        <option data-code="76" value="350000">GPS TRACKING(1yr Subscription) (350000)</option>
+                                                        <option data-code="32" value="370000">Has Learner's Class A (370000)</option>
+                                                        <option data-code="33" value="415000">Has Learner's Class B (415000)</option>
+                                                        <option data-code="131" value="650000">INTERNATIONAL PERMIT (650000)</option>
+                                                        <option data-code="241" value="200000">IOV PROCESS ONLY CLASS B (200000)</option>
+                                                        <option data-code="44" value="415000">Learners B from Elsewhere (415000)</option>
+                                                        <option data-code="69" value="650000">lost &amp; Cancelled B &amp; CM (650000)</option>
+                                                        <option data-code="98" value="700000">Lost &amp; Cancelled B &amp; DL (700000)</option>
+                                                        <option data-code="181" value="650000">LOST &amp; CANCELLED B (5YRS) (650000)</option>
+                                                        <option data-code="52" value="850000">Lost &amp; Cancelled permit B , CM &amp; CH (850000)</option>
+                                                        <option data-code="51" value="950000">Lost &amp; Cancelled permit B, DL &amp; DM (950000)</option>
+                                                        <option data-code="74" value="520000">Lost &amp; Cancelled permit G (520000)</option>
+                                                        <option data-code="132" value="700000">Lost &amp; Renewal (3YRS) &amp; EXT B (700000)</option>
+                                                        <option data-code="169" value="850000">Lost &amp; Renewal (5YRS) &amp; EXT B (850000)</option>
+                                                        <option data-code="130" value="420000">lost and cancelled A (420000)</option>
+                                                        <option data-code="83" value="520000">Lost and Cancelled A &amp; B (520000)</option>
+                                                        <option data-code="92" value="520000">Lost and Cancelled B (520000)</option>
+                                                        <option data-code="13" value="300000">Lost and Renewal (1YR) (300000)</option>
+                                                        <option data-code="40" value="440000">Lost and Renewal (3YRS) (440000)</option>
+                                                        <option data-code="15" value="520000">Lost and Renewal (5YRS) (520000)</option>
+                                                        <option data-code="80" value="740000">Lost and Renewal and Ext DL (740000)</option>
+                                                        <option data-code="118" value="700000">Lost Cancelled A &amp; EXT B (700000)</option>
+                                                        <option data-code="116" value="520000">Lost Cancelled A and B (520000)</option>
+                                                        <option data-code="108" value="750000">Lost Cancelled B &amp; EXT DL (750000)</option>
+                                                        <option data-code="253" value="770000">Lost Cancelled B (3YRS) &amp; EXT A (770000)</option>
+                                                        <option data-code="254" value="900000">Lost Cancelled B (5YRS) &amp; EXT A (900000)</option>
+                                                        <option data-code="120" value="900000">Lost Cancelled B and Ext DL and Ext CM (900000)</option>
+                                                        <option data-code="156" value="730000">Lost Cancelled B, CM &amp; DL (3YRS) (730000)</option>
+                                                        <option data-code="157" value="850000">Lost Cancelled B, CM &amp; DL (5YRS) (850000)</option>
+                                                        <option data-code="223" value="1100000">LOST CANCELLED B, CM ,DL(3YRS) &amp; EXT CH (1100000)</option>
+                                                        <option data-code="224" value="1220000">LOST CANCELLED B, CM ,DL(5YRS) &amp; EXT CH (1220000)</option>
+                                                        <option data-code="107" value="880000">Lost Cancelled Ext A and Ext CM (880000)</option>
+                                                        <option data-code="145" value="550000">Lost Expired Permit (5YRS) (550000)</option>
+                                                        <option data-code="41" value="1275000">Lost Permit and Renewal and EXT A and EXT CM (1275000)</option>
+                                                        <option data-code="165" value="550000">Lost Renewal &amp; EXT CM (1YR) (550000)</option>
+                                                        <option data-code="123" value="580000">Lost Renewal (1YR) &amp; EXT A (580000)</option>
+                                                        <option data-code="100" value="700000">Lost Renewal (3YR) &amp; EXT A (700000)</option>
+                                                        <option data-code="187" value="750000">Lost Renewal (3yrs) &amp; EXT CH (750000)</option>
+                                                        <option data-code="218" value="1210000">LOST RENEWAL (3YRS) EXT G, EXT CM, EXTCH (1210000)</option>
+                                                        <option data-code="193" value="1000000">LOST RENEWAL (3YRS)&amp; EXT CM AND CH (1000000)</option>
+                                                        <option data-code="237" value="820000">Lost Renewal (5YR) &amp; EXT A (820000)</option>
+                                                        <option data-code="188" value="870000">LOST Renewal (5yrs) &amp; EXT CH (870000)</option>
+                                                        <option data-code="217" value="1360000">LOST RENEWAL (5YRS) EXT G, EXT CM, EXTCH (1360000)</option>
+                                                        <option data-code="194" value="1120000">LOST RENEWAL (5YRS)&amp; EXT CM AND CH (1120000)</option>
+                                                        <option data-code="160" value="550000">Lost Valid &amp; Ext B (550000)</option>
+                                                        <option data-code="153" value="600000">LOST VALID &amp; EXT CH (600000)</option>
+                                                        <option data-code="171" value="570000">LOST VALID &amp; EXT CM (570000)</option>
+                                                        <option data-code="183" value="550000">LOST VALID &amp; EXT DL (550000)</option>
+                                                        <option data-code="14" value="190000">Lost Valid Permit (190000)</option>
+                                                        <option data-code="26" value="700000">Lost+Renew+EXT CM (700000)</option>
+                                                        <option data-code="109" value="180000">OWN IOV A (1YEAR) (180000)</option>
+                                                        <option data-code="111" value="280000">OWN IOV A (3YEARS) (280000)</option>
+                                                        <option data-code="64" value="570000">OWN IOV A and RENEWAL (570000)</option>
+                                                        <option data-code="110" value="200000">OWN IOV B (1YEAR) (200000)</option>
+                                                        <option data-code="112" value="290000">OWN IOV B (3YEARS) (290000)</option>
+                                                        <option data-code="228" value="640000">OWN LEARNERS A&amp;B  (3YRS) (640000)</option>
+                                                        <option data-code="229" value="770000">OWN LEARNERS A&amp;B (5YRS) (770000)</option>
+                                                        <option data-code="5" value="140000">Passenger Service Vehicle - PSV (140000)</option>
+                                                        <option data-code="163" value="1000000">Permit Test Service (1000000)</option>
+                                                        <option data-code="53" value="130000">Professional Driving permit (PRDP) (130000)</option>
+                                                        <option data-code="149" value="800000">RENEWAL &amp; EXT DH (3YRS) (800000)</option>
+                                                        <option data-code="150" value="920000">RENEWAL &amp; EXT DH (5YRS) (920000)</option>
+                                                        <option data-code="151" value="750000">RENEWAL &amp; EXT DM (3YRS) (750000)</option>
+                                                        <option data-code="152" value="870000">RENEWAL &amp; EXT DM (5YRS) (870000)</option>
+                                                        <option data-code="27" value="195000">Renewal (1YR) (195000)</option>
+                                                        <option data-code="246" value="550000">Renewal (1YR) +EXT CM (550000)</option>
+                                                        <option data-code="4" value="270000">Renewal (3YRS) (270000)</option>
+                                                        <option data-code="58" value="650000">RENEWAL (3YRS) &amp; EXT A (650000)</option>
+                                                        <option data-code="159" value="700000">Renewal (3yrs) &amp; EXT CH (700000)</option>
+                                                        <option data-code="248" value="950000">Renewal (3yrs) &amp; EXT DL &amp; EXTCH (950000)</option>
+                                                        <option data-code="196" value="1010000">Renewal (3yrs) &amp; EXTB , EXTCM (1010000)</option>
+                                                        <option data-code="9" value="880000">RENEWAL (3YRS) &amp; INTERNATIONAL PERMIT (880000)</option>
+                                                        <option data-code="184" value="1108000">RENEWAL (3YRS) AND EXT A, CM &amp; DL (1108000)</option>
+                                                        <option data-code="191" value="1090000">Renewal (3YRS) and EXT A, DL &amp; CH (1090000)</option>
+                                                        <option data-code="177" value="470000">Renewal (3yrs) and Training (470000)</option>
+                                                        <option data-code="10" value="640000">Renewal (3YRS)+ EXT B (640000)</option>
+                                                        <option data-code="129" value="370000">Renewal (5YRS) (370000)</option>
+                                                        <option data-code="158" value="820000">Renewal (5yrs) &amp; EXT CH (820000)</option>
+                                                        <option data-code="249" value="1070000">Renewal (5yrs) &amp; EXT DL &amp; EXTCH (1070000)</option>
+                                                        <option data-code="173" value="750000">Renewal (5YRS) &amp; EXTA (750000)</option>
+                                                        <option data-code="226" value="1000000">RENEWAL (5YRS) &amp; INTERNATIONAL PERMIT (1000000)</option>
+                                                        <option data-code="225" value="790000">Renewal (5YRS) +EXT CM (790000)</option>
+                                                        <option data-code="185" value="1228000">RENEWAL (5YRS) AND EXT A, CM &amp; DL (1228000)</option>
+                                                        <option data-code="192" value="1210000">Renewal (5YRS) and EXT A, DL &amp; CH (1210000)</option>
+                                                        <option data-code="143" value="770000">Renewal (5yrs) and Ext CM (770000)</option>
+                                                        <option data-code="206" value="760000">Renewal (5YRS)+EXT B (760000)</option>
+                                                        <option data-code="70" value="700000">Renewal and Ext CH (700000)</option>
+                                                        <option data-code="81" value="1000000">Renewal and Ext CM and Ext A (1000000)</option>
+                                                        <option data-code="11" value="670000">Renewal(3YRS) + EXT CM (670000)</option>
+                                                        <option data-code="19" value="630000">RENEWAL(3YRS)+EXT DL (630000)</option>
+                                                        <option data-code="231" value="980000">Renewal(3yrs)+EXTCM+EXTCH (980000)</option>
+                                                        <option data-code="182" value="725000">RENEWAL(5YRS) +EXT DL (725000)</option>
+                                                        <option data-code="227" value="750000">RENEWAL(5YRS)+EXT DL (750000)</option>
+                                                        <option data-code="232" value="1100000">Renewal(5yrs)+EXTCM+EXTCH (1100000)</option>
+                                                        <option data-code="25" value="605000">Renewal+Ext A (605000)</option>
+                                                        <option data-code="30" value="850000">Renewal+Ext CM &amp; DL (3YRS) (850000)</option>
+                                                        <option data-code="12" value="970000">Renewal+Ext CM &amp; DL (5YRS) (970000)</option>
+                                                        <option data-code="46" value="750000">Renewal+Ext CM (5YRS) (750000)</option>
+                                                        <option data-code="148" value="380000">ROCKET HEALTH TOPUP A&amp;B (380000)</option>
+                                                        <option data-code="62" value="100000">Tax identification Number (TIN) Company (100000)</option>
+                                                        <option data-code="63" value="50000">Tax identification Number (TIN) Individual (50000)</option>
+                                                        <option data-code="45" value="420000">Taxify -  Class A Permit (420000)</option>
+                                                        <option data-code="48" value="465000">Taxify -  Class B Permit (465000)</option>
+                                                        <option data-code="6" value="70000">Thirdparty (70000)</option>
+                                                        <option data-code="139" value="780000">Training  3WEEKS &amp; Class B (780000)</option>
+                                                        <option data-code="207" value="100000">TRAINING (1WEEK) (100000)</option>
+                                                        <option data-code="60" value="200000">TRAINING 2 WEEKS (200000)</option>
+                                        </select>
+                                        <small class="text-muted">Select the price of the service you are applying for</small>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">Permit Details <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" required name="message">
+                                            <small class="text-muted">Enter the name of the service you are applying for.</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        
+                                        <button class="btn btn-success" type="submit">Apply</button>
+                                    </div>
+                                </form>
+                                <a href="{% url 'home:index' %}"><button class="btn btn-secondary">Back</button></a>
+
+
+                            </div>
+                        </div>
+                        <!--widget card ends-->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </body>
+    <script src='{% static "assets1/js/bundles/9556cd6744b0b19628598270bd385082cda6a269.js" %}'></script>
+<!--page specific scripts for demo-->
+<script src='{% static "assets1/js/bundles/85bd871e04eb889b6141c1aba0fedfa1a2215991.js" %}'></script>
+<script src='{% static "assets1/js/bundles/ba78fede76f682cd388ed2abbfd1e1568e76f8a4.js" %}'></script>
+<script src='{% static "assets1/js/bundles/a5c528ebd70097577937a146c587ed9dda0f7f70.js" %}'></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</html>

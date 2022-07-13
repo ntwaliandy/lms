@@ -75,6 +75,28 @@ class GroupApply(models.Model):
         return 'Group loan, amout of :- ' + str(self.loan_amount) + ' ' + ' with a loan ID of ' + ' ' + str(self.loan_id)
 
 
+class PermitApply(models.Model):
+    permit_id = models.CharField(default=random_string, max_length=200)
+    first_name = models.CharField(max_length=200, default='null')
+    last_name = models.CharField(max_length=200, default='null')
+    service = models.CharField(max_length=200, default='null')
+    phone_number = models.CharField(max_length=20, default='0000000')
+    date_modified = models.DateTimeField(default=datetime.now, blank=True)
+    status = models.CharField(max_length=50, default='pending')
+    message = models.CharField(max_length=200, default='null')
+    final_amount = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    deposits = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.balance = int(self.final_amount) - int(self.deposits)
+        return super(PermitApply, self).save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return self.first_name + ' ' + self.last_name + ' applied for => ' + self.service
+
+
+
 
 class Support(models.Model):
     user = models.CharField(max_length=100)

@@ -26,6 +26,14 @@ urlpatterns = [
     re_path(r'^view_reply/(?P<error_id>[0-9]+)/$', views.reply, name='reply'),
     re_path(r'^done/(?P<quest_id>[0-9]+)/$', views.done, name='done'),
     re_path(r'^group/(?P<group_l_id>[0-9]+)/$', views.group_details, name='group-details'),
-    path('send-report', views.send_report, name='send-report')
+    path('send-report', views.send_report, name='send-report'),
+
+    # permit section
+
+    path('permit-dashboard', views.permit_dashboard, name='permit-dashboard'),
+    path('permit-add-payment', views.permit_add_payment, name='permit-add-payment'),
+    path('permit-payment-details', views.permit_payment_details, name='permit-payment-details'),
+    re_path(r'^permit-pay-details/(?P<ref>[0-9]+)/$', views.permit_pay_details, name='permit-pay-details'),
+    path('permit-clients', views.permit_clients, name='permit-clients')
 
 ]

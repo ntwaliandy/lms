@@ -3,7 +3,7 @@ import json
 from random import randint
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from .models import Apply, GroupApply, Support
+from .models import Apply, GroupApply, PermitApply, Support
 from loan.models import AddPayment, Replies
 from datetime import datetime
 
@@ -172,13 +172,45 @@ def group_apply(request):
                 fourth_person_national_id_pic = fourth_person_national_id_pic,
                 fourth_person_pic = fourth_person_pic,
                 loan_amount = loan_amount,
-                date = date
+                date = request.POST.get('date_modified', datetime.now())
             )
             return redirect('home:index')
         else:
             return render(request, 'group-apply.html')
     else:
         return redirect('account:user_login')
+
+
+
+# permit Apply
+def permit_apply(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            data = request.POST
+            firstName = data['first_name']
+            lastName = data['last_name']
+            phoneNumber = data['telephone']
+            service_price = data['service']
+            mess = data['message']
+            date = datetime.now()
+
+            PermitApply.objects.create(
+                first_name = firstName,
+                last_name = lastName,
+                phone_number = phoneNumber,
+                service = mess,
+                final_amount = service_price,
+                message = mess,
+                status = 'applied',
+                date_modified = date
+            )
+
+            return redirect('home:index')
+        else:
+            return render(request, 'apply-permit.html')
+    else:
+        return redirect('account:user_login')
+
 
 
 # user loans records
