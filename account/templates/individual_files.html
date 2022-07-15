@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+    {% load static %}
+
+    {% block content %}
+    <center>
+    <div>
+        <h3>Permit Individual File Details</h3>
+    </div>
+        {% if files %}
+            {% for fl in files %}
+                <div>
+                    <label>Permit ID:</label>
+                    <h6>{{fl.permit_id}}</h6>
+
+                    <label>Document Name:</label>
+                    <h6>{{fl.message}}</h6>
+        
+                    <label>Document Picture:</label><br>
+                    <a href='{{fl.uploaded_file.url}}' target='_blank'><img src="{{fl.uploaded_file.url}}" width="300px" height="300px" alt="picture"><a><br>
+                    
+                    <label>Uploaded Date:</label>
+                    <h6>{{fl.date}}</h6>
+
+                    <label>Admin's Username:</label>
+                    <h6>{{fl.admin}}</h6>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            {% endfor %}
+        {% else %}
+                <h4>No Files Yet</h4>
+        {% endif %}
+    </center>
+
+    {% endblock %}

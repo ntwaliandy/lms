@@ -25,7 +25,7 @@
                                 {% endfor %}
                                 <h1><span class="js-greeting"></span>, {{ user }} </h1>
                                 <p class="opacity-75">
-                                    Add Today's payment for a specific permit ID <br>
+                                    Upload client's document carefully <br>
                                 </p>
 
                             </div>
@@ -45,7 +45,7 @@
                                 <div class="card m-b-30">
                                     <div class="card-header">
                                         <h5 class="m-b-0">
-                                            Permit Add a Payment
+                                            File Upload Section
                                         </h5>
                                         <p class="m-b-0 text-muted">
                                             Standard form
@@ -72,18 +72,18 @@
                                                     <small class="text-muted">these Permit ID's are under approved ones.</small>
                                                 </div>
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">Phone Number *</label>
-                                                    <input type="text" class="form-control" name="phone_number" required placeholder="forexample:- 256775555464">
-                                                    <small class="text-muted">put the the number which the system will reduct the money</small>
+                                                    <label for="inputPassword4">Picture Upload *</label>
+                                                    <input type="file" class="form-control" name="upload_file" accept=".jpg, .jpeg, .png" required>
+                                                    <small class="text-muted">upload a document</small>
                                                 </div>
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">payment fee *</label>
-                                                    <input type="text" class="form-control" name="payment_fee" required placeholder="forexample:- 3000">
-                                                    <small class="text-muted">put the amount he/she is supposed to pay.</small>
+                                                    <label for="inputPassword4">message</label>
+                                                    <input type="text" class="form-control" name="message" required placeholder="Already has IOV">
+                                                    <small class="text-muted">put a small message that indicates the file you are uploading</small>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <button class="btn btn-primary">Request</button>
+                                                <button class="btn btn-primary">UPLOAD</button>
                                             </div>
                                         </form>
                                     </div>

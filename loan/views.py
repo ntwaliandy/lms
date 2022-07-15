@@ -6,7 +6,7 @@ from random import randint
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, Support
-from .models import AddPayment, AddPermitPayment, GroupAddPayment, Replies
+from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -468,9 +468,10 @@ def send_report(request):
     for pay in payments:
         loan_ID = pay.loan_id
     subject = 'hello everyone'
-    recipient = 'rankunda48@gmail.com'
+    recipient = 'mutagayageorge14@gmail.com'
     sender = 'ntwaliandy90@gmail.com'
     message = 'amount ' + str(payments[1])
+    print(message)
     
     msg = EmailMessage(subject, message, sender, [recipient])
     msg.content_subtype = "html"
@@ -586,11 +587,11 @@ def permit_pay_details(request, ref):
             latest_deposit = single_permit.deposits + fee
             PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
-            return redirect('loan:payment-record')
+            return redirect('loan:permit-payment-details')
         else:
             AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
             messages.info(request, "user with permit ID " + permitId + " haven't paid yet for the specific day")
-            return redirect('loan:payment-record')
+            return redirect('loan:permit-payment-details')
     else:
         return redirect('account:admin-login')
 
@@ -603,6 +604,49 @@ def permit_clients(request):
         return render(request, "permit_clients.html", context)
     else:
         return redirect('accounts:admin-login')
+
+
+def files_upload(request):
+    if request.user.is_superuser:
+        permits = PermitApply.objects.exclude(balance = 0).all()
+        context = {
+            "permits": permits
+        }
+        username = request.user.username
+        if request.method == 'POST':
+            data = request.POST
+            permitId = data.get('permit_id', 'none')
+            File_upload = data.get('upload_file')
+            message = data['message']
+            
+            print(File_upload)
+            FileUpload.objects.create(
+                permit_id = permitId,
+                uploaded_file = File_upload,
+                message = message,
+                admin = username
+            )
+
+            return redirect('loan:permit-dashboard')
+
+        else:
+            return render(request, 'permit_file_upload.html', context)    
+    else:
+        return redirect('account:admin-login')
+
+
+
+def file_details(request, permitId):
+    if request.user.is_superuser:
+        individual_files = FileUpload.objects.filter(permit_id=permitId).all()
+        context = {
+            'files': individual_files,
+        }
+
+        return render(request, 'individual_files.html', context)
+
+    else:
+        return redirect('account:admin-login')
             
 
     

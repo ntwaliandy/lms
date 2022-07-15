@@ -46,3 +46,13 @@ class AddPermitPayment(models.Model):
     def __str__(self):
         return 'a request of ' + str(self.payment_fee) + ' from ' + str(self.permit_id)
 
+class FileUpload(models.Model):
+    permit_id = models.CharField(max_length=200, default='null')
+    uploaded_file = models.FileField()
+    message = models.TextField(default='null')
+    admin = models.CharField(max_length=30, default='null')
+    date = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return self.message + ' for PERMIT ID => ' + str(self.permit_id)
+

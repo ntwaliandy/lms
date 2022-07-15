@@ -67,6 +67,7 @@
                                                     <th>Deposits</th>
                                                     <th>Balance</th>
                                                     <th>Date Modified</th>
+                                                    <th>Files</th>
                                                 </tr>
                                                 </thead>
                                               
@@ -87,6 +88,10 @@
                                                                 <td>{{pr.deposits}}</td>
                                                                 <td>{{pr.balance}}</td>
                                                                 <td>{{pr.date_modified}}</td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
+                                                                
+                                                                </td>
                                                                 
                                                             </tr>
                                                         
@@ -122,6 +127,7 @@
                                                     <th>Deposits</th>
                                                     <th>Balance</th>
                                                     <th>Date Modified</th>
+                                                    <th>Files</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -129,20 +135,25 @@
                                                         {% for pr in permits %}
                                                             {% if pr.status == 'applied' %}
                                                             
-                                                                <tr>
-                                                                    <td>
-                                                                        {{pr.permit_id}}
-                                                                    </td>
-                                                                    <td>{{pr.first_name}}</td>
-                                                                    <td>{{pr.last_name}}</td>
-                                                                    <td>{{pr.phone_number}}</td>
-                                                                    <td>{{pr.message}}</td>
-                                                                    <td>{{pr.final_amount}}</td>
-                                                                    <td>{{pr.deposits}}</td>
-                                                                    <td>{{pr.balance}}</td>
-                                                                    <td>{{pr.date_modified}}</td>
-                                                                    
-                                                                </tr>
+                                                                
+                                                                    <tr>
+                                                                        <td>
+                                                                            {{pr.permit_id}}
+                                                                        </td>
+                                                                        <td>{{pr.first_name}}</td>
+                                                                        <td>{{pr.last_name}}</td>
+                                                                        <td>{{pr.phone_number}}</td>
+                                                                        <td>{{pr.message}}</td>
+                                                                        <td>{{pr.final_amount}}</td>
+                                                                        <td>{{pr.deposits}}</td>
+                                                                        <td>{{pr.balance}}</td>
+                                                                        <td>{{pr.date_modified}}</td>
+                                                                        <td>
+                                                                            <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
+                                                                        
+                                                                        </td>
+                                                                        
+                                                                    </tr>
                                                             
                                                             {% endif %}
                                                         {% endfor %}
