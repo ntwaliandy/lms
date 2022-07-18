@@ -586,7 +586,8 @@ def permit_pay_details(request, ref):
             AddPermitPayment.objects.filter(reference=ref).update(status = 'paid')
             single_permit = get_object_or_404(PermitApply, permit_id=permitId)
             latest_deposit = single_permit.deposits + fee
-            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance='0')
+            new_balance = single_permit.full_amount - latest_deposit
+            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance=new_balance)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
             return redirect('loan:permit-payment-details')
         elif result == 'SUCCESSFUL' and statuss == 'paid':
