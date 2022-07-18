@@ -1,8 +1,9 @@
 from contextlib import redirect_stderr
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import imp
 import json
 from random import randint
+from time import time
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, Support
@@ -581,11 +582,14 @@ def permit_pay_details(request, ref):
             AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
             return redirect('loan:permit-payment-details')    
-        elif result == 'SUCCESSFUL' or statuss == 'not paid':
+        elif result == 'SUCCESSFUL' and statuss == 'not paid':
             AddPermitPayment.objects.filter(reference=ref).update(status = 'paid')
             single_permit = get_object_or_404(PermitApply, permit_id=permitId)
             latest_deposit = single_permit.deposits + fee
-            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit)
+            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance='0')
+            messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
+            return redirect('loan:permit-payment-details')
+        elif result == 'SUCCESSFUL' and statuss == 'paid':
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
             return redirect('loan:permit-payment-details')
         else:
@@ -645,6 +649,57 @@ def file_details(request, permitId):
 
         return render(request, 'individual_files.html', context)
 
+    else:
+        return redirect('account:admin-login')
+
+
+def permit_logs(request):
+    if request.user.is_superuser:
+        # today results
+        today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all()
+        today_fee = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').aggregate(Sum('payment_fee'))
+        today_fee_res = today_fee['payment_fee__sum']
+
+        # weekly results
+        current_date = date.today()
+        today_date = current_date + timedelta(days=1)
+        past_days = current_date - timedelta(days=7)
+        week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all()
+        week_fee = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').aggregate(Sum('payment_fee'))
+        week_fee_res = week_fee['payment_fee__sum']
+
+        # monthly results
+        week_current_date = date.today()
+        week_today_date = week_current_date + timedelta(days=1)
+        past_weeks = week_current_date - timedelta(days=31)
+        month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all()
+        month_fee = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').aggregate(Sum('payment_fee'))
+        month_fee_res = month_fee['payment_fee__sum']
+
+
+        # All Payments
+        allPay = AddPermitPayment.objects.filter(status='paid').all()
+        allPayFee = AddPermitPayment.objects.filter(status='paid').aggregate(Sum('payment_fee'))
+        allPayFee_res = allPayFee['payment_fee__sum']
+
+
+
+
+
+
+        print(date.today())
+        print(datetime.now())
+        context = {
+            'todayRes': today_res,
+            'todayFee': today_fee_res,
+            'weekRes': week_res,
+            'weekFee': week_fee_res,
+            'monthRes': month_res,
+            'monthFee': month_fee_res,
+            'allPay': allPay,
+            'allfeeRes': allPayFee_res
+        }
+        return render(request, 'permit-logs.html', context)
     else:
         return redirect('account:admin-login')
             
