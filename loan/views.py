@@ -23,8 +23,8 @@ def dashboard(request):
         applied_loans = Apply.objects.count()
         total_loans = Apply.objects.aggregate(Sum('loan_amount'))
         totalLoans = total_loans['loan_amount__sum']
-        total_sales = Apply.objects.filter(status='completed').aggregate(Sum('payback'))
-        totalSales = total_sales['payback__sum']
+        total_sales = Apply.objects.aggregate(Sum('deposits'))
+        totalSales = total_sales['deposits__sum']
         recent_loans = reversed(Apply.objects.filter(status = 'pending').order_by('date')[:3])
         loans = Apply.objects.all()
 
@@ -187,6 +187,7 @@ def pay_details(request, ref):
             fee = recd.payment_fee
             loanId = recd.loan_id
             trans_id = recd.transaction_id
+            statuss = recd.status
         print(fee)
         print(ref)
         print(trans_id)
@@ -206,7 +207,16 @@ def pay_details(request, ref):
             AddPayment.objects.filter(reference=ref).update(status = 'pending')
             messages.info(request, "user with Loan ID " + loanId + " haven't paid yet for the specific day")
             return redirect('loan:payment-record')    
-        elif result == 'SUCCESSFUL':
+        elif result == 'SUCCESSFUL' and statuss == 'pending':
+            AddPayment.objects.filter(reference=ref).update(status = 'paid')
+            single_loan = get_object_or_404(Apply, loan_id=loanId)
+            latest_deposit = single_loan.deposits + fee
+            new_balance = single_loan.payback - latest_deposit
+            PermitApply.objects.filter(loan_id=loanId).update(deposits=latest_deposit, balance=new_balance)
+
+            messages.info(request, "user with Loan ID " + loanId + " paid " + str(fee) + " successfully!")
+            return redirect('loan:payment-record')
+        elif result == 'SUCCESSFUL' and statuss == 'paid':
             AddPayment.objects.filter(reference=ref).update(status = 'paid')
             messages.info(request, "user with Loan ID " + loanId + " paid " + str(fee) + " successfully!")
             return redirect('loan:payment-record')
@@ -704,6 +714,57 @@ def permit_logs(request):
     else:
         return redirect('account:admin-login')
             
+
+# loanlogs
+def loan_logs(request):
+    if request.user.is_superuser:
+        # today results
+        today_res = AddPayment.objects.filter(date__date=date.today(), status='paid').all()
+        today_fee = AddPayment.objects.filter(date__date=date.today(), status='paid').aggregate(Sum('payment_fee'))
+        today_fee_res = today_fee['payment_fee__sum']
+
+        # weekly results
+        current_date = date.today()
+        today_date = current_date + timedelta(days=1)
+        past_days = current_date - timedelta(days=7)
+        week_res = AddPayment.objects.filter(date__range=(past_days, today_date), status='paid').all()
+        week_fee = AddPayment.objects.filter(date__range=(past_days, today_date), status='paid').aggregate(Sum('payment_fee'))
+        week_fee_res = week_fee['payment_fee__sum']
+
+        # monthly results
+        week_current_date = date.today()
+        week_today_date = week_current_date + timedelta(days=1)
+        past_weeks = week_current_date - timedelta(days=31)
+        month_res = AddPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all()
+        month_fee = AddPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').aggregate(Sum('payment_fee'))
+        month_fee_res = month_fee['payment_fee__sum']
+
+
+        # All Payments
+        allPay = AddPayment.objects.filter(status='paid').all()
+        allPayFee = AddPayment.objects.filter(status='paid').aggregate(Sum('payment_fee'))
+        allPayFee_res = allPayFee['payment_fee__sum']
+
+
+
+
+
+
+        print(date.today())
+        print(datetime.now())
+        context = {
+            'todayRes': today_res,
+            'todayFee': today_fee_res,
+            'weekRes': week_res,
+            'weekFee': week_fee_res,
+            'monthRes': month_res,
+            'monthFee': month_fee_res,
+            'allPay': allPay,
+            'allfeeRes': allPayFee_res
+        }
+        return render(request, 'loan-logs.html', context)
+    else:
+        return redirect('account:admin-login')
 
     
      

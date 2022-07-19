@@ -37,7 +37,8 @@ urlpatterns = [
     path('permit-clients', views.permit_clients, name='permit-clients'),
     path('files-upload', views.files_upload, name='files-upload'),
     re_path(r'^file-details/(?P<permitId>[0-9]+)/$', views.file_details, name='file-details'),
-    path('permit-logs', views.permit_logs, name='permit-logs')
+    path('permit-logs', views.permit_logs, name='permit-logs'),
+    path('loan-logs', views.loan_logs, name='loan-logs')
 
 
 ]

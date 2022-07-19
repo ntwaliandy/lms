@@ -29,9 +29,13 @@ class Apply(models.Model):
     status = models.CharField(max_length=50, default='fee_not_paid')
     user = models.CharField(max_length=200)
     payback = models.DecimalField(max_digits=12, decimal_places=2, default='0.00')
+    deposits = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.payback = 10.00/100.00 * int(self.loan_amount) + int(self.loan_amount)
+        self.balance = int(self.payback) - int(self.deposits)
         return super(Apply, self).save(force_insert, force_update, using, update_fields)
 
     def __str__(self):

@@ -64,9 +64,10 @@
                                                     <th>first name</th>
                                                     <th>last name</th>
                                                     <th>telephone</th>
-                                                    <th>application fee</th>
+                                                    <th>deposits</th>
                                                     <th>loan amount</th>
                                                     <th>payback</th>
+                                                    <th>Balance</th>
                                                     <th>Action</th>
                                                     <th>View</th>
                                                 </tr>
@@ -84,9 +85,10 @@
                                                                 <td>{{loan.first_name}}</td>
                                                                 <td>{{loan.last_name}}</td>
                                                                 <td>{{loan.telephone}}</td>
-                                                                <td>{{loan.transction_id}}</td>
-                                                                <td>ugx {{loan.loan_amount}}</td>
-                                                                <td>ugx {{loan.payback}}</td>
+                                                                <td>{{loan.deposits}}</td>
+                                                                <td>{{loan.loan_amount}}</td>
+                                                                <td>{{loan.payback}}</td>
+                                                                <td>{{loan.balance}}</td>
                                                                 <td>
                                                                     <form action="{% url 'loan:loan-complete' %}" method="POST">
                                                                         {% csrf_token %}
