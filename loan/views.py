@@ -1,5 +1,6 @@
 from contextlib import redirect_stderr
 from datetime import datetime, date, timedelta
+import uuid
 import imp
 import json
 from random import randint
@@ -142,7 +143,7 @@ def add_payment(request):
             elif payment_fee == '':
                 messages.info(request, 'payment fee cant be null')
             else:
-                ref = randint(00000,99999)
+                ref = uuid.uuid4()
                 conn = http.client.HTTPSConnection("api.cissytech.com")
                 payload = json.dumps({
                 "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
@@ -519,7 +520,7 @@ def permit_add_payment(request):
             phoneNumber = data['phone_number']
 
 
-            ref = randint(00000,99999)
+            ref = uuid.uuid4()
             conn = http.client.HTTPSConnection("api.cissytech.com")
             payload = json.dumps({
             "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",

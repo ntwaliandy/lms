@@ -54,11 +54,11 @@
                                     <table class="table align-td-middle table-card table-striped">
                                         <thead>
                                         <tr>
-                                            <th>USER ID</th>
-                                            <th>FIRST NAME</th>
-                                            <th>LAST NAME</th>
+                                            <th>PERMIT ID</th>
+                                            <th>FULL NAME</th>
                                             <th>PHONE NUMBER</th>
                                             <th>SERVICE</th>
+                                            <th>STATUS</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -66,12 +66,15 @@
                                             {% for client in clients %}
                                                     <tr>
                                                         <td>
-                                                            {{client.id}}
+                                                            {{client.permit_id}}
                                                         </td>
-                                                        <td>{{client.first_name}}</td>
-                                                        <td>{{client.last_name}}</td>
+                                                        <td>{{client.first_name}} {{client.last_name}}</td>
                                                         <td>{{client.phone_number}}</td>
                                                         <td>{{client.service}}</td>
+                                                        <td>
+                                                            <a class='btn hvr-hover' href="{% url 'loan:file-details' client.permit_id %}">Check</a>
+                                                        
+                                                        </td>
                                                     </tr>
                                             {% endfor %}
                                         {% else %}

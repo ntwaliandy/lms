@@ -63,7 +63,7 @@
                                                         <option value="">select</option>
                                                         {% for per in permits %}
                                                         {% if per.status == 'applied' %}
-                                                        <option value="{{ per.permit_id }}">{{ per.permit_id }}</option>
+                                                        <option value="{{ per.permit_id }}">{{ per.permit_id }} {{ per.first_name }} {{ per.last_name }}</option>
                                                         
                                                         {% endif %}
                                                         {% endfor %}

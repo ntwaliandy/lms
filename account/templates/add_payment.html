@@ -63,7 +63,7 @@
                                                         <option value="">select</option>
                                                         {% for loan in loans %}
                                                         {% if loan.status == 'approved' %}
-                                                        <option value="{{ loan.loan_id }}">{{ loan.loan_id }}</option>
+                                                        <option value="{{ loan.loan_id }}">{{ loan.loan_id }} {{ loan.first_name }} {{ loan.last_name }}</option>
                                                         
                                                         {% endif %}
                                                         {% endfor %}
