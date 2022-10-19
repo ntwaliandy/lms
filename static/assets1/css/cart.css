@@ -1,0 +1,40 @@
+
+
+.products {
+	margin-top: 250px;
+}
+
+.products h1 {
+	color: #000;
+	margin-bottom: 30px;
+	font-size: 30px;
+	padding-left: 0.5rem;
+}
+
+input,
+.form-select {
+	border-radius: 0 !important;
+	color: #999 !important;
+}
+
+.light-wgt input::placeholder {
+	color: #999;
+}
+
+.light-wgt label {
+	font-size: 15px;
+	padding: 10px 0;
+	color: #999;
+}
+
+footer {
+	margin-top: 0;
+}
+
+.cta {
+	margin-top: 100px;
+}
+
+.btn-prim {
+	border-radius: 0;
+}
