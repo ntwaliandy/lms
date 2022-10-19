@@ -1,6 +1,7 @@
 import http.client
 import json
 from random import randint
+import uuid
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Apply, GroupApply, PermitApply, Support
@@ -69,7 +70,7 @@ def user_apply(request):
             elif loan_amount == '':
                 messages.info(request, 'user field empty')
             else:
-                ref = randint(00000,99999)
+                ref = uuid.uuid4()
                 conn = http.client.HTTPSConnection("api.cissytech.com")
                 payload = json.dumps({
                 "apiKey": "cf5eaeba-fbb4-42e2-8c3f-de00ce969a4f",
