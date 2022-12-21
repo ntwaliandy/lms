@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Create your models here.
 def random_string():
-    return str(random.randint(1000, 9999))
+    return str(random.randint(10000, 99999))
 
 class Apply(models.Model):
     first_name = models.CharField(max_length=200)

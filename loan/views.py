@@ -632,7 +632,7 @@ def permit_pay_details(request, ref):
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
             return redirect('loan:permit-payment-details')    
         elif result == 'SUCCESSFUL' and statuss == 'not paid':
-            username = "EREMIT"   
+            username = "EREMIT" 
             api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
