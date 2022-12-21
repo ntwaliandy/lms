@@ -128,7 +128,7 @@ def add_payment(request):
     if request.user.is_superuser:
         loans = Apply.objects.all()
         context = {
-            'loans': loans 
+            'loans': loans
         }
         username = request.user.username
         if request.method == 'POST':
@@ -208,7 +208,7 @@ def pay_details(request, ref):
         if result == 'INPROCESS' or result == 'FAILED':
             AddPayment.objects.filter(reference=ref).update(status = 'pending')
             messages.info(request, "user with Loan ID " + loanId + " haven't paid yet for the specific day")
-            return redirect('loan:payment-record')    
+            return redirect('loan:payment-record')
         elif result == 'SUCCESSFUL' and statuss == 'pending':
             AddPayment.objects.filter(reference=ref).update(status = 'paid')
             single_loan = get_object_or_404(Apply, loan_id=loanId)
@@ -250,7 +250,7 @@ def fee_details(request, loan_id):
         if result == 'FAILED' or result == 'INPROCESS':
             Apply.objects.filter(loan_id=loan_id).update(status = 'fee_not_paid')
             messages.info(request, "user with loan ID " + loan_id + " haven't paid 5000 application fee")
-            return redirect('loan:manage-loans')    
+            return redirect('loan:manage-loans')
         elif result == 'SUCCESSFUL':
             Apply.objects.filter(loan_id=loan_id).update(status = 'pending')
             messages.info(request, "user paid application fee successfully, check in pending loans to approve")
@@ -303,7 +303,7 @@ def group_loan_approve(request):
             return HttpResponse('Bad request')
     else:
         return redirect('account:admin-login')
-    
+
 # group loan reject
 def group_loan_remove(request):
     if request.user.is_superuser:
@@ -349,7 +349,7 @@ def group_add_payment(request):
     if request.user.is_superuser:
         loans = GroupApply.objects.all()
         context = {
-            'loans': loans 
+            'loans': loans
         }
         username = request.user.username
         if request.method == 'POST':
@@ -413,7 +413,7 @@ def all_clients(request):
         return render(request, 'all-clients.html', context)
     else:
         return redirect('account:admin-login')
-    
+
 def staff(request):
     if request.user.is_superuser:
         User = get_user_model()
@@ -424,7 +424,7 @@ def staff(request):
         return render(request, 'staff.html', context)
     else:
         return redirect('account:admin-login')
-    
+
 def complaints(request):
     if request.user.is_superuser:
         errors = Support.objects.filter(answered='NO').all()
@@ -434,18 +434,18 @@ def complaints(request):
         return render(request, 'complaints.html', context)
     else:
         return redirect('account:admin-login')
-    
+
 def reply(request, error_id):
     if request.user.is_superuser:
         error = get_object_or_404(Support, pk=error_id)
-        
+
         context ={
             'error': error
         }
         if request.method == 'POST':
             data = request.POST
             feedback = data['feedback']
-            
+
             # inserting them to the database
             Replies.objects.create(
                 question_id = error.id,
@@ -456,7 +456,7 @@ def reply(request, error_id):
         return render(request, 'reply_error.html', context)
     else:
         return redirect('account:admin-login')
-    
+
 def done(request, quest_id):
     Support.objects.filter(id=quest_id).update(
         answered = 'YES'
@@ -473,10 +473,10 @@ def group_details(request, group_l_id):
         return render(request, 'group_loan_details.html', context)
     else:
         return redirect('account:admin-login')
-    
-    
+
+
 def send_report(request):
-    
+
     payments = AddPayment.objects.all()
     for pay in payments:
         loan_ID = pay.loan_id
@@ -485,11 +485,11 @@ def send_report(request):
     sender = 'ntwaliandy90@gmail.com'
     message = 'amount ' + str(payments[1])
     print(message)
-    
+
     msg = EmailMessage(subject, message, sender, [recipient])
     msg.content_subtype = "html"
     msg.send()
-    
+
     return redirect('loan:dashboard')
 
 
@@ -570,7 +570,7 @@ def manual_add_payment(request):
             paymentFee = data['payment_fee']
             phoneNumber = data['phone_number']
             status = "paid"
-            
+
             reference = uuid.uuid4()
             transaction_id = "manual pay"
 
@@ -630,10 +630,10 @@ def permit_pay_details(request, ref):
         if result == 'INPROCESS' or result == 'FAILED':
             AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
-            return redirect('loan:permit-payment-details')    
+            return redirect('loan:permit-payment-details')
         elif result == 'SUCCESSFUL' and statuss == 'not paid':
-            username = "EREMIT"   
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
+            username = "EREMIT"
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -682,7 +682,7 @@ def files_upload(request):
             permitId = data.get('permit_id', 'none')
             File_upload = data.get('upload_file')
             message = data['message']
-            
+
             print(File_upload)
             FileUpload.objects.create(
                 permit_id = permitId,
@@ -694,7 +694,7 @@ def files_upload(request):
             return redirect('loan:permit-dashboard')
 
         else:
-            return render(request, 'permit_file_upload.html', context)    
+            return render(request, 'permit_file_upload.html', context)
     else:
         return redirect('account:admin-login')
 
@@ -762,7 +762,7 @@ def permit_logs(request):
         return render(request, 'permit-logs.html', context)
     else:
         return redirect('account:admin-login')
-            
+
 
 # loanlogs
 def loan_logs(request):
@@ -815,8 +815,8 @@ def loan_logs(request):
     else:
         return redirect('account:admin-login')
 
-    
-     
+
+
 
 
 
