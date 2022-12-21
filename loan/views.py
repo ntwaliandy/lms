@@ -17,6 +17,7 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 import requests
 import http.client
+import africastalking
 
 
 def dashboard(request):
@@ -607,6 +608,7 @@ def permit_pay_details(request, ref):
         record = AddPermitPayment.objects.filter(reference=ref)
         for recd in record:
             fee = recd.payment_fee
+            phone_number = recd.phone_number
             permitId = recd.permit_id
             trans_id = recd.transaction_id
             statuss = recd.status
@@ -630,11 +632,21 @@ def permit_pay_details(request, ref):
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
             return redirect('loan:permit-payment-details')    
         elif result == 'SUCCESSFUL' and statuss == 'not paid':
+            username = "EREMIT"   
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
+            africastalking.initialize(username, api_key)
+            sms = africastalking.SMS
+
+
             AddPermitPayment.objects.filter(reference=ref).update(status = 'paid')
             single_permit = get_object_or_404(PermitApply, permit_id=permitId)
             latest_deposit = single_permit.deposits + fee
             new_balance = single_permit.final_amount - latest_deposit
+            new_phoneNumber = "+" + phone_number
+            service = single_permit.service
+            full_name = single_permit.first_name + " " + single_permit.last_name
             PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance=new_balance)
+            sms.send("hey " + full_name + ", you have successfully paid " + str(fee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
             return redirect('loan:permit-payment-details')
         elif result == 'SUCCESSFUL' and statuss == 'paid':
@@ -805,3 +817,10 @@ def loan_logs(request):
 
     
      
+
+
+
+def on_finish(error, response):
+    if error is not None:
+        raise error
+    print(response)
