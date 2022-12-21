@@ -555,9 +555,45 @@ def permit_add_payment(request):
         return redirect('accounts:admin-login')
 
 
+def manual_add_payment(request):
+    if request.user.is_superuser:
+        permits = PermitApply.objects.exclude(balance = 0).all()
+        context = {
+            "permits": permits
+        }
+
+        username = request.user.username
+        if request.method == 'POST':
+            data = request.POST
+            permitId = data.get('permit_id', 'none')
+            paymentFee = data['payment_fee']
+            phoneNumber = data['phone_number']
+            status = "paid"
+            
+            reference = uuid.uuid4()
+            transaction_id = "manual pay"
+
+            AddPermitPayment.objects.create(
+                permit_id = permitId,
+                payment_fee = paymentFee,
+                phone_number = phoneNumber,
+                reference = reference,
+                transaction_id = transaction_id,
+                status = status,
+                admin = username
+            )
+            messages.info(request, "successfully added the record manually")
+            return redirect('loan:permit-dashboard')
+        else:
+            messages.info(request, "failed to add the record manually")
+            return render(request, 'add_permit_payment.html', context)
+    else:
+        return redirect('accounts:admin-login')
+
+
 def permit_payment_details(request):
     if request.user.is_superuser:
-        payments = AddPermitPayment.objects.all()
+        payments = reversed(AddPermitPayment.objects.all())
         context = {
             'payments': payments
         }

@@ -16,6 +16,7 @@ urlpatterns = [
     re_path(r'^fee-details/(?P<loan_id>(.*))/$', views.fee_details, name='fee-details'),
     path('group-loan-complete', views.group_loan_complete, name='group-loan-complete'),
     path('add-payment', views.add_payment, name='add-payment'),
+    path('manual-add-payment', views.manual_add_payment, name='manual-add-payment'),
     path('group-add-payment', views.group_add_payment, name='group-add-payment'),
     path('payment-record', views.payment_record, name='payment-record'),
     path('group-payment-record', views.group_payment_record, name='group-payment-record'),
