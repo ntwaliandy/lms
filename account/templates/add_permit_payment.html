@@ -41,7 +41,7 @@
                     <!-- // Normal content -->
                    
                         <div class="row">
-                            <div class="col-lg-8">
+                            <div class="col-lg-6">
                                 <div class="card m-b-30">
                                     <div class="card-header">
                                         <h5 class="m-b-0">
@@ -89,8 +89,56 @@
                                     </div>
                                 </div>
                             </div>
-                            
+                            <div class="col-lg-6">
+                                <div class="card m-b-30">
+                                    <div class="card-header">
+                                        <h5 class="m-b-0">
+                                            Manual Add Permit Payment
+                                        </h5>
+                                        <p class="m-b-0 text-muted">
+                                            Standard form
+                                        </p>
+                                    </div>
+                                    <div class="card-body ">
+                                        <form action="{% url 'loan:manual-add-payment' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+                                                <div class="m-b-15">
+                                                    <p class="font-secondary mb-2">
+                                                        Permit ID <span class="text-danger">*</span>
+                                                    </p>
+                                                    <select class="custom-select" name="permit_id" required="">
+                                                        <option value="">select</option>
+                                                        {% for per in permits %}
+                                                        {% if per.status == 'applied' %}
+                                                        <option value="{{ per.permit_id }}">{{ per.permit_id }} {{ per.first_name }} {{ per.last_name }}</option>
+                                                        
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                    </select>
+                                                    <small class="text-muted">these Permit ID's are under approved ones.</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Phone Number *</label>
+                                                    <input type="text" class="form-control" name="phone_number" required placeholder="forexample:- 256775555464">
+                                                    <small class="text-muted">put the the number which the system will reduct the money</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">payment fee *</label>
+                                                    <input type="text" class="form-control" name="payment_fee" required placeholder="forexample:- 3000">
+                                                    <small class="text-muted">put the amount he/she is supposed to pay.</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Request</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        
                 </div>
 
             </section>
