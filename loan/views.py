@@ -785,30 +785,30 @@ def search_client(request):
             data = request.POST
             search_entry = data['client_search']
             if PermitApply.objects.filter(first_name=search_entry).first():
-                client = get_object_or_404(PermitApply, first_name=search_entry)
+                client = PermitApply.objects.filter(first_name=search_entry).all()
                 context = {
-                    "cl": client
+                    "client": client
                 }
                 messages.info(request, "User Found: " + client.first_name + ". checkout details")
                 return render(request, "search_client.html", context)
             elif PermitApply.objects.filter(last_name=search_entry).first():
-                client = get_object_or_404(PermitApply, last_name=search_entry)
+                client = PermitApply.objects.filter(last_name=search_entry).all()
                 context = {
-                    "cl": client
+                    "client": client
                 }
                 messages.info(request, "User Found: " + client.first_name + ". checkout details")
                 return render(request, "search_client.html", context)
             elif PermitApply.objects.filter(phone_number=search_entry).first():
-                client = get_object_or_404(PermitApply, phone_number=search_entry)
+                client = PermitApply.objects.filter(phone_number=search_entry).all()
                 context = {
-                    "cl": client
+                    "client": client
                 }
                 messages.info(request, "User Found: " + client.first_name + ". checkout details")
                 return render(request, "search_client.html", context)
             elif PermitApply.objects.filter(permit_id=search_entry).first():
-                client = get_object_or_404(PermitApply, permit_id=search_entry)
+                client = PermitApply.objects.filter(permit_id=search_entry).all()
                 context = {
-                    "cl": client
+                    "client": client
                 }
                 messages.info(request, "User Found: " + client.first_name + ". checkout details")
                 return render(request, "search_client.html", context)
