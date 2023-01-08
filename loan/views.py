@@ -498,8 +498,14 @@ def send_report(request):
 def permit_dashboard(request):
     if request.user.is_superuser:
         permits = PermitApply.objects.all()
+        in_process_permits_count = PermitApply.objects.filter(status='applied').count()
+        done_permits_count = PermitApply.objects.filter(status='finished').count()
+        all_application_count = PermitApply.objects.all().count()
         context = {
-            'permits': permits
+            'permits': permits,
+            'in_process': in_process_permits_count,
+            'done': done_permits_count,
+            'all_permits_count': all_application_count,
         }
         return render(request, 'permit_dashboard.html', context)
 
@@ -717,6 +723,7 @@ def permit_logs(request):
     if request.user.is_superuser:
         # today results
         today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all()
+        today_no_tr = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all().count()
         today_fee = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').aggregate(Sum('payment_fee'))
         today_fee_res = today_fee['payment_fee__sum']
 
@@ -725,6 +732,7 @@ def permit_logs(request):
         today_date = current_date + timedelta(days=1)
         past_days = current_date - timedelta(days=7)
         week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all()
+        week_no_tr = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all().count()
         week_fee = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').aggregate(Sum('payment_fee'))
         week_fee_res = week_fee['payment_fee__sum']
 
@@ -733,12 +741,14 @@ def permit_logs(request):
         week_today_date = week_current_date + timedelta(days=1)
         past_weeks = week_current_date - timedelta(days=31)
         month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all()
+        month_no_tr = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all().count()
         month_fee = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').aggregate(Sum('payment_fee'))
         month_fee_res = month_fee['payment_fee__sum']
 
 
         # All Payments
         allPay = AddPermitPayment.objects.filter(status='paid').all()
+        total_no_tr = AddPermitPayment.objects.filter(status='paid').all().count()
         allPayFee = AddPermitPayment.objects.filter(status='paid').aggregate(Sum('payment_fee'))
         allPayFee_res = allPayFee['payment_fee__sum']
 
@@ -757,7 +767,11 @@ def permit_logs(request):
             'monthRes': month_res,
             'monthFee': month_fee_res,
             'allPay': allPay,
-            'allfeeRes': allPayFee_res
+            'allfeeRes': allPayFee_res,
+            'today_no': today_no_tr,
+            'weekly_no': week_no_tr,
+            'monthly_no': month_no_tr,
+            'total_no': total_no_tr
         }
         return render(request, 'permit-logs.html', context)
     else:
