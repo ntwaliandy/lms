@@ -28,6 +28,9 @@
                                 <p class="opacity-75">
                                     Review permit applications
                                 </p>
+                                <p class="opacity-75">
+                                    Total clients are {{all_permits_count}}
+                                </p>
 
                             </div>
                             <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
@@ -43,8 +46,8 @@
                         <!-- Content goes here -->
                         <div class="col-lg-8">
                             <nav class="nav nav-pills nav-justified m-b-80">
-                            <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Completed Permits</a>
-                            <a class="nav-item nav-link text-white" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">IN PROCESS</a>
+                            <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Completed Permits ({{ done }})</a>
+                            <a class="nav-item nav-link text-white" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">IN PROCESS Permits ({{ in_process }})</a>
                             
                         </nav>
                         </div>
