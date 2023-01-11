@@ -589,7 +589,23 @@ def manual_add_payment(request):
                 status = status,
                 admin = username
             )
-            messages.info(request, "successfully added the record manually")
+
+            username = "EREMIT" 
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
+            africastalking.initialize(username, api_key)
+            sms = africastalking.SMS
+
+
+            single_permit = get_object_or_404(PermitApply, permit_id=permitId)
+
+            latest_deposit = single_permit.deposits + int(paymentFee)
+            new_balance = single_permit.final_amount - latest_deposit
+            new_phoneNumber = "+" + phoneNumber
+            service = single_permit.service
+            full_name = single_permit.first_name + " " + single_permit.last_name
+            PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance=new_balance)
+            sms.send("hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            messages.info(request, "user with Permit ID " + permitId + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:permit-dashboard')
         else:
             messages.info(request, "failed to add the record manually")
