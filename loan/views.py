@@ -606,9 +606,9 @@ def manual_add_payment(request):
             full_name = single_permit.first_name + " " + single_permit.last_name
             PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance=new_balance)
 
-            if new_balance == 0:
+            if new_balance <= 0:
                 PermitApply.objects.filter(permit_id=permitId).update(status="finished")
-                
+
             sms.send("hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:permit-dashboard')
@@ -673,6 +673,10 @@ def permit_pay_details(request, ref):
             service = single_permit.service
             full_name = single_permit.first_name + " " + single_permit.last_name
             PermitApply.objects.filter(permit_id=permitId).update(deposits=latest_deposit, balance=new_balance)
+
+            if new_balance <= 0:
+                PermitApply.objects.filter(permit_id=permitId).update(status="finished")
+
             sms.send("hey " + full_name + ", you have successfully paid " + str(fee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
             return redirect('loan:permit-payment-details')
