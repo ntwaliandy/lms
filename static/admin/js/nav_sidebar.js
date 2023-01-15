@@ -13,6 +13,15 @@
                 navLink.tabIndex = 0;
             }
         }
+<<<<<<< HEAD
+=======
+        function disableNavFilterTabbing() {
+            document.getElementById('nav-filter').tabIndex = -1;
+        }
+        function enableNavFilterTabbing() {
+            document.getElementById('nav-filter').tabIndex = 0;
+        }
+>>>>>>> 85c65212f07da655027c5761a133ff4546fadbf2
 
         const main = document.getElementById('main');
         let navSidebarIsOpen = localStorage.getItem('django.admin.navSidebarIsOpen');
@@ -21,6 +30,10 @@
         }
         if (navSidebarIsOpen === 'false') {
             disableNavLinkTabbing();
+<<<<<<< HEAD
+=======
+            disableNavFilterTabbing();
+>>>>>>> 85c65212f07da655027c5761a133ff4546fadbf2
         }
         main.classList.toggle('shifted', navSidebarIsOpen === 'true');
 
@@ -28,9 +41,17 @@
             if (navSidebarIsOpen === 'true') {
                 navSidebarIsOpen = 'false';
                 disableNavLinkTabbing();
+<<<<<<< HEAD
             } else {
                 navSidebarIsOpen = 'true';
                 enableNavLinkTabbing();
+=======
+                disableNavFilterTabbing();
+            } else {
+                navSidebarIsOpen = 'true';
+                enableNavLinkTabbing();
+                enableNavFilterTabbing();
+>>>>>>> 85c65212f07da655027c5761a133ff4546fadbf2
             }
             localStorage.setItem('django.admin.navSidebarIsOpen', navSidebarIsOpen);
             main.classList.toggle('shifted');
