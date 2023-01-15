@@ -91,6 +91,7 @@ class PermitApply(models.Model):
     final_amount = models.DecimalField(max_digits=12, decimal_places=2, default='0')
     deposits = models.DecimalField(max_digits=12, decimal_places=2, default='0')
     balance = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    admin = models.CharField(max_length=200, default='null')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.balance = int(self.final_amount) - int(self.deposits)

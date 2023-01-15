@@ -1,0 +1,59 @@
+/*
+  * This document contains only
+  * styles related to the products
+  * page
+*/
+
+.mile_pagination {
+    text-align: center;
+    margin: 45px auto;
+}
+
+.mile_pagination .pagination {
+    display: block
+}
+
+.mile_pagination .pagination li {
+    display: inline-block;
+    margin-right: 20px
+}
+
+.mile_pagination .pagination li.next a,
+.mile_pagination .pagination li.prev a {
+    width: auto;
+    height: auto;
+    border: 0
+}
+
+.mile_pagination .pagination li:last-child {
+    margin-right: 0
+}
+
+.mile_pagination .pagination li a {
+    display: inline-block;
+    color: #999;
+    font-size: 16px;
+    text-align: center;
+    border: 0;
+    font-weight: 400;
+    padding: 0;
+    height: 45px;
+    text-transform: uppercase;
+    width: 45px;
+    line-height: 45px;
+    border: 1px dashed transparent;
+    border-radius: 0;
+    border-radius: 50%
+}
+
+.mile_pagination .pagination li a:hover {
+    background-color: inherit;
+    color: #000
+}
+
+.mile_pagination .pagination li.active a {
+    border-color: #000;
+    background-color: inherit;
+    color: #000;
+    font-weight: 700
+} 

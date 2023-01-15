@@ -1,0 +1,59 @@
+
+
+footer {
+	margin-top: 0;
+}
+
+.dashboard-tabs button {
+	color: #000;
+	font-weight: 500;
+}
+
+.dashboard-tabs button:not(.active) {
+	color: #999;
+}
+
+.dashboard-tabs button:hover {
+	color: #000;
+}
+
+.tab-content {
+	padding: 0 16px;
+	color: #000;
+}
+
+.tab-content h3 {
+	text-transform: uppercase;
+	font-size: 21px;
+	margin-bottom: 30px;
+}
+
+.tab-content h1 {
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+.tab-content p {
+	color: #999;
+}
+
+.cta-faq {
+	font-size: 32px;
+	position: relative;
+	margin-top: 150px;
+}
+
+.tab-content a {
+	color: #0055D3;
+	text-decoration: underline;
+}
+
+.cta-faq a:after {
+	content: "";
+	position: absolute;
+	bottom: 22px;
+	right: 335px;
+	width: 165px;
+	height: 1px;
+	background-color: red;
+}

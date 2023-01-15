@@ -194,6 +194,7 @@ def permit_apply(request):
             service_price = data['service']
             mess = data['message']
             date = datetime.now()
+            user_admin = request.user.username
 
             PermitApply.objects.create(
                 first_name = firstName,
@@ -203,7 +204,8 @@ def permit_apply(request):
                 final_amount = service_price,
                 message = mess,
                 status = 'applied',
-                date_modified = date
+                date_modified = date,
+                admin = user_admin
             )
 
             return redirect('home:index')

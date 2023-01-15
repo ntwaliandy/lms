@@ -18,6 +18,7 @@ from django.core.mail import EmailMessage
 import requests
 import http.client
 import africastalking
+from django.db.models import Q
 
 
 def dashboard(request):
@@ -497,7 +498,8 @@ def send_report(request):
 
 def permit_dashboard(request):
     if request.user.is_superuser:
-        permits = PermitApply.objects.all()
+        user_name = request.user.username
+        permits = PermitApply.objects.filter(Q(admin=user_name) | Q(admin="null")).all()
         in_process_permits_count = PermitApply.objects.filter(status='applied').count()
         done_permits_count = PermitApply.objects.filter(status='finished').count()
         all_application_count = PermitApply.objects.all().count()
@@ -515,7 +517,8 @@ def permit_dashboard(request):
 
 def permit_add_payment(request):
     if request.user.is_superuser:
-        permits = PermitApply.objects.exclude(balance = 0).all()
+        user_name = request.user.username
+        permits = PermitApply.objects.filter(Q(status = "applied"), Q(admin = user_name) |Q(admin = "null")).all()
         context = {
             "permits": permits
         }
@@ -563,8 +566,9 @@ def permit_add_payment(request):
 
 
 def manual_add_payment(request):
-    if request.user.is_superuser:
-        permits = PermitApply.objects.exclude(balance = 0).all()
+    if request.user.username == "george@accessm.com":
+        user_name = request.user.username
+        permits = PermitApply.objects.filter(Q(status = "applied"), Q(admin = user_name) |Q(admin = "null")).all()
         context = {
             "permits": permits
         }
@@ -616,12 +620,14 @@ def manual_add_payment(request):
             messages.info(request, "failed to add the record manually")
             return render(request, 'add_permit_payment.html', context)
     else:
-        return redirect('accounts:admin-login')
+        messages.info(request, "Only George is Allowed to Enter values HERE!!!!!")
+        return redirect('loan:permit-add-payment')
 
 
 def permit_payment_details(request):
     if request.user.is_superuser:
-        payments = reversed(AddPermitPayment.objects.all())
+        user_name = request.user.username
+        payments = reversed(AddPermitPayment.objects.filter(admin = user_name).all())
         context = {
             'payments': payments
         }
@@ -746,8 +752,9 @@ def file_details(request, permitId):
 
 def permit_logs(request):
     if request.user.is_superuser:
+        user_name = request.user.username
         # today results
-        today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all()
+        today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid', admin=user_name).all()
         today_no_tr = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all().count()
         today_fee = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').aggregate(Sum('payment_fee'))
         today_fee_res = today_fee['payment_fee__sum']
@@ -756,7 +763,7 @@ def permit_logs(request):
         current_date = date.today()
         today_date = current_date + timedelta(days=1)
         past_days = current_date - timedelta(days=7)
-        week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all()
+        week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid', admin=user_name).all()
         week_no_tr = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all().count()
         week_fee = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').aggregate(Sum('payment_fee'))
         week_fee_res = week_fee['payment_fee__sum']
@@ -765,14 +772,14 @@ def permit_logs(request):
         week_current_date = date.today()
         week_today_date = week_current_date + timedelta(days=1)
         past_weeks = week_current_date - timedelta(days=31)
-        month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all()
+        month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid', admin=user_name).all()
         month_no_tr = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all().count()
         month_fee = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').aggregate(Sum('payment_fee'))
         month_fee_res = month_fee['payment_fee__sum']
 
 
         # All Payments
-        allPay = AddPermitPayment.objects.filter(status='paid').all()
+        allPay = AddPermitPayment.objects.filter(status='paid', admin=user_name).all()
         total_no_tr = AddPermitPayment.objects.filter(status='paid').all().count()
         allPayFee = AddPermitPayment.objects.filter(status='paid').aggregate(Sum('payment_fee'))
         allPayFee_res = allPayFee['payment_fee__sum']
@@ -836,6 +843,45 @@ def search_client(request):
             else:
                 messages.info(request, "No such User")
                 return redirect('loan:dashboard')
+        else:
+            return redirect('loan:dashboard')
+
+    else:
+        return redirect('account:user_login')
+
+
+# search client for triggering
+def search_client_trigger(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            data = request.POST
+            search_entry = data['client_search']
+            if PermitApply.objects.filter(first_name=search_entry).first():
+                client = PermitApply.objects.filter(first_name=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return HttpResponse({"status": "success", "data": client})
+            elif PermitApply.objects.filter(last_name=search_entry).first():
+                client = PermitApply.objects.filter(last_name=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return HttpResponse({"status": "success", "data": client})
+            elif PermitApply.objects.filter(phone_number=search_entry).first():
+                client = PermitApply.objects.filter(phone_number=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return HttpResponse({"status": "success", "data": client})
+            elif PermitApply.objects.filter(permit_id=search_entry).first():
+                client = PermitApply.objects.filter(permit_id=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return HttpResponse({"status": "success", "data": client})
+            else:
+                return HttpResponse({"status": "failed"})
         else:
             return redirect('loan:dashboard')
 

@@ -1,0 +1,239 @@
+
+
+.info h1 {
+	font-size: 2rem;
+	margin-top: 20px;
+}
+
+.details {
+	margin-left: 30px;
+}
+
+.details > small {
+	color: #999;
+}
+
+.details > small span {
+	padding: 0 10px;
+}
+
+.details > p,
+.details ul li {
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.details ul {
+	list-style: square;
+}
+
+.details .d-flex {
+	font-size: 13px;
+}
+
+.details .d-flex i {
+	margin-right: 15px;
+}
+
+.description .d-flex h1 {
+	font-size: 3rem;
+	margin-right: 100px;
+}
+
+.description .d-flex button {
+	background-color: #4f2fd9;
+	color: #fff;
+	font-weight: 500;
+	max-height: 45px;
+	margin: 0px 10px;
+}
+
+
+.description small span {
+	color: var(--dimmed);
+}
+
+.description small > span {
+	margin: 0 10px;
+}
+
+
+
+
+/*
+-------------------------------
+	*** TABS SECTION ***	
+-------------------------------
+*/
+.description .tab ul li button {
+	color: #999;
+	padding: 0;
+	text-transform: uppercase;
+	/*font-size: 18px;*/
+	font-weight: 500;
+}
+
+.description .tab ul li .active {
+	color: #000;
+}
+
+.description .tab ul span {
+	padding: 0 20px;
+	color: #999;
+}
+
+.description .tab-content p {
+	color: #999;
+	margin-bottom: 2.7rem;
+}
+
+.description .tab-content h6 {
+	/*margin-top: 20px;*/
+}
+
+
+
+/*
+-------------------------------
+	*** OPTIONAL PANEL ***	
+-------------------------------
+*/
+.optional p,
+.optional ul li {
+	font-size: 12pt;
+	line-height: 18pt;
+	color: #666;
+}
+
+.optional ul {
+	padding-left: 0;
+	margin: 25px 16px;
+
+}
+
+
+
+/*
+-------------------------------
+	*** FEATURES SECTION ***	
+-------------------------------
+*/
+.features > h1 {
+	font-size: 30px;
+}
+
+.features .card-body {
+	cursor: pointer;
+}
+
+.features .card-body i {
+	font-size: 30px;
+	color: #999;
+	transition: all .5s ease-in-out;
+}
+
+.features .card-body:hover i{
+	color: var(--primary);
+}
+
+.features .card-body h3 {
+	font-size: 20px;
+	text-transform: uppercase;
+	margin-top: 20px;
+}
+
+.features .card-body p {
+	color: #666666;
+}
+
+
+
+
+
+.pricing .badge {
+	color: #669900;
+	background-color: #f8fcf1;
+}
+
+.pricing .col-md-3:nth-child(2) {
+	box-shadow: 0px 7rem 5rem 1px rgb(0 0 0 / 18%);
+	margin: -45px 30px 0 30px;
+}
+
+.pricing img {
+	width: 45%;
+	height: auto;
+	margin: 35px auto;
+}
+
+.pricing h1 {
+	font-size: 3rem;
+	margin-bottom: 30px;
+}
+
+.pricing sup,
+.pricing sub {
+	font-size: 15px;
+}
+
+.pricing sup {
+	vertical-align: middle;
+}
+
+.pricing sub {
+	color: var(--dimmed);
+}
+
+.pricing .row:first-child h6,
+.pricing .row:first-child p {
+	text-transform: uppercase;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.pricing p {
+	margin: 0 16px;
+}
+
+.pricing .btn {
+	border-radius: 30px;
+	font-size: 15px;
+	width: 100%;
+	margin: 40px 0 10px;
+	background-color: #fff;
+	color: var(--primary) !important;
+}
+
+.pricing .col-md-3:nth-child(2) .btn {
+	background-color: var(--primary);
+	color: #fff !important;
+}
+
+.pricing .card-body .lp {
+	min-height: 52px !important;
+}
+
+.pricing .sub-txt p {
+	font-size: 15px;
+	color: #999;
+ 	text-align: center;
+}
+
+.pricing .sub-txt p:first-child {
+	width: 70%;
+	margin: 50px auto 20px;
+}
+
+.pricing .sub-txt p:nth-child(2) {
+	width: 50%;
+	margin: 5px auto;
+}
+
+.pricing .sub-txt img {
+	width: 30%;
+	margin: 50px auto;
+}
+
+.products a {
+	text-decoration: underline;
+}
