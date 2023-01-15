@@ -64,8 +64,8 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% if payments %}
-                                            {% for payment in payments %}
+                                        {% if request.user.username == "george@accessm.com" %}
+                                            {% for payment in admin_payments %}
                                                     <tr>
                                                         <td>
                                                             {{payment.permit_id}}
@@ -85,6 +85,28 @@
                                                         {% endif %}
                                                     </tr>
                                             {% endfor %}
+
+                                        {% elif request.user.username != "george@accessm.com" %}
+                                        {% for payment in payments %}
+                                        <tr>
+                                            <td>
+                                                {{payment.permit_id}}
+                                            </td>
+                                            <td>Ugx {{payment.payment_fee}}</td>
+                                            <td>{{payment.transaction_id}}</td>
+                                            <td>{{payment.status}}</td>
+                                            <td>{{payment.date}}</td>
+                                            <td>{{payment.admin}}</td>
+                                            {% if payment.transaction_id != "manual pay" %}
+                                            <td>
+                                                <a class='btn hvr-hover' href="{% url 'loan:permit-pay-details' payment.reference %}">View</a>
+                                            
+                                            </td>
+                                            {% else %}
+                                            <td>cash at hand</td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
                                         {% else %}
                                                 <tr>
                                                     <td><h6>No record in DB</h6></td>

@@ -500,12 +500,14 @@ def permit_dashboard(request):
     if request.user.is_superuser:
         user_name = request.user.username
         permits = PermitApply.objects.filter(Q(admin=user_name) | Q(admin="null")).all()
+        admin_permit = PermitApply.objects.all()
         in_process_permits_count = PermitApply.objects.filter(status='applied').count()
         done_permits_count = PermitApply.objects.filter(status='finished').count()
         all_application_count = PermitApply.objects.all().count()
         context = {
             'permits': permits,
             'in_process': in_process_permits_count,
+            'admin_permit': admin_permit,
             'done': done_permits_count,
             'all_permits_count': all_application_count,
         }
@@ -628,8 +630,10 @@ def permit_payment_details(request):
     if request.user.is_superuser:
         user_name = request.user.username
         payments = reversed(AddPermitPayment.objects.filter(admin = user_name).all())
+        admin_payments = reversed(AddPermitPayment.objects.all())
         context = {
-            'payments': payments
+            'payments': payments,
+            'admin_payments': admin_payments
         }
         return render(request, 'permit_payment_details.html', context)
     else:
@@ -755,6 +759,7 @@ def permit_logs(request):
         user_name = request.user.username
         # today results
         today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid', admin=user_name).all()
+        admin_today_res = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all()
         today_no_tr = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').all().count()
         today_fee = AddPermitPayment.objects.filter(date__date=date.today(), status='paid').aggregate(Sum('payment_fee'))
         today_fee_res = today_fee['payment_fee__sum']
@@ -764,6 +769,7 @@ def permit_logs(request):
         today_date = current_date + timedelta(days=1)
         past_days = current_date - timedelta(days=7)
         week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid', admin=user_name).all()
+        admin_week_res = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all()
         week_no_tr = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').all().count()
         week_fee = AddPermitPayment.objects.filter(date__range=(past_days, today_date), status='paid').aggregate(Sum('payment_fee'))
         week_fee_res = week_fee['payment_fee__sum']
@@ -773,6 +779,7 @@ def permit_logs(request):
         week_today_date = week_current_date + timedelta(days=1)
         past_weeks = week_current_date - timedelta(days=31)
         month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid', admin=user_name).all()
+        admin_month_res = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all()
         month_no_tr = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').all().count()
         month_fee = AddPermitPayment.objects.filter(date__range=(past_weeks, week_today_date), status='paid').aggregate(Sum('payment_fee'))
         month_fee_res = month_fee['payment_fee__sum']
@@ -780,6 +787,7 @@ def permit_logs(request):
 
         # All Payments
         allPay = AddPermitPayment.objects.filter(status='paid', admin=user_name).all()
+        admin_allPay = AddPermitPayment.objects.filter(status='paid').all()
         total_no_tr = AddPermitPayment.objects.filter(status='paid').all().count()
         allPayFee = AddPermitPayment.objects.filter(status='paid').aggregate(Sum('payment_fee'))
         allPayFee_res = allPayFee['payment_fee__sum']
@@ -803,7 +811,11 @@ def permit_logs(request):
             'today_no': today_no_tr,
             'weekly_no': week_no_tr,
             'monthly_no': month_no_tr,
-            'total_no': total_no_tr
+            'total_no': total_no_tr,
+            'admin_today_res': admin_today_res,
+            'admin_week_res': admin_week_res,
+            'admin_month_res': admin_month_res,
+            'admin_allPay': admin_allPay
         }
         return render(request, 'permit-logs.html', context)
     else:
