@@ -90,8 +90,33 @@
                                                 </thead>
                                               
                                                 <tbody>
-                                                {% if permits %}
-                                                    {% for pr in permits %}
+                                                {% if request.user.username == "george@accessm.com" %}
+                                                    {% for pr in admin_permits %}
+                                                        {% if pr.status == 'finished' %}
+                                                        
+                                                            <tr>
+                                                                <td>
+                                                                    {{pr.permit_id}}
+                                                                </td>
+                                                                <td>{{pr.first_name}}</td>
+                                                                <td>{{pr.last_name}}</td>
+                                                                <td>{{pr.phone_number}}</td>
+                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.final_amount}}</td>
+                                                                <td>{{pr.deposits}}</td>
+                                                                <td>{{pr.balance}}</td>
+                                                                <td>{{pr.date_modified}}</td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
+                                                                
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% elif request.user.username != "george@accessm.com" %}
+                                                {% for pr in permits %}
                                                         {% if pr.status == 'finished' %}
                                                         
                                                             <tr>
@@ -149,37 +174,61 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% if permits %}
-                                                        {% for pr in permits %}
-                                                            {% if pr.status == 'applied' %}
-                                                            
-                                                                
-                                                                    <tr>
-                                                                        <td>
-                                                                            {{pr.permit_id}}
-                                                                        </td>
-                                                                        <td>{{pr.first_name}}</td>
-                                                                        <td>{{pr.last_name}}</td>
-                                                                        <td>{{pr.phone_number}}</td>
-                                                                        <td>{{pr.message}}</td>
-                                                                        <td>{{pr.final_amount}}</td>
-                                                                        <td>{{pr.deposits}}</td>
-                                                                        <td>{{pr.balance}}</td>
-                                                                        <td>{{pr.date_modified}}</td>
-                                                                        <td>
-                                                                            <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
-                                                                        
-                                                                        </td>
-                                                                        
-                                                                    </tr>
-                                                            
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    {% else %}
+                                                    {% if request.user.username == "george@accessm.com" %}
+                                                    {% for pr in admin_permits %}
+                                                        {% if pr.status == 'applied' %}
+                                                        
                                                             <tr>
-                                                                <td><h4>No record in DB</h4></td>
+                                                                <td>
+                                                                    {{pr.permit_id}}
+                                                                </td>
+                                                                <td>{{pr.first_name}}</td>
+                                                                <td>{{pr.last_name}}</td>
+                                                                <td>{{pr.phone_number}}</td>
+                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.final_amount}}</td>
+                                                                <td>{{pr.deposits}}</td>
+                                                                <td>{{pr.balance}}</td>
+                                                                <td>{{pr.date_modified}}</td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
+                                                                
+                                                                </td>
+                                                                
                                                             </tr>
-                                                    {% endif %}
+                                                        
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% elif request.user.username != "george@accessm.com" %}
+                                                {% for pr in permits %}
+                                                        {% if pr.status == 'applied' %}
+                                                        
+                                                            <tr>
+                                                                <td>
+                                                                    {{pr.permit_id}}
+                                                                </td>
+                                                                <td>{{pr.first_name}}</td>
+                                                                <td>{{pr.last_name}}</td>
+                                                                <td>{{pr.phone_number}}</td>
+                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.final_amount}}</td>
+                                                                <td>{{pr.deposits}}</td>
+                                                                <td>{{pr.balance}}</td>
+                                                                <td>{{pr.date_modified}}</td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
+                                                                
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                        <tr>
+                                                            <td><h4>No record in DB</h4></td>
+                                                        </tr>
+                                                {% endif %}
                                                     </tbody>
                                             </table>
 
