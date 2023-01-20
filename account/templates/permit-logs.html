@@ -70,7 +70,7 @@
                                                 </thead>
                                               
                                                 <tbody>
-                                                    {% if todayRes %}
+                                                    {% if admin_today_res %}
                                                         {% for res in admin_today_res %}
                                                             <tr>
                                                                 <td>{{res.permit_id}}</td>
@@ -111,7 +111,7 @@
                                                     </thead>
                                                   
                                                     <tbody>
-                                                        {% if weekRes %}
+                                                        {% if admin_week_res %}
                                                         {% for res in admin_week_res %}
                                                             <tr>
                                                                 <td>{{res.permit_id}}</td>
@@ -152,7 +152,7 @@
                                                     </thead>
                                                   
                                                     <tbody>
-                                                        {% if monthRes %}
+                                                        {% if admin_month_res %}
                                                         {% for res in admin_month_res %}
                                                             <tr>
                                                                 <td>{{res.permit_id}}</td>
@@ -194,7 +194,7 @@
                                                     </thead>
                                                   
                                                     <tbody>
-                                                        {% if allPay %}
+                                                        {% if admin_allPay %}
                                                         {% for res in admin_allPay %}
                                                             <tr>
                                                                 <td>{{res.permit_id}}</td>
