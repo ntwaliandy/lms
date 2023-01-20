@@ -91,7 +91,7 @@
                                               
                                                 <tbody>
                                                 {% if request.user.username == "george@accessm.com" %}
-                                                    {% for pr in admin_permits %}
+                                                    {% for pr in admin_permit %}
                                                         {% if pr.status == 'finished' %}
                                                         
                                                             <tr>
@@ -175,7 +175,8 @@
                                                 </thead>
                                                 <tbody>
                                                     {% if request.user.username == "george@accessm.com" %}
-                                                    {% for pr in admin_permits %}
+                                                    
+                                                    {% for pr in admin_permit %}
                                                         {% if pr.status == 'applied' %}
                                                         
                                                             <tr>
