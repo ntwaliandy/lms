@@ -5,7 +5,7 @@ import imp
 import json
 from random import randint
 from time import time
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, Support
 from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies
@@ -19,6 +19,7 @@ import requests
 import http.client
 import africastalking
 from django.db.models import Q
+from django.core.serializers import serialize
 
 
 def dashboard(request):
@@ -528,10 +529,9 @@ def permit_add_payment(request):
         if request.method == 'POST':
             data = request.POST
             permitId = data.get('permit_id', 'none')
+            print("permit ID ", permitId)
             paymentFee = data['payment_fee']
             phoneNumber = data['phone_number']
-
-
             ref = uuid.uuid4()
             conn = http.client.HTTPSConnection("api.cissytech.com")
             payload = json.dumps({
@@ -548,19 +548,36 @@ def permit_add_payment(request):
             data = json.load(res)
             # response = data.decode("utf-8")
             result = data['data']['requestToPay']
-            transId = data['data']['transactionId']
             if result == True:
-                print(result)
+                transId = data['data']['transactionId']
                 AddPermitPayment.objects.create(
                     permit_id = permitId,
                     payment_fee = paymentFee,
                     phone_number = phoneNumber,
                     reference = ref,
                     transaction_id = transId,
-                    status = 'not paid',
+                    status = 'paid',
                     admin = username
                 )
-            return redirect('loan:permit-dashboard')
+                messages.info(request, "user with permit ID " + str(permitId) +" paid " + str(paymentFee) + " successfully")
+                return redirect('loan:permit-dashboard')
+            elif result == False:
+                AddPermitPayment.objects.create(
+                    permit_id = permitId,
+                    payment_fee = paymentFee,
+                    phone_number = phoneNumber,
+                    reference = ref,
+                    transaction_id = "NOT PAID",
+                    status = 'paid',
+                    admin = username
+                )
+                messages.info(request, "repeat the tansaction please!!!!!!!!")
+                return redirect('loan:permit-dashboard')
+            else:
+                messages.info(request, "Transaction Error... REPEAT AGAIN")
+                return redirect('loan:permit-dashboard')
+
+            
         else:
             return render(request, 'add_permit_payment.html', context)
     else:
@@ -867,33 +884,34 @@ def search_client_trigger(request):
     if request.user.is_superuser:
         if request.method == 'POST':
             data = request.POST
-            search_entry = data['client_search']
-            if PermitApply.objects.filter(first_name=search_entry).first():
-                client = PermitApply.objects.filter(first_name=search_entry).all()
-                context = {
-                    "client": client
-                }
-                return HttpResponse({"status": "success", "data": client})
-            elif PermitApply.objects.filter(last_name=search_entry).first():
-                client = PermitApply.objects.filter(last_name=search_entry).all()
-                context = {
-                    "client": client
-                }
-                return HttpResponse({"status": "success", "data": client})
-            elif PermitApply.objects.filter(phone_number=search_entry).first():
-                client = PermitApply.objects.filter(phone_number=search_entry).all()
-                context = {
-                    "client": client
-                }
-                return HttpResponse({"status": "success", "data": client})
-            elif PermitApply.objects.filter(permit_id=search_entry).first():
-                client = PermitApply.objects.filter(permit_id=search_entry).all()
-                context = {
-                    "client": client
-                }
-                return HttpResponse({"status": "success", "data": client})
+            search_entry = data.get('client_search', False)
+            print(search_entry)
+            if PermitApply.objects.filter(first_name=search_entry, status="applied").first():
+                client = PermitApply.objects.filter(first_name=search_entry, status="applied").all()
+                
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse ({"status": "success", "data": data})
+            elif PermitApply.objects.filter(last_name=search_entry, status="applied").first():
+                client = PermitApply.objects.filter(last_name=search_entry, status="applied").all()
+                
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse({"status": "success", "data": data})
+            elif PermitApply.objects.filter(phone_number=search_entry, status="applied").first():
+                client = PermitApply.objects.filter(phone_number=search_entry, status="applied").all()
+                
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse({"status": "success", "data": data})
+            elif PermitApply.objects.filter(permit_id=search_entry, status="applied").first():
+                client = PermitApply.objects.filter(permit_id=search_entry, status="applied").all()
+                
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse({"status": "success", "data": data})
             else:
-                return HttpResponse({"status": "failed"})
+                return JsonResponse({"status": "failed"})
         else:
             return redirect('loan:dashboard')
 
