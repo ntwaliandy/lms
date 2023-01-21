@@ -2,6 +2,7 @@
 {% load static %}
 
     {% block content %}
+    
 
         <section class="admin-content">
                 <div class=" bg-dark m-b-30 bg-stars">
@@ -24,6 +25,7 @@
                                     </div>
                                 {% endfor %}
                                 <h1><span class="js-greeting"></span>, {{ user }} </h1>
+                                <h6>Kindly, when triggering, don't refresh the page or do anything for like 5mins untill we get the client's feedback</h6>
                                 <p class="opacity-75">
                                     Add Today's payment for a specific permit ID <br>
                                 </p>
@@ -55,21 +57,15 @@
                                         <form action="" method="post">
                                             {% csrf_token %}
                                             <div class="form-row">
-                                                <div class="m-b-15">
-                                                    <p class="font-secondary mb-2">
-                                                        Permit ID <span class="text-danger">*</span>
-                                                    </p>
-                                                    <select class="custom-select" name="permit_id" required="">
-                                                        <option value="">select</option>
-                                                        {% for per in permits %}
-                                                        {% if per.status == 'applied' %}
-                                                        <option value="{{ per.permit_id }}">{{ per.permit_id }} {{ per.first_name }} {{ per.last_name }}</option>
-                                                        
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                        
-                                                    </select>
-                                                    <small class="text-muted">these Permit ID's are under approved ones.</small>
+                                                <div class="form-group col-md-12" style="display: none;">
+                                                    <label for="inputPassword4">client</label>
+                                                    <input type="text" id="permit_id" class="form-control" name="permit_id" placeholder="">
+                                                    
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">client</label>
+                                                    <input type="text" class="form-control" id="client_name" onchange="searchUser()" required placeholder="">
+                                                    <div class="text-muted" id="client_res"></div>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label for="inputPassword4">Phone Number *</label>
@@ -103,21 +99,15 @@
                                         <form action="{% url 'loan:manual-add-payment' %}" method="post">
                                             {% csrf_token %}
                                             <div class="form-row">
-                                                <div class="m-b-15">
-                                                    <p class="font-secondary mb-2">
-                                                        Permit ID <span class="text-danger">*</span>
-                                                    </p>
-                                                    <select class="custom-select" name="permit_id" required="">
-                                                        <option value="">select</option>
-                                                        {% for per in permits %}
-                                                        {% if per.status == 'applied' %}
-                                                        <option value="{{ per.permit_id }}">{{ per.permit_id }} {{ per.first_name }} {{ per.last_name }}</option>
-                                                        
-                                                        {% endif %}
-                                                        {% endfor %}
-                                                        
-                                                    </select>
-                                                    <small class="text-muted">these Permit ID's are under approved ones.</small>
+                                                <div class="form-group col-md-12" style="display: none;">
+                                                    <label for="inputPassword4">client</label>
+                                                    <input type="text" id="manual_permit_id" class="form-control" name="permit_id" placeholder="">
+                                                    
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">client</label>
+                                                    <input type="text" class="form-control" id="manual_client_name" onchange="searchManualUser()" required placeholder="">
+                                                    <div class="text-muted" id="manual_client_res"></div>
                                                 </div>
                                                 <div class="form-group col-md-12">
                                                     <label for="inputPassword4">Phone Number *</label>
@@ -142,5 +132,67 @@
                 </div>
 
             </section>
+
+            <script>
+                function searchUser(e) {
+                    var clientName = document.getElementById("client_name").value;
+                    console.log(clientName)
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'loan:search-client-trigger' %}",
+                        data: {
+                            csrfmiddlewaretoken: "{{ csrf_token }}",
+                            "client_search": clientName
+                        },
+                        success: function (response) {
+                            console.log(response)
+                            var res = document.getElementById("client_res")
+                            var permitID = document.getElementById("permit_id")
+                            
+                            if (response['status'] == 'success') {
+                                var permit_id = response['data'][0]['fields']['permit_id']
+                                var first_name = response['data'][0]['fields']['first_name']
+                                var last_name = response['data'][0]['fields']['last_name']
+                                console.log(permit_id)
+                                res.innerHTML = permit_id + " " + first_name + " " + last_name
+                                permitID.setAttribute('value', permit_id)
+                            } else {
+                                res.innerHTML = response['status'] 
+                            }
+                        }
+                        
+                    })
+                }
+
+                function searchManualUser(e) {
+                    var clientName = document.getElementById("manual_client_name").value;
+                    console.log(clientName)
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'loan:search-client-trigger' %}",
+                        data: {
+                            csrfmiddlewaretoken: "{{ csrf_token }}",
+                            "client_search": clientName
+                        },
+                        success: function (response) {
+                            console.log(response)
+                            var res = document.getElementById("manual_client_res")
+                            var permitID = document.getElementById("manual_permit_id")
+                            
+                            if (response['status'] == 'success') {
+                                var permit_id = response['data'][0]['fields']['permit_id']
+                                var first_name = response['data'][0]['fields']['first_name']
+                                var last_name = response['data'][0]['fields']['last_name']
+                                console.log(permit_id)
+                                res.innerHTML = permit_id + " " + first_name + " " + last_name
+                                permitID.setAttribute('value', permit_id)
+                            } else {
+                                res.innerHTML = response['status'] 
+                            }
+                        }
+                        
+                    })
+                }
+            </script>
     
     {% endblock %}
