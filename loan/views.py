@@ -562,13 +562,12 @@ def permit_add_payment(request):
                 messages.info(request, "user with permit ID " + str(permitId) +" paid " + str(paymentFee) + " successfully")
                 return redirect('loan:permit-dashboard')
             elif result == False:
-                transId = data['data']['transactionId']
                 AddPermitPayment.objects.create(
                     permit_id = permitId,
                     payment_fee = paymentFee,
                     phone_number = phoneNumber,
                     reference = ref,
-                    transaction_id = transId,
+                    transaction_id = "NOT PAID",
                     status = 'paid',
                     admin = username
                 )
