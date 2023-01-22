@@ -75,13 +75,16 @@
                                                         <td>{{payment.status}}</td>
                                                         <td>{{payment.date}}</td>
                                                         <td>{{payment.admin}}</td>
-                                                        {% if payment.transaction_id != "manual pay" %}
+                                                        {% if payment.transaction_id == "manual pay" %}
+                                                        
+                                                        <td>cash at hand</td>
+                                                        {% elif payment.transaction_id == "NOT PAID" %}
+                                                        <td>failed</td>
+                                                        {% else %}
                                                         <td>
                                                             <a class='btn hvr-hover' href="{% url 'loan:permit-pay-details' payment.reference %}">View</a>
                                                         
                                                         </td>
-                                                        {% else %}
-                                                        <td>cash at hand</td>
                                                         {% endif %}
                                                     </tr>
                                             {% endfor %}
@@ -97,13 +100,16 @@
                                             <td>{{payment.status}}</td>
                                             <td>{{payment.date}}</td>
                                             <td>{{payment.admin}}</td>
-                                            {% if payment.transaction_id != "manual pay" %}
-                                            <td>
-                                                <a class='btn hvr-hover' href="{% url 'loan:permit-pay-details' payment.reference %}">View</a>
-                                            
-                                            </td>
+                                            {% if payment.transaction_id == "manual pay" %}
+                                                        
+                                                <td>cash at hand</td>
+                                            {% elif payment.transaction_id == "NOT PAID" %}
+                                                <td>failed</td>
                                             {% else %}
-                                            <td>cash at hand</td>
+                                                <td>
+                                                    <a class='btn hvr-hover' href="{% url 'loan:permit-pay-details' payment.reference %}">View</a>
+                                                
+                                                </td>
                                             {% endif %}
                                         </tr>
                                         {% endfor %}
