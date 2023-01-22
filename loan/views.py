@@ -546,6 +546,7 @@ def permit_add_payment(request):
             conn.request("POST", "/pay/moneyaccess/requestToPay", payload, headers)
             res = conn.getresponse()
             data = json.load(res)
+            print(data)
             # response = data.decode("utf-8")
             result = data['data']['requestToPay']
             if result == True:
@@ -568,7 +569,7 @@ def permit_add_payment(request):
                     phone_number = phoneNumber,
                     reference = ref,
                     transaction_id = "NOT PAID",
-                    status = 'paid',
+                    status = 'NOT PAID',
                     admin = username
                 )
                 messages.info(request, "repeat the tansaction please!!!!!!!!")
