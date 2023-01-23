@@ -557,10 +557,10 @@ def permit_add_payment(request):
                     phone_number = phoneNumber,
                     reference = ref,
                     transaction_id = transId,
-                    status = 'paid',
+                    status = 'pending',
                     admin = username
                 )
-                messages.info(request, "user with permit ID " + str(permitId) +" paid " + str(paymentFee) + " successfully")
+                messages.info(request, "user with permit ID " + str(permitId) +" paid " + str(paymentFee) + " successfully. Go to Permit Details and view so that you can finally confirm the transaction.")
                 return redirect('loan:permit-dashboard')
             elif result == False:
                 AddPermitPayment.objects.create(
@@ -685,10 +685,17 @@ def permit_pay_details(request, ref):
         if result == 'INPROCESS' or result == 'FAILED':
             AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
+<<<<<<< HEAD
             return redirect('loan:permit-payment-details')
         elif result == 'SUCCESSFUL' and statuss == 'not paid':
             username = "EREMIT"
             api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
+=======
+            return redirect('loan:permit-payment-details')    
+        elif result == 'SUCCESSFUL' and statuss == 'pending':
+            username = "EREMIT" 
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
+>>>>>>> 9f61383d885c097a7805d797ebf8a1b9080ca3de
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
