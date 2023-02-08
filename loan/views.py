@@ -1,5 +1,6 @@
 from contextlib import redirect_stderr
 from datetime import datetime, date, timedelta
+import decimal
 import uuid
 import imp
 import json
@@ -971,8 +972,52 @@ def loan_logs(request):
     else:
         return redirect('account:admin-login')
 
-    
+
+def permit_edit_details(request, permitID):
+    if request.user.is_superuser:
+        permit_details = get_object_or_404(PermitApply, permit_id=permitID)
+        context = {
+            "permit_details": permit_details
+        }
+
+        return render(request, "permit_edit_details.html", context)
+    else:
+        return redirect('account:admin-login')
      
+
+def post_permit_edit(request):
+    if request.user.is_superuser and request.method == 'POST':
+        data = request.POST
+        permitId = data['permit_id'] 
+        first_name = data['first_name']
+        last_name = data['last_name']
+        phone_number = data['phone_number']
+        service = data['service']
+        final_amount = data['service_amount']
+
+        permit = get_object_or_404(PermitApply, permit_id=permitId)
+        deposits = permit.deposits
+
+        balance = decimal.Decimal(final_amount) - deposits
+
+        PermitApply.objects.filter(permit_id=permitId).update(
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone_number,
+            service=service,
+            final_amount=final_amount,
+            balance = balance
+        )
+
+        messages.info(request, "user with Permit ID " + permitId + " has been updated successfully!")
+
+        return redirect('loan:permit-dashboard')
+
+    else:
+        messages.info(request, "failed to update!")
+
+        return redirect('loan:permit-dashboard')
+
 
 
 

@@ -41,7 +41,9 @@ urlpatterns = [
     path('search-client-trigger', views.search_client_trigger, name='search-client-trigger'),
     re_path(r'^file-details/(?P<permitId>[0-9]+)/$', views.file_details, name='file-details'),
     path('permit-logs', views.permit_logs, name='permit-logs'),
-    path('loan-logs', views.loan_logs, name='loan-logs')
+    path('loan-logs', views.loan_logs, name='loan-logs'),
+    re_path(r'^edit_permit/(?P<permitID>[0-9]+)/$', views.permit_edit_details, name='edit-permit'),
 
+    path('post-permit-edit', views.post_permit_edit, name='post-permit-edit'),
 
 ]
