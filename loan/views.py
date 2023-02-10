@@ -578,7 +578,7 @@ def permit_add_payment(request):
                 messages.info(request, "Transaction Error... REPEAT AGAIN")
                 return redirect('loan:permit-dashboard')
 
-            
+
         else:
             return render(request, 'add_permit_payment.html', context)
     else:
@@ -614,8 +614,8 @@ def manual_add_payment(request):
                 admin = username
             )
 
-            username = "EREMIT" 
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
+            username = "EREMIT"
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -624,7 +624,7 @@ def manual_add_payment(request):
 
             latest_deposit = single_permit.deposits + int(paymentFee)
             new_balance = single_permit.final_amount - latest_deposit
-            
+
             new_phoneNumber = "+" + phoneNumber
             service = single_permit.service
             full_name = single_permit.first_name + " " + single_permit.last_name
@@ -685,17 +685,11 @@ def permit_pay_details(request, ref):
         if result == 'INPROCESS' or result == 'FAILED':
             AddPermitPayment.objects.filter(reference=ref).update(status = 'not paid')
             messages.info(request, "user with Permit ID " + permitId + " haven't paid yet for the specific day")
-<<<<<<< HEAD
             return redirect('loan:permit-payment-details')
-        elif result == 'SUCCESSFUL' and statuss == 'not paid':
+
+        elif result == 'SUCCESSFUL' and statuss == 'pending':
             username = "EREMIT"
             api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
-=======
-            return redirect('loan:permit-payment-details')    
-        elif result == 'SUCCESSFUL' and statuss == 'pending':
-            username = "EREMIT" 
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"     
->>>>>>> 9f61383d885c097a7805d797ebf8a1b9080ca3de
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -896,25 +890,25 @@ def search_client_trigger(request):
             print(search_entry)
             if PermitApply.objects.filter(first_name=search_entry, status="applied").first():
                 client = PermitApply.objects.filter(first_name=search_entry, status="applied").all()
-                
+
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse ({"status": "success", "data": data})
             elif PermitApply.objects.filter(last_name=search_entry, status="applied").first():
                 client = PermitApply.objects.filter(last_name=search_entry, status="applied").all()
-                
+
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse({"status": "success", "data": data})
             elif PermitApply.objects.filter(phone_number=search_entry, status="applied").first():
                 client = PermitApply.objects.filter(phone_number=search_entry, status="applied").all()
-                
+
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse({"status": "success", "data": data})
             elif PermitApply.objects.filter(permit_id=search_entry, status="applied").first():
                 client = PermitApply.objects.filter(permit_id=search_entry, status="applied").all()
-                
+
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse({"status": "success", "data": data})
