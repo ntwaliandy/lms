@@ -974,9 +974,7 @@ def loan_logs(request):
         return redirect('account:admin-login')
 
 
-<<<<<<< HEAD
 
-=======
 def permit_edit_details(request, permitID):
     if request.user.is_superuser:
         permit_details = get_object_or_404(PermitApply, permit_id=permitID)
@@ -987,13 +985,12 @@ def permit_edit_details(request, permitID):
         return render(request, "permit_edit_details.html", context)
     else:
         return redirect('account:admin-login')
-     
->>>>>>> d127ca7ac32d5f759348c2ee718d4921a9cde2cd
+
 
 def post_permit_edit(request):
     if request.user.is_superuser and request.method == 'POST':
         data = request.POST
-        permitId = data['permit_id'] 
+        permitId = data['permit_id']
         first_name = data['first_name']
         last_name = data['last_name']
         phone_number = data['phone_number']
