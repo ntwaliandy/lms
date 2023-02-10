@@ -86,6 +86,9 @@
                                                     <th>Balance</th>
                                                     <th>Date Modified</th>
                                                     <th>Files</th>
+                                                    {% if request.user.username == "george@accessm.com" %}
+                                                    <th>Edit</th>
+                                                    {% endif %}
                                                 </tr>
                                                 </thead>
                                               
@@ -101,7 +104,7 @@
                                                                 <td>{{pr.first_name}}</td>
                                                                 <td>{{pr.last_name}}</td>
                                                                 <td>{{pr.phone_number}}</td>
-                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.service}}</td>
                                                                 <td>{{pr.final_amount}}</td>
                                                                 <td>{{pr.deposits}}</td>
                                                                 <td>{{pr.balance}}</td>
@@ -109,6 +112,9 @@
                                                                 <td>
                                                                     <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:edit-permit' pr.permit_id %}">Edit Permit</a>
                                                                 </td>
                                                                 
                                                             </tr>
@@ -126,7 +132,7 @@
                                                                 <td>{{pr.first_name}}</td>
                                                                 <td>{{pr.last_name}}</td>
                                                                 <td>{{pr.phone_number}}</td>
-                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.service}}</td>
                                                                 <td>{{pr.final_amount}}</td>
                                                                 <td>{{pr.deposits}}</td>
                                                                 <td>{{pr.balance}}</td>
@@ -171,6 +177,9 @@
                                                     <th>Balance</th>
                                                     <th>Date Modified</th>
                                                     <th>Files</th>
+                                                    {% if request.user.username == "george@accessm.com" %}
+                                                    <th>Edit</th>
+                                                    {% endif %}
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -186,7 +195,7 @@
                                                                 <td>{{pr.first_name}}</td>
                                                                 <td>{{pr.last_name}}</td>
                                                                 <td>{{pr.phone_number}}</td>
-                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.service}}</td>
                                                                 <td>{{pr.final_amount}}</td>
                                                                 <td>{{pr.deposits}}</td>
                                                                 <td>{{pr.balance}}</td>
@@ -194,6 +203,9 @@
                                                                 <td>
                                                                     <a class='btn hvr-hover' href="{% url 'loan:file-details' pr.permit_id %}">Check</a>
                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a class='btn hvr-hover' href="{% url 'loan:edit-permit' pr.permit_id %}">Edit Permit</a>
                                                                 </td>
                                                                 
                                                             </tr>
@@ -211,7 +223,7 @@
                                                                 <td>{{pr.first_name}}</td>
                                                                 <td>{{pr.last_name}}</td>
                                                                 <td>{{pr.phone_number}}</td>
-                                                                <td>{{pr.message}}</td>
+                                                                <td>{{pr.service}}</td>
                                                                 <td>{{pr.final_amount}}</td>
                                                                 <td>{{pr.deposits}}</td>
                                                                 <td>{{pr.balance}}</td>

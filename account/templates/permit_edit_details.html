@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <h1><span class="js-greeting"></span>, {{ user }} </h1>
+                                <p class="opacity-75">
+                                    Edit Permit Details For {{permit_details.first_name}} {{permit_details.last_name}}<br>
+                                </p>
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container pull-up">
+
+                    <!-- // Normal content -->
+                   
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card m-b-30">
+                                    <div class="card-header">
+                                        <h5 class="m-b-0">
+                                            Edit Permit Details
+                                        </h5>
+                                        <p class="m-b-0 text-muted">
+                                            Standard form
+                                        </p>
+                                    </div>
+                                    <div class="card-body ">
+                                        <form action="{% url 'loan:post-permit-edit' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+                                                <input type="text" class="form-control" style="display: none;" name="permit_id" required value="{{permit_details.permit_id}}">
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">First Name *</label>
+                                                    <input type="text" class="form-control" name="first_name" required value="{{permit_details.first_name}}">
+                                                    <small class="text-muted">Client's First Name</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Last Name</label>
+                                                    <input type="text" class="form-control" name="last_name" required value="{{permit_details.last_name}}">
+                                                    <small class="text-muted">Client's Last Name</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Phone Number</label>
+                                                    <input type="text" class="form-control" name="phone_number" required value="{{permit_details.phone_number}}">
+                                                    <small class="text-muted">Client's Phone Number</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Service</label>
+                                                    <input type="text" class="form-control" name="service" required value="{{permit_details.service}}">
+                                                    <small class="text-muted">Client's Service</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Service Amount</label>
+                                                    <input type="text" class="form-control" name="service_amount" required value="{{permit_details.final_amount}}">
+                                                    <small class="text-muted">Service Amount</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                </div>
+
+            </section>
+    
+    {% endblock %}
