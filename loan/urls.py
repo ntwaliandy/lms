@@ -43,7 +43,7 @@ urlpatterns = [
     path('permit-logs', views.permit_logs, name='permit-logs'),
     path('loan-logs', views.loan_logs, name='loan-logs'),
     re_path(r'^edit_permit/(?P<permitID>[0-9]+)/$', views.permit_edit_details, name='edit-permit'),
-
+    path('client-csv', views.client_csv, name='client-csv'),
     path('post-permit-edit', views.post_permit_edit, name='post-permit-edit'),
 
 ]

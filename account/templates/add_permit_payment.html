@@ -43,7 +43,7 @@
                     <!-- // Normal content -->
                    
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-6" style="display: none;">
                                 <div class="card m-b-30">
                                     <div class="card-header">
                                         <h5 class="m-b-0">
@@ -121,7 +121,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <button class="btn btn-primary">Request</button>
+                                                <button class="btn btn-primary">Submit</button>
                                             </div>
                                         </form>
                                     </div>
@@ -157,7 +157,7 @@
                                 res.innerHTML = permit_id + " " + first_name + " " + last_name
                                 permitID.setAttribute('value', permit_id)
                             } else {
-                                res.innerHTML = response['status'] 
+                                res.innerHTML = response['status']
                             }
                         }
                         

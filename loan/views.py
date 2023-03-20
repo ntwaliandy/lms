@@ -21,6 +21,7 @@ import http.client
 import africastalking
 from django.db.models import Q
 from django.core.serializers import serialize
+import csv
 
 
 def dashboard(request):
@@ -587,9 +588,8 @@ def permit_add_payment(request):
 
 
 def manual_add_payment(request):
-    if request.user.username == "george@accessm.com":
-        user_name = request.user.username
-        permits = PermitApply.objects.filter(Q(status = "applied"), Q(admin = user_name) |Q(admin = "null")).all()
+    if request.user.is_superuser:
+        permits = PermitApply.objects.filter(status = "applied").all()
         context = {
             "permits": permits
         }
@@ -604,6 +604,10 @@ def manual_add_payment(request):
 
             reference = uuid.uuid4()
             transaction_id = "manual pay"
+
+            if permitId == "":
+                messages.info(request, "Try writing the user correctly")
+                return render(request, 'add_permit_payment.html', context)
 
             AddPermitPayment.objects.create(
                 permit_id = permitId,
@@ -641,7 +645,7 @@ def manual_add_payment(request):
             messages.info(request, "failed to add the record manually")
             return render(request, 'add_permit_payment.html', context)
     else:
-        messages.info(request, "Only George is Allowed to Enter values HERE!!!!!")
+        messages.info(request, "User not Allowed")
         return redirect('loan:permit-add-payment')
 
 
@@ -872,11 +876,17 @@ def search_client(request):
                     "client": client
                 }
                 return render(request, "search_client.html", context)
+            elif PermitApply.objects.filter(admin=search_entry).first():
+                client = PermitApply.objects.filter(admin=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return render(request, "search_client.html", context)
             else:
                 messages.info(request, "No such User")
-                return redirect('loan:dashboard')
+                return redirect('loan:permit-dashboard')
         else:
-            return redirect('loan:dashboard')
+            return redirect('loan:permit-dashboard')
 
     else:
         return redirect('account:user_login')
@@ -1021,8 +1031,32 @@ def post_permit_edit(request):
         return redirect('loan:permit-dashboard')
 
 
+def client_csv(request):
+    low_client = AddPermitPayment.objects.filter(transaction_id="manual pay").all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=all_applicants' + str(datetime.now()) + '.csv'
 
+    writer = csv.writer(response)
+    writer.writerow([
+        'permit_id',
+        'first_name',
+        'service',
+        'phone_number',
+        'message',
+        'final_amount',
+        'deposits',
+        'balance',
+    ])
 
+    for cl in low_client:
+       writer.writerow([
+            cl.permit_id,
+            cl.payment_fee,
+            cl.phone_number,
+            cl.date,
+            cl.transaction_id
+        ]) 
+    return response
 def on_finish(error, response):
     if error is not None:
         raise error

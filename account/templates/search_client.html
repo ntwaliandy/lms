@@ -68,6 +68,7 @@
                                                     <th>Balance</th>
                                                     <th>Date Modified</th>
                                                     <th>Files</th>
+                                                    <th>Applied By</th>
                                                 </tr>
                                                 </thead>
                                               
@@ -87,8 +88,8 @@
                                                                 <td>{{cl.date_modified}}</td>
                                                                 <td>
                                                                     <a class='btn hvr-hover' href="{% url 'loan:file-details' cl.permit_id %}">Check</a>
-                                                                
                                                                 </td>
+                                                                <td>{{cl.admin}}</td>
                                                                 
                                                             </tr>
                                                             {% endfor %}
