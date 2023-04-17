@@ -64,7 +64,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {% if request.user.username == "george@accessm.com" %}
+                                        {% if request.user.username == "george@accessm.com" or request.user.username == "BRENDAR" or request.user.username == "ADMIN" %}
                                             {% for payment in admin_payments %}
                                                     <tr>
                                                         <td>
