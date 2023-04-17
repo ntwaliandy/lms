@@ -7,6 +7,7 @@ from django.contrib import messages
 from .models import Apply, GroupApply, PermitApply, Support
 from loan.models import AddPayment, Replies
 from datetime import datetime
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 
@@ -186,6 +187,9 @@ def group_apply(request):
 # permit Apply
 def permit_apply(request):
     if request.user.is_authenticated:
+        User = get_user_model()
+        admin_users = User.objects.filter(is_staff=True)
+        context = {"admin_users": admin_users}
         if request.method == 'POST':
             data = request.POST
             firstName = data['first_name']
@@ -194,7 +198,7 @@ def permit_apply(request):
             service_price = data['service']
             mess = data['message']
             date = datetime.now()
-            user_admin = request.user.username
+            user_admin = data['assigned']
 
             PermitApply.objects.create(
                 first_name = firstName,
@@ -210,7 +214,7 @@ def permit_apply(request):
 
             return redirect('home:index')
         else:
-            return render(request, 'apply-permit.html')
+            return render(request, 'apply-permit.html', context)
     else:
         return redirect('account:user_login')
 

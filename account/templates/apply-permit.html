@@ -332,6 +332,18 @@
                                             <small class="text-muted">Enter the name of the service you are applying for.</small>
                                         </div>
                                     </div>
+                                    <div class="m-b-15">
+                                        <p class="font-secondary mb-2">
+                                            A person to assing to <span class="text-danger">*</span>
+                                        </p>
+                                        <select class="custom-select" id="assigned_person" name="assigned" required="">
+                                            <option value="">Select an option</option>
+                                            {% for userAdmin in admin_users %}
+                                            <option value="{{userAdmin.username}}">{{userAdmin.username}}</option>
+                                            {% endfor %}
+                                        </select>
+
+                                    </div>
 
                                     <div class="form-group">
                                         
