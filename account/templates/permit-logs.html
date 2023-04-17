@@ -37,7 +37,7 @@
                     </div>
 
                 </div>
-                {% if request.user.username == "george@accessm.com" %}
+                {% if request.user.username == "george@accessm.com" or request.user.username == "BRENDAR" or request.user.username == "ADMIN" %}
                 <div class="container pull-up">
                     <div class="row">
 
@@ -223,7 +223,7 @@
                     </div>
                 </div>
 
-                {% elif request.user.username != "george@accessm.com" %}
+                {% elif request.user.username != "george@accessm.com" or request.user.username == "BRENDAR" or request.user.username == "ADMIN" %}
                 <div class="container pull-up">
                     <div class="row">
 
