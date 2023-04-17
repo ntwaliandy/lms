@@ -181,12 +181,13 @@
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i>Permit Dashboard</div>
                                 </div>
                             </a>
-
+                            {% if request.user.username == "ADMIN" or request.user.username == "BRENDAR" %}
                             <a href="{% url 'loan:permit-add-payment' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-account-convert"></i> Permit Payment</div>
                                 </div>
                             </a>
+                            {% endif %}
 
                             <a href="{% url 'loan:permit-payment-details' %}" class="d-block m-b-10">
                                 <div class="card">
