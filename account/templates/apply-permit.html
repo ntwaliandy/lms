@@ -339,7 +339,7 @@
                                         <select class="custom-select" id="assigned_person" name="assigned" required="">
                                             <option value="">Select an option</option>
                                             {% for userAdmin in admin_users %}
-                                            <option value="{{userAdmin.username}}">{{userAdmin.username}}</option>
+                                            <option value="{{userAdmin.username}}">{{userAdmin.first_name}} {{userAdmin.last_name}}</option>
                                             {% endfor %}
                                         </select>
 
