@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+    {% block content %}
+    
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                    <div class="d-flex">
+                                        <div class="icon">
+                                            <i class="icon mdi mdi-alert-octagram"></i>
+                                        </div>
+                                        <div class="content text-dark">
+                                            {{message}}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                                <h1>{{cl.first_name}} Permit details</h1>
+                                <p class="opacity-75">
+                                    Review permit applications
+                                </p>
+                                    
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container pull-up">
+                    <div class="row">
+
+                        <!-- Content goes here -->
+                        <div class="col-lg-8">
+                            <nav class="nav nav-pills nav-justified m-b-80">
+                            <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{cl.first_name}} Details</a>
+                            
+                        </nav>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>Completed Permits</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>FULL NAME</th>
+                                                    <th>PHONE NUMBER</th>
+                                                    <th>NUMBER PLATE</th>
+                                                    <th>FULL AMOUNT</th>
+                                                    <th>CURRENT DEPOSIT</th>
+                                                    <th>CURRENT BALANCE</th>
+                                                    <th>View Files</th>
+                                                </tr>
+                                                </thead>
+                                              
+                                                <tbody>
+                                                            {% for cl in client %}
+                                                            <tr>
+                                                                <td>
+                                                                    {{cl.boda_guy_firstName}} {{cl.boda_guy_lastName}}
+                                                                </td>
+                                                                <td>{{cl.phone_number}}</td>
+                                                                <td>{{cl.boda_numberPlate}}</td>
+                                                                <td>{{cl.final_amount}}</td>
+                                                                <td>{{cl.deposits}}</td>
+                                                                <td>{{cl.balance}}</td>
+                                                                <td>
+                                                                    <a class='btn btn-success' href="{% url 'loan:boda-detail' cl.boda_id %}">Check</a>
+                                                                
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+    {% endblock %}

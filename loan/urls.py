@@ -46,4 +46,13 @@ urlpatterns = [
     path('client-csv', views.client_csv, name='client-csv'),
     path('post-permit-edit', views.post_permit_edit, name='post-permit-edit'),
 
+    # boda bodas
+    path('add-boda', views.add_boda, name="add-boda"),
+    path('boda-dashboard', views.boda_dashboard, name="boda-dashboard"),
+    path('search-client-boda', views.search_client_boda, name='search-client-boda'),
+    path('manual-add-boda-payment', views.manual_add_boda_pay, name="add-boda-pay"),
+    path('search-boda', views.search_boda_trigger, name="search-boda"),
+    path('weekly-logs', views.weekly_logs, name="weekly-logs"),
+    path('full-boda-logs', views.full_week_logs, name="full-week-logs"),
+    re_path(r'^boda-details/(?P<bodaId>[0-9]+)/$', views.boda_details, name='boda-detail'),
 ]

@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+    {% block content %}
+    
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                    <div class="d-flex">
+                                        <div class="icon">
+                                            <i class="icon mdi mdi-alert-octagram"></i>
+                                        </div>
+                                        <div class="content text-dark">
+                                            {{message}}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                                <h1>Permit Logs</h1>
+                                <p class="opacity-75">
+                                    See the latest logs of our payments
+                                </p>
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="container pull-up">
+                    <div class="row">
+
+                        <!-- Content goes here -->
+                        <div class="col-lg-8">
+                            <nav class="nav nav-pills nav-justified m-b-80">
+                            <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Daily ({{today_no}} Trans)</a>
+                            <a class="nav-item nav-link text-white" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Weekly ({{weekly_no}} Trans)</a>
+                            <a class="nav-item nav-link text-white" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Monthly ({{monthly_no}} Trans)</a>
+                            <a class="nav-item nav-link text-white" id="contact-tab" data-toggle="tab" href="#new" role="tab" aria-controls="new" aria-selected="false">All Payments ({{total_no}} Trans)</a>
+                            
+                        </nav>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>Daily payments ({{ todayFee }}) ugx</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>FULL NAME</th>
+                                                    <th>Amount</th>
+                                                    <th>Transction ID</th>
+                                                    <th>date of pay</th>
+                                                </tr>
+                                                </thead>
+                                              
+                                                <tbody>
+                                                    {% if todayRes %}
+                                                        {% for res in todayRes %}
+                                                            <tr>
+                                                                <td>{{res.boda_firstName}} {{res.boda_lastName}}</td>
+                                                                <td>{{res.payment_fee}} Ugx</td>
+                                                                <td>{{res.transaction_id}}</td>
+                                                                <td>{{res.date}}</td>
+                                                                
+                                                            </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                            <tr>
+                                                                <td>No results Yet</td>
+                                                            </tr>
+                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                
+
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>Weekly Payments ({{weekFee}}) Ugx</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>FULL NAME</th>
+                                                        <th>Amount</th>
+                                                        <th>Transction ID</th>
+                                                        <th>date of pay</th>
+                                                    </tr>
+                                                    </thead>
+                                                  
+                                                    <tbody>
+                                                        {% if weekRes %}
+                                                        {% for res in weekRes %}
+                                                            <tr>
+                                                                <td>{{res.boda_firstName}} {{res.boda_lastName}}</td>
+                                                                <td>{{res.payment_fee}} Ugx</td>
+                                                                <td>{{res.transaction_id}}</td>
+                                                                <td>{{res.date}}</td>
+                                                                
+                                                            </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                            <tr>
+                                                                <td>No results Yet</td>
+                                                            </tr>
+                                                    {% endif %}
+                                                    </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                
+
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>Monthly Payments ({{monthFee}}) Ugx</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>FULL NAME</th>
+                                                        <th>Amount</th>
+                                                        <th>Transction ID</th>
+                                                        <th>date of pay</th>
+                                                    </tr>
+                                                    </thead>
+                                                  
+                                                    <tbody>
+                                                        {% if monthRes %}
+                                                        {% for res in monthRes %}
+                                                            <tr>
+                                                                <td>{{res.boda_firstName}} {{res.boda_lastName}}</td>
+                                                                <td>{{res.payment_fee}} Ugx</td>
+                                                                <td>{{res.transaction_id}}</td>
+                                                                <td>{{res.date}}</td>
+                                                                
+                                                            </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                            <tr>
+                                                                <td>No results Yet</td>
+                                                            </tr>
+                                                    {% endif %}
+                                                    </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+                                
+
+                                    <div class="col-md-12 m-b-30">
+                                        <h5>All Payments ({{allfeeRes}}) Ugx</h5>
+                                        <div class="table-responsive">
+                                            <table class="table align-td-middle table-card table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>FULL NAME</th>
+                                                        <th>Amount</th>
+                                                        <th>Transction ID</th>
+                                                        <th>date of pay</th>
+                                                    </tr>
+                                                    </thead>
+                                                  
+                                                    <tbody>
+                                                        {% if allPay %}
+                                                        {% for res in allPay %}
+                                                            <tr>
+                                                                <td>{{res.boda_firstName}} {{res.boda_lastName}}</td>
+                                                                <td>{{res.payment_fee}} Ugx</td>
+                                                                <td>{{res.transaction_id}}</td>
+                                                                <td>{{res.date}}</td>
+                                                                
+                                                            </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                            <tr>
+                                                                <td>No results Yet</td>
+                                                            </tr>
+                                                    {% endif %}
+                                                    </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+    {% endblock %}

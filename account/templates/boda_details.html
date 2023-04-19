@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+    {% load static %}
+
+    {% block content %}
+    <center>
+    <div>
+        <h3>Applicant Details Page</h3>
+    </div>
+        <div>
+            <label>first name:</label>
+            <h6>{{boda_obj.boda_guy_firstName}}</h6>
+
+            <label>last name:</label>
+            <h6>{{boda_obj.boda_guy_lastName}}</h6>
+
+            <label>Number Plate: </label>
+            <h6>{{boda_obj.boda_numberPlate}}</h6>
+
+            <label>National ID:</label>
+            <h6>{{boda_obj.nin_number}}</h6>
+
+            <label>Telephone:</label>
+            <h6>{{boda_obj.phone_number}}</h6>
+
+            <label>Work Stage:</label>
+            <h6>{{boda_obj.work_stage}}</h6>
+
+            <label>Picture ID:</label><br>
+            <a href='{{boda_obj.nin_picture.url}}' target='_blank'><img src="{{ boda_obj.nin_picture.url }}" width="200px" height="200px" alt="picture id"><a><br>
+            <br>
+            <br><br>
+            <h2>1st GUARANTOR DETAILS</h2>
+            <label>first guarrante full names:</label>
+            <h6>{{boda_obj.guarantor1_name}}</h6>
+
+            <label>first guarrante national ID:</label>
+            <h6>{{boda_obj.guarantor1_nin}}</h6>
+
+            <label>first guarrante telephone:</label>
+            <h6>{{boda_obj.guarantor1_number}}</h6>
+
+            <label>first guarrante ID picture:</label><br>
+            <a href='{{boda_obj.guarantor1_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor1_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
+
+            <br>
+            <br><br>
+            <h2>2nd GUARANTOR DETAILS</h2>
+            <label>Second guarrante full names:</label>
+            <h6>{{boda_obj.guarantor2_name}}</h6>
+
+            <label>Second guarrante national ID:</label>
+            <h6>{{boda_obj.guarantor2_nin}}</h6>
+
+            <label>Second guarrante telephone:</label>
+            <h6>{{boda_obj.guarantor1_number}}</h6>
+
+            <label>Second guarrante ID picture:</label><br>
+            <a href='{{boda_obj.guarantor2_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor2_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
+
+            <br>
+            <br><br>
+            <h2>3rd GUARANTOR DETAILS</h2>
+            <label>Third guarrante full names:</label>
+            <h6>{{boda_obj.guarantor3_name}}</h6>
+
+            <label>Third guarrante national ID:</label>
+            <h6>{{boda_obj.guarantor3_nin}}</h6>
+
+            <label>Third guarrante telephone:</label>
+            <h6>{{boda_obj.guarantor3_number}}</h6>
+
+            <label>Third guarrante ID picture:</label><br>
+            <a href='{{boda_obj.guarantor3_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor3_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
+        </div>
+    </center>
+
+    {% endblock %}

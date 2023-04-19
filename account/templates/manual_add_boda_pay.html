@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <h1><span class="js-greeting"></span>, {{ user }} </h1>
+                                <h6>Kindly, when triggering, don't refresh the page or do anything for like 5mins untill we get the client's feedback</h6>
+                                <p class="opacity-75">
+                                    Add Today's payment for a specific BODA <br>
+                                </p>
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container pull-up">
+
+                    <!-- // Normal content -->
+                   
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card m-b-30">
+                                    <div class="card-header">
+                                        <h5 class="m-b-0">
+                                            Manual Add Boda Weekly Payment
+                                        </h5>
+                                        <p class="m-b-0 text-muted">
+                                            Standard form
+                                        </p>
+                                    </div>
+                                    <div class="card-body ">
+                                        <form action="{% url 'loan:add-boda-pay' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+                                                <div class="form-group col-md-12" style="display: none;">
+                                                    <label for="inputPassword4">Client</label>
+                                                    <input type="text" id="manual_boda_id" class="form-control" name="boda_id" placeholder="">
+                                                    
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">client Name / Number Plate</label>
+                                                    <input type="text" class="form-control client_name" id="manual_client_name" required placeholder="">
+                                                    <div class="text-muted" id="manual_client_res"></div>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Phone Number *</label>
+                                                    <input type="text" class="form-control" name="phone_number" required placeholder="forexample:- 256775555464">
+                                                    <small class="text-muted">put the the number which the system will reduct the money</small>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">payment fee *</label>
+                                                    <input type="text" class="form-control" name="payment_fee" required placeholder="forexample:- 3000">
+                                                    <small class="text-muted">put the amount he/she is supposed to pay.</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                </div>
+
+            </section>
+
+            <script>
+                
+                $(document).on("input", ".client_name", function() {
+                    var clientName = document.getElementById("manual_client_name").value;
+                    console.log(clientName)
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'loan:search-boda' %}",
+                        data: {
+                            csrfmiddlewaretoken: "{{ csrf_token }}",
+                            "client_search": clientName
+                        },
+                        success: function (response) {
+                            console.log(response)
+                            var res = document.getElementById("manual_client_res")
+                            var permitID = document.getElementById("manual_boda_id")
+                            
+                            if (response['status'] == 'success') {
+                                var boda_id = response['data'][0]['fields']['boda_id']
+                                var first_name = response['data'][0]['fields']['boda_guy_firstName']
+                                var last_name = response['data'][0]['fields']['boda_guy_lastName']
+                                console.log(boda_id)
+                                res.innerHTML = boda_id + " " + first_name + " " + last_name
+                                permitID.setAttribute('value', boda_id)
+                            } else {
+                                res.innerHTML = response['status'] 
+                            }
+                        }
+                        
+                    })
+                })
+            </script>
+    
+    {% endblock %}

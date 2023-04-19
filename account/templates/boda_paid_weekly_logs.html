@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    <section class="admin-content">
+        <div class=" bg-dark m-b-30 bg-stars">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                        {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                        <h1>This Week Status</h1>
+                        <p class="opacity-75">
+                            All boda Boda details
+                        </p>
+                        <p class="opacity-75">
+                            You can Easily Search for a Client by entering either first name or last name or phone number or Boda Number Plate!
+                        </p>
+                        <form action="{% url 'loan:search-client-boda' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group col-md-7">
+                                <label for="inputPassword4">Search Client:</label>
+                                <input type="text" class="form-control" name="client_search" required placeholder="Search anything related to the client">
+                                <small class="text-muted">Search Clients Details</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Search Client</button>
+                            </div>
+                        </form> 
+
+                    </div>
+                    <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container pull-up">
+            <div class="row">
+
+                <!-- Content goes here -->
+                <div class="col-lg-8">
+                    <nav class="nav nav-pills nav-justified m-b-80">
+                        <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#monday" role="tab" aria-controls="home" aria-selected="true">PAID ({{len_paid}})</a>
+                        <a class="nav-item nav-link text-white" id="tue-tab" data-toggle="tab" href="#tuesday" role="tab" aria-controls="profile" aria-selected="false">NOT YET PAID ({{len_unpaid}})</a>
+
+
+
+
+
+                    </nav>
+                </div>
+                <div class="col-lg-12">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="monday" role="tabpanel" aria-labelledby="home-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Boda Boda That paid this week</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if paid %}
+                                            {% for bd in paid %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Monday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- tuesday -->
+                        <div class="tab-pane fade" id="tuesday" role="tabpanel" aria-labelledby="tue-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Boda Boda That haven't yet paid this week</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if unpaid %}
+                                            {% for bd in unpaid %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Tuesday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+        </div>
+
+    </section>
+    {% endblock %}

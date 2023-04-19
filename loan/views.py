@@ -1,4 +1,4 @@
-from contextlib import redirect_stderr
+
 from datetime import datetime, date, timedelta
 import decimal
 import uuid
@@ -9,7 +9,7 @@ from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, Support
-from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies
+from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -22,7 +22,7 @@ import africastalking
 from django.db.models import Q
 from django.core.serializers import serialize
 import csv
-
+from django.db.models import Count
 
 def dashboard(request):
     if request.user.is_superuser:
@@ -507,6 +507,10 @@ def permit_dashboard(request):
         in_process_permits_count = PermitApply.objects.filter(status='applied').count()
         done_permits_count = PermitApply.objects.filter(status='finished').count()
         all_application_count = PermitApply.objects.all().count()
+        duplicate = PermitApply.objects.values('permit_id').annotate(count=Count('permit_id')).filter(count__gt=1).values_list('permit_id', flat=True)
+        print(len(duplicate))
+        for permit_id in duplicate:
+            print(permit_id)
         context = {
             'permits': permits,
             'in_process': in_process_permits_count,
@@ -1061,3 +1065,323 @@ def on_finish(error, response):
     if error is not None:
         raise error
     print(response)
+
+
+# BODA BODA SECTION
+def add_boda(request):
+    if request.method == 'POST':
+        data = request.POST
+        boda_firstName = data.get('boda_first_name')
+        boda_lastName = data.get('boda_last_name')
+        boda_numberPlate = data.get('boda_number_plate')
+        boda_amount = data.get('boda_amount')
+        boda_weeklyPay = data.get('boda_weekly_pay')
+        boda_phone = data.get('boda_phone_number')
+        boda_nin = data.get('boda_nin_number')
+        boda_ninPic = data.get('boda_nin_picture')
+        boda_stage = data.get('boda_work_stage', 'None')
+
+        # gurantor1
+        gua1_name = data.get('gua1_name')
+        gua1_stage = data.get('gua1_stage_name')
+        gua1_phone = data.get('gua1_phone_number')
+        gua1_nin = data.get('gua1_nin_number')
+        gua1_ninPic = data.get('gua1_nin_picture')
+
+        # guarantor 2
+        gua2_name = data.get('gua2_name')
+        gua2_stage = data.get('gua2_stage_name')
+        gua2_phone = data.get('gua2_phone_number')
+        gua2_nin = data.get('gua2_nin_number')
+        gua2_ninPic = data.get('gua2_nin_picture')
+
+        # guarantor 3
+        gua3_name = data.get('gua3_name')
+        gua3_stage = data.get('gua3_stage_name')
+        gua3_phone = data.get('gua3_phone_number')
+        gua3_nin = data.get('gua3_nin_number')
+        gua3_ninPic = data.get('gua3_nin_picture')
+
+        try:
+
+
+            add_boda_guy = BodaApply.objects.create(
+                boda_guy_firstName=boda_firstName,
+                boda_guy_lastName=boda_lastName,
+                boda_numberPlate=boda_numberPlate,
+                final_amount=boda_amount,
+                weekly_pay=boda_weeklyPay,
+                phone_number=boda_phone,
+                nin_number=boda_nin,
+                nin_picture=boda_ninPic,
+                work_stage=boda_stage,
+                guarantor1_name=gua1_name,
+                guarantor1_stage_name=gua1_stage,
+                guarantor1_number=gua1_phone,
+                guarantor1_nin=gua1_nin,
+                guarantor1_nin_picture=gua1_ninPic,
+                guarantor2_name=gua2_name,
+                guarantor2_stage_name=gua2_stage,
+                guarantor2_number=gua2_phone,
+                guarantor2_nin=gua2_nin,
+                guarantor2_nin_picture=gua2_ninPic,
+                guarantor3_name=gua3_name,
+                guarantor3_stage_name=gua3_stage,
+                guarantor3_number=gua3_phone,
+                guarantor3_nin=gua3_nin,
+                guarantor3_nin_picture=gua3_ninPic,
+            )
+            messages.success(request, boda_firstName + " " + boda_lastName + " Added successfully")
+
+            return redirect('loan:add-boda')
+        except Exception as e:
+            print(str(e))
+
+            messages.success(request, "Error, Kindly Try to check all the fields well and submit again!")
+
+            return redirect('loan:add-boda')
+    else:
+
+        return render(request, "add_boda.html")
+
+
+def boda_dashboard(request):
+    if request.user.is_superuser:
+        boda_monday = BodaApply.objects.filter(day_of_the_week="Monday").all()
+        boda_tuesday = BodaApply.objects.filter(day_of_the_week="Tuesday").all()
+        boda_wednesday = BodaApply.objects.filter(day_of_the_week="Wednesday").all()
+        boda_thursday = BodaApply.objects.filter(day_of_the_week="Thursday").all()
+        boda_friday = BodaApply.objects.filter(day_of_the_week="Friday").all()
+        boda_saturday = BodaApply.objects.filter(day_of_the_week="Saturday").all()
+        boda_sunday = BodaApply.objects.filter(day_of_the_week="Sunday").all()
+
+        context = {
+            "boda_mon": reversed(boda_monday),
+            "boda_tue": reversed(boda_tuesday),
+            "boda_wed": reversed(boda_wednesday),
+            "boda_thur": reversed(boda_thursday),
+            "boda_fri": reversed(boda_friday),
+            "boda_sat": reversed(boda_saturday),
+            "boda_sun": reversed(boda_sunday),
+            "mon_len": len(boda_monday),
+            "tue_len": len(boda_tuesday),
+            "wed_len": len(boda_wednesday),
+            "thur_len": len(boda_thursday),
+            "fri_len": len(boda_friday),
+            "sat_len": len(boda_saturday),
+            "sun_len": len(boda_sunday)
+        }
+
+        return render(request, "boda_dashboard.html", context)
+    else:
+        return redirect('account:admin-login')
+        
+#  search client boda
+def search_client_boda(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            data = request.POST
+            search_entry = data['client_search']
+            if BodaApply.objects.filter(boda_guy_firstName=search_entry).first():
+                client = BodaApply.objects.filter(boda_guy_firstName=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return render(request, "search_client_boda.html", context)
+            elif BodaApply.objects.filter(boda_guy_lastName=search_entry).first():
+                client = BodaApply.objects.filter(boda_guy_lastName=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return render(request, "search_client_boda.html", context)
+            elif BodaApply.objects.filter(phone_number=search_entry).first():
+                client = BodaApply.objects.filter(phone_number=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return render(request, "search_client_boda.html", context)
+            elif BodaApply.objects.filter(boda_numberPlate=search_entry).first():
+                client = BodaApply.objects.filter(boda_numberPlate=search_entry).all()
+                context = {
+                    "client": client
+                }
+                return render(request, "search_client_boda.html", context)
+            else:
+                messages.info(request, "No such User")
+                return redirect('loan:boda-dashboard')
+        else:
+            return redirect('loan:boda-dashboard')
+
+    else:
+        return redirect('account:user_login')
+
+# manual add boda boda payment
+def manual_add_boda_pay(request):
+    if request.user.is_superuser:
+        if request.method == "POST":
+            data = request.POST
+            bodaId = data.get('boda_id', 'none')
+            paymentFee = data['payment_fee']
+            phoneNumber = data['phone_number']
+            status = "paid"
+
+            print(bodaId)
+            reference = uuid.uuid4()
+            transaction_id = "manual pay"
+            boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
+            BodaWeeklyPay.objects.create(
+                boda_id = bodaId,
+                boda_firstName = boda_obj.boda_guy_firstName,
+                boda_lastName = boda_obj.boda_guy_lastName,
+                payment_fee = paymentFee,
+                phone_number = phoneNumber,
+                reference = reference,
+                transaction_id = transaction_id,
+                status = status,
+            )
+
+            single_boda = boda_obj
+
+            latest_deposit = single_boda.deposits + int(paymentFee)
+            new_balance = single_boda.final_amount - latest_deposit
+
+            new_phoneNumber = "+" + phoneNumber
+            full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
+            BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
+            # sms
+            username = "EREMIT"
+            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
+            africastalking.initialize(username, api_key)
+            sms = africastalking.SMS
+
+            sms.send("hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at trendz Movers and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            messages.info(request, "user with BODA ID " + bodaId + " paid " + str(paymentFee) + " successfully!")
+            return redirect('loan:boda-dashboard')
+        else:
+
+            return render(request, "manual_add_boda_pay.html")
+
+    else:
+        return redirect('account:user_login')
+
+# search client-boda for triggering
+def search_boda_trigger(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            data = request.POST
+            search_entry = data.get('client_search', False)
+            print(search_entry)
+            if BodaApply.objects.filter(boda_guy_firstName=search_entry).first():
+                client = BodaApply.objects.filter(boda_guy_firstName=search_entry).all()
+
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse ({"status": "success", "data": data})
+            elif BodaApply.objects.filter(boda_guy_lastName=search_entry).first():
+                client = BodaApply.objects.filter(boda_guy_lastName=search_entry).all()
+
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse({"status": "success", "data": data})
+            elif BodaApply.objects.filter(boda_numberPlate=search_entry).first():
+                client = BodaApply.objects.filter(boda_numberPlate=search_entry).all()
+
+                serialized_data = serialize("json", client)
+                data = json.loads(serialized_data)
+                return JsonResponse({"status": "success", "data": data})
+            else:
+                return JsonResponse({"status": "failed"})
+        else:
+            return redirect('loan:dashboard')
+
+    else:
+        return redirect('account:user_login')
+
+
+# weekly logs
+def weekly_logs(request):
+    if request.user.is_superuser:
+        today = datetime.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week).all()
+        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week)).all()
+        context = {
+            "paid": reversed(weekly_paid_bodas),
+            "unpaid": reversed(weekly_unpaid_bodas),
+            "len_paid": len(weekly_paid_bodas),
+            "len_unpaid": len(weekly_unpaid_bodas)
+        }
+        return render(request, "boda_paid_weekly_logs.html", context)
+    
+    else:
+        return redirect('account:user_login')
+
+
+def full_week_logs(request):
+    if request.user.is_superuser:
+        today_res = BodaWeeklyPay.objects.filter(date__date=date.today()).all()
+        today_no_tr = BodaWeeklyPay.objects.filter(date__date=date.today()).all().count()
+        today_fee = BodaWeeklyPay.objects.filter(date__date=date.today()).aggregate(Sum('payment_fee'))
+        today_fee_res = today_fee['payment_fee__sum']
+
+        # weekly results
+        current_date = date.today()
+        today_date = current_date + timedelta(days=1)
+        past_days = current_date - timedelta(days=7)
+        week_res = BodaWeeklyPay.objects.filter(date__range=(past_days, today_date)).all()
+        week_no_tr = BodaWeeklyPay.objects.filter(date__range=(past_days, today_date)).all().count()
+        week_fee = BodaWeeklyPay.objects.filter(date__range=(past_days, today_date)).aggregate(Sum('payment_fee'))
+        week_fee_res = week_fee['payment_fee__sum']
+
+        # monthly results
+        week_current_date = date.today()
+        week_today_date = week_current_date + timedelta(days=1)
+        past_weeks = week_current_date - timedelta(days=31)
+        month_res = BodaWeeklyPay.objects.filter(date__range=(past_weeks, week_today_date)).all()
+        month_no_tr = BodaWeeklyPay.objects.filter(date__range=(past_weeks, week_today_date)).all().count()
+        month_fee = BodaWeeklyPay.objects.filter(date__range=(past_weeks, week_today_date)).aggregate(Sum('payment_fee'))
+        month_fee_res = month_fee['payment_fee__sum']
+
+
+        # All Payments
+        allPay = BodaWeeklyPay.objects.all()
+        total_no_tr = BodaWeeklyPay.objects.all().count()
+        allPayFee = BodaWeeklyPay.objects.aggregate(Sum('payment_fee'))
+        allPayFee_res = allPayFee['payment_fee__sum']
+
+
+
+
+
+
+        print(date.today())
+        print(datetime.now())
+        context = {
+            'todayRes': reversed(today_res),
+            'todayFee': today_fee_res,
+            'weekRes': reversed(week_res),
+            'weekFee': week_fee_res,
+            'monthRes': reversed(month_res),
+            'monthFee': month_fee_res,
+            'allPay': reversed(allPay),
+            'allfeeRes': allPayFee_res,
+            'today_no': today_no_tr,
+            'weekly_no': week_no_tr,
+            'monthly_no': month_no_tr,
+            'total_no': total_no_tr,
+        }
+        return render(request, "all_boda_logs.html", context)
+
+    else:
+        return redirect('account:user_login')
+
+
+def boda_details(request, bodaId):
+    boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
+
+    context = {
+        "boda_obj": boda_obj
+    }
+
+    return render(request, "boda_details.html", context)

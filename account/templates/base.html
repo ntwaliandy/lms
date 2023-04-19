@@ -237,11 +237,11 @@
 
                     <div class="dropdown-menu notification-container dropdown-menu-right">
                         <div class="d-flex p-all-15 bg-white justify-content-between border-bottom ">
-                            <span class="h5 m-0">Loan Categories</span>
+                            <span class="h5 m-0">Boda Boda Categories</span>
                         </div>
                         <div class="notification-events bg-gray-300">
                             <div class="text-overline m-b-5">All categories</div>
-                            <a href="{% url 'loan:dashboard' %}" class="d-block m-b-10">
+                            <!-- <a href="{% url 'loan:dashboard' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Dashboard</div>
                                 </div>
@@ -310,12 +310,41 @@
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-airballoon "></i> Export</div>
                                 </div>
+                            </a> -->
+
+                            <!-- boda dashboard -->
+                            <a href="{% url 'loan:boda-dashboard' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Boda Dashboard</div>
+                                </div>
+                            </a>
+                            <!-- add a boda -->
+                            <a href="{% url 'loan:add-boda' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Register a Boda</div>
+                                </div>
                             </a>
 
+                            <!-- add boda payment -->
+                            <a href="{% url 'loan:add-boda-pay' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Add Boda Weekly Pay</div>
+                                </div>
+                            </a>
 
-                            
+                            <!-- this week stats -->
+                            <a href="{% url 'loan:weekly-logs' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> This week Stats</div>
+                                </div>
+                            </a>
 
-
+                            <!-- full logs -->
+                            <a href="{% url 'loan:full-week-logs' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Daily, Weekly, Monthly Logs</div>
+                                </div>
+                            </a>
                         </div>
 
                     </div>

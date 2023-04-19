@@ -80,7 +80,7 @@ class GroupApply(models.Model):
 
 
 class PermitApply(models.Model):
-    permit_id = models.CharField(default=random_string, max_length=200)
+    permit_id = models.CharField(default=random_string, max_length=200, unique=True)
     first_name = models.CharField(max_length=200, default='null')
     last_name = models.CharField(max_length=200, default='null')
     service = models.CharField(max_length=200, default='null')

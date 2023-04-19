@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    <section class="admin-content">
+        <div class=" bg-dark m-b-30 bg-stars">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                        {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                        <h1>Boda Boda Dashboard</h1>
+                        <p class="opacity-75">
+                            All boda Boda details
+                        </p>
+                        <p class="opacity-75">
+                            You can Easily Search for a Client by entering either first name or last name or phone number or Boda Number Plate!
+                        </p>
+                        <form action="{% url 'loan:search-client-boda' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group col-md-7">
+                                <label for="inputPassword4">Search Client:</label>
+                                <input type="text" class="form-control" name="client_search" required placeholder="Search anything related to the client">
+                                <small class="text-muted">Search Clients Details</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Search Client</button>
+                            </div>
+                        </form> 
+
+                    </div>
+                    <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container pull-up">
+            <div class="row">
+
+                <!-- Content goes here -->
+                <div class="col-lg-12">
+                    <nav class="nav nav-pills nav-justified m-b-80">
+                        <a class="nav-item nav-link text-white active" id="home-tab" data-toggle="tab" href="#monday" role="tab" aria-controls="home" aria-selected="true">Monday({{mon_len}})</a>
+                        <a class="nav-item nav-link text-white" id="tue-tab" data-toggle="tab" href="#tuesday" role="tab" aria-controls="profile" aria-selected="false">Tuesday({{tue_len}})</a>
+                        <a class="nav-item nav-link text-white" id="wed-tab" data-toggle="tab" href="#wed" role="tab" aria-controls="profile" aria-selected="false">Wednesday({{wed_len}})</a>
+                        <a class="nav-item nav-link text-white" id="thur-tab" data-toggle="tab" href="#thur" role="tab" aria-controls="profile" aria-selected="false">Thursday({{thur_len}})</a>
+                        <a class="nav-item nav-link text-white" id="fri-tab" data-toggle="tab" href="#fri" role="tab" aria-controls="profile" aria-selected="false">Friday({{fri_len}})</a>
+                        <a class="nav-item nav-link text-white" id="sat-tab" data-toggle="tab" href="#sat" role="tab" aria-controls="profile" aria-selected="false">Saturday({{sat_len}})</a>
+                        <a class="nav-item nav-link text-white" id="sun-tab" data-toggle="tab" href="#sun" role="tab" aria-controls="profile" aria-selected="false">Sunday({{sun_len}})</a>
+
+
+
+
+
+                    </nav>
+                </div>
+                <div class="col-lg-12">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="monday" role="tabpanel" aria-labelledby="home-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Monday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if boda_mon %}
+                                            {% for bd in boda_mon %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Monday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- tuesday -->
+                        <div class="tab-pane fade" id="tuesday" role="tabpanel" aria-labelledby="tue-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Tuesday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_tue %}
+                                            {% for bd in boda_tue %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Tuesday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- wednesday -->
+                        <div class="tab-pane fade" id="wed" role="tabpanel" aria-labelledby="wed-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Wednesday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_wed %}
+                                            {% for bd in boda_wed %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Wednesday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Thursday -->
+                        <div class="tab-pane fade" id="thur" role="tabpanel" aria-labelledby="thur-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Thursday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_thur %}
+                                            {% for bd in boda_thur %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Thursday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- friday -->
+                        <div class="tab-pane fade" id="fri" role="tabpanel" aria-labelledby="fri-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Friday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_fri %}
+                                            {% for bd in boda_fri %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Friday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- saturday -->
+                        <div class="tab-pane fade" id="sat" role="tabpanel" aria-labelledby="sat-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Saturday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_sat %}
+                                            {% for bd in boda_sat %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Saturday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- sunday -->
+                        <div class="tab-pane fade" id="sun" role="tabpanel" aria-labelledby="sun-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Sunday Boda Boda Details</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>FULL NAME</th>
+                                            <th>FULL AMOUNT</th>
+                                            <th>DEPOSITS MADE</th>
+                                            <th>BALANCE LEFT</th>
+                                            <th>CHECK MORE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if boda_sun %}
+                                            {% for bd in boda_sun %}
+                                                <tr>
+                                                    <td>{{bd.boda_guy_firstName}} {{bd.boda_guy_lastName}}</td>
+                                                    <td>{{bd.final_amount}}</td>
+                                                    <td>{{bd.deposits}}</td>
+                                                    <td>{{bd.balance}}</td>
+                                                    <td>VIEW</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No Sunday record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+        </div>
+
+    </section>
+    {% endblock %}
