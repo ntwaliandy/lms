@@ -24,9 +24,10 @@
 
             <label>Work Stage:</label>
             <h6>{{boda_obj.work_stage}}</h6>
-
+            {% if boda_obj.nin_picture.url %}
             <label>Picture ID:</label><br>
             <a href='{{boda_obj.nin_picture.url}}' target='_blank'><img src="{{ boda_obj.nin_picture.url }}" width="200px" height="200px" alt="picture id"><a><br>
+            {% endif %}
             <br>
             <br><br>
             <h2>1st GUARANTOR DETAILS</h2>
@@ -38,10 +39,10 @@
 
             <label>first guarrante telephone:</label>
             <h6>{{boda_obj.guarantor1_number}}</h6>
-
+            {% if boda_obj.guarantor1_nin_picture.url %}
             <label>first guarrante ID picture:</label><br>
             <a href='{{boda_obj.guarantor1_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor1_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
-
+            {% endif %}
             <br>
             <br><br>
             <h2>2nd GUARANTOR DETAILS</h2>
@@ -53,10 +54,10 @@
 
             <label>Second guarrante telephone:</label>
             <h6>{{boda_obj.guarantor1_number}}</h6>
-
+            {% if boda_obj.guarantor2_nin_picture.url %}
             <label>Second guarrante ID picture:</label><br>
             <a href='{{boda_obj.guarantor2_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor2_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
-
+            {% endif %}
             <br>
             <br><br>
             <h2>3rd GUARANTOR DETAILS</h2>
@@ -68,9 +69,10 @@
 
             <label>Third guarrante telephone:</label>
             <h6>{{boda_obj.guarantor3_number}}</h6>
-
+            {% if boda_obj.guarantor3_nin_picture.url %}
             <label>Third guarrante ID picture:</label><br>
             <a href='{{boda_obj.guarantor3_nin_picture.url}}' target='_blank'><img src="{{ boda_obj.guarantor3_nin_picture.url }}" width="200px" height="200px" alt="picture id"><br>
+            {% endif %}    
         </div>
     </center>
 

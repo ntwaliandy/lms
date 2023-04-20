@@ -1078,7 +1078,7 @@ def add_boda(request):
         boda_weeklyPay = data.get('boda_weekly_pay')
         boda_phone = data.get('boda_phone_number')
         boda_nin = data.get('boda_nin_number')
-        boda_ninPic = data.get('boda_nin_picture')
+        boda_ninPic = request.FILES.get('boda_nin_picture')
         boda_stage = data.get('boda_work_stage', 'None')
 
         # gurantor1
@@ -1086,21 +1086,23 @@ def add_boda(request):
         gua1_stage = data.get('gua1_stage_name')
         gua1_phone = data.get('gua1_phone_number')
         gua1_nin = data.get('gua1_nin_number')
-        gua1_ninPic = data.get('gua1_nin_picture')
+        gua1_ninPic = request.FILES.get('gua1_nin_picture')
 
         # guarantor 2
         gua2_name = data.get('gua2_name')
         gua2_stage = data.get('gua2_stage_name')
         gua2_phone = data.get('gua2_phone_number')
         gua2_nin = data.get('gua2_nin_number')
-        gua2_ninPic = data.get('gua2_nin_picture')
+        gua2_ninPic = request.FILES.get('gua2_nin_picture')
 
         # guarantor 3
         gua3_name = data.get('gua3_name')
         gua3_stage = data.get('gua3_stage_name')
         gua3_phone = data.get('gua3_phone_number')
         gua3_nin = data.get('gua3_nin_number')
-        gua3_ninPic = data.get('gua3_nin_picture')
+        gua3_ninPic = request.FILES.get('gua3_nin_picture')
+
+        print(gua3_ninPic)
 
         try:
 
