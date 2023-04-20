@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timedelta
 # Create your models here.
 import random
 
@@ -101,7 +101,8 @@ class BodaApply(models.Model):
 
     def save(self, *args, **kwargs):
         # Get the day of the week from the datetime field
-        day_of_week = self.date_of_application.strftime('%A')
+        paying_day = self.date_of_application + timedelta(days=1)
+        day_of_week = paying_day.strftime('%A')
         # Save the day of the week to the second field
         self.day_of_the_week= day_of_week
         # always saving the balance
