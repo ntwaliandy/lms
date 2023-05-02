@@ -1256,8 +1256,8 @@ def manual_add_boda_pay(request):
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
-            sms.send("hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at trendz Movers and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
-            messages.info(request, "user with BODA ID " + bodaId + " paid " + str(paymentFee) + " successfully!")
+            sms.send("hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:boda-dashboard')
         else:
 

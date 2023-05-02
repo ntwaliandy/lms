@@ -227,8 +227,8 @@
                 </div>
             </li>
 
-
-            <!-- loan category -->
+            {% if request.user.username == "BRENDAR" %}
+            <!-- BODA category -->
             <li class="nav-item">
                 <div class="dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-format-list-bulleted"></i>
@@ -350,6 +350,7 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
 
             <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle" href="#"   role="button" data-toggle="dropdown"
