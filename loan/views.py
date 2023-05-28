@@ -772,8 +772,13 @@ def files_upload(request):
 def file_details(request, permitId):
     if request.user.is_superuser:
         individual_files = FileUpload.objects.filter(permit_id=permitId).all()
+        permit_payments = AddPermitPayment.objects.filter(permit_id=permitId).all()
+        permit_obj = PermitApply.objects.filter(permit_id=permitId).first()
+
         context = {
+            'permitObj': permit_obj,
             'files': individual_files,
+            'permit_payments': permit_payments
         }
 
         return render(request, 'individual_files.html', context)
