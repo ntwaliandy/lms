@@ -77,5 +77,43 @@
             {% endif %}    
         </div>
     </center>
+    <div class="container pull-up">
+            <div class="col-lg-12 p-t-90 p-b-20">
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="monday" role="tabpanel" aria-labelledby="home-tab">
+                    
+                        <div class="col-md-12 m-b-30">
+                            <h5>{{boda_obj.boda_guy_firstName}} {{boda_obj.boda_guy_lastName}} Weekly Logs</h5>
+                            <div class="table-responsive">
+                                <table class="table align-td-middle table-card table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>PAYMENT FEE</th>
+                                        <th>DATE OF PAYMENT</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if bodaPaymentObj %}
+                                        {% for bd in bodaPaymentObj %}
+                                            <tr>
+                                                <td>{{bd.payment_fee}}</td>
+                                                <td>{{bd.date}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td>No payment record yet!</td>
+                                        </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
 
     {% endblock %}

@@ -1381,9 +1381,11 @@ def full_week_logs(request):
 
 def boda_details(request, bodaId):
     boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
-
+    boda_payments = BodaWeeklyPay.objects.filter(boda_id=bodaId)
+    print(len(boda_payments))
     context = {
-        "boda_obj": boda_obj
+        "boda_obj": boda_obj,
+        "bodaPaymentObj": boda_payments
     }
 
     return render(request, "boda_details.html", context)
