@@ -1306,8 +1306,8 @@ def weekly_logs(request):
         today = datetime.today()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week).all()
-        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week)).all()
+        weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week).order_by('-date_of_application').all()
+        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week)).order_by('-date_of_application').all()
         context = {
             "paid": reversed(weekly_paid_bodas),
             "unpaid": reversed(weekly_unpaid_bodas),
