@@ -290,6 +290,12 @@ def sms(request):
             
             print("Received Callback Data:", callback_data)
 
+            custom_params = callback_data.getlist('parameters[]')
+            custom_params_dict = dict(item.split('=') for item in custom_params)
+            full_name = custom_params_dict.get('full_name')
+
+            print(":: full name ::", full_name)
+
             return JsonResponse({'status': 'success'})
         
         except Exception as e:
