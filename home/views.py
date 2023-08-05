@@ -9,6 +9,8 @@ from loan.models import AddPayment, Replies
 from datetime import datetime
 from django.contrib.auth import get_user_model
 import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 # Create your views here.
 
 def index(request):
@@ -280,7 +282,18 @@ def about(request):
     return render(request, 'about.html')
 
 
-
+@csrf_exempt
 def sms(request):
-    print(":: sms callbackurl ::", request)
-    return HttpResponse("Call Back Url")
+    if request.method == 'GET':
+        try:
+            callback_data = request.GET
+            
+            print("Received Callback Data:", callback_data)
+
+            return JsonResponse({'status': 'success'})
+        
+        except Exception as e:
+            print("Error processing callback:", e)
+            return JsonResponse({'status': 'error'})
+    
+    return JsonResponse({'status': 'method not allowed'}, status=405)
