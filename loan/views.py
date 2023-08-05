@@ -642,7 +642,11 @@ def manual_add_payment(request):
             if new_balance <= 0:
                 PermitApply.objects.filter(permit_id=permitId).update(status="finished")
 
-            sms.send("hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            sms.send(
+                "hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber],
+                reference,
+                callback=on_finish
+            )
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:permit-dashboard')
         else:
@@ -1261,7 +1265,16 @@ def manual_add_boda_pay(request):
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
-            sms.send("hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            custom_params = {
+                "id": bodaId,
+                "reference": reference,
+            }
+            sms.send(
+                "hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber],
+                reference,
+                callback=on_finish,
+                
+            )
             messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:boda-dashboard')
         else:

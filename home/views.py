@@ -297,7 +297,7 @@ def sms(request):
             
             new_phoneNumber = ''.join(filter(str.isdigit, phone_number))
             network_status = ""
-            if network_code == 64110:
+            if int(network_code) == 64110:
                 network_status = "MTN UGANDA"
             else:
                 network_status = "AIRTEL UGANDA"
