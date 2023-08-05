@@ -284,9 +284,9 @@ def about(request):
 
 @csrf_exempt
 def sms(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         try:
-            callback_data = request.GET
+            callback_data = request.POST
             
             print("Received Callback Data:", callback_data)
 
