@@ -11,5 +11,6 @@ urlpatterns = [
     path('my-loans', views.my_loans, name='my-loans'),
     path('my-payments', views.my_payments, name='my-payments'),
     path('support', views.support, name='support'),
-    path('about', views.about, name='about')
+    path('about', views.about, name='about'),
+    path('sms', views.sms, name="sms")
 ]

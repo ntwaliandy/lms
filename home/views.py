@@ -2,13 +2,13 @@ import http.client
 import json
 from random import randint
 import uuid
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import messages
 from .models import Apply, GroupApply, PermitApply, Support
 from loan.models import AddPayment, Replies
 from datetime import datetime
 from django.contrib.auth import get_user_model
-
+import requests
 # Create your views here.
 
 def index(request):
@@ -279,3 +279,8 @@ def support(request):
 def about(request):
     return render(request, 'about.html')
 
+
+
+def sms(request):
+    print(":: sms callbackurl ::", request)
+    return HttpResponse("Call Back Url")
