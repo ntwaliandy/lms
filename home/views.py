@@ -4,8 +4,8 @@ from random import randint
 import uuid
 from django.shortcuts import redirect, render, HttpResponse
 from django.contrib import messages
-from .models import Apply, GroupApply, PermitApply, Support
-from loan.models import AddPayment, Replies
+from .models import Apply, GroupApply, PermitApply, SmsCallBack, Support
+from loan.models import AddPayment, BodaWeeklyPay, Replies
 from datetime import datetime
 from django.contrib.auth import get_user_model
 import requests
@@ -294,10 +294,30 @@ def sms(request):
             message_id = callback_data.get('id')
             status = callback_data.get('status')
             network_code = callback_data.get('networkCode')
+            
+            new_phoneNumber = ''.join(filter(str.isdigit, phone_number))
+            network_status = ""
+            if network_code == 64110:
+                network_status = "MTN UGANDA"
+            else:
+                network_status = "AIRTEL UGANDA"
 
-            print(phone_number)
-            print(message_id)
-            print(network_code)
+            get_boda_details = BodaWeeklyPay.objects.filter(phone_number=new_phoneNumber).first()
+            
+            if get_boda_details:
+                first_name = get_boda_details.boda_firstName
+                last_name = get_boda_details.boda_lastName
+                amount = get_boda_details.payment_fee
+
+                SmsCallBack.objects.create(
+                    first_name = first_name,
+                    last_name = last_name,
+                    phone_number = new_phoneNumber,
+                    amount = amount,
+                    network = network_status,
+                    status = status
+                )
+            
             return JsonResponse({'status': 'success'})
         
         except Exception as e:
