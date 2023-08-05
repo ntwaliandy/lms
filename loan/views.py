@@ -613,7 +613,7 @@ def manual_add_payment(request):
                 messages.info(request, "Try writing the user correctly")
                 return render(request, 'add_permit_payment.html', context)
 
-            AddPermitPayment.objects.create(
+            create_payment = AddPermitPayment.objects.create(
                 permit_id = permitId,
                 payment_fee = paymentFee,
                 phone_number = phoneNumber,
@@ -641,12 +641,20 @@ def manual_add_payment(request):
 
             if new_balance <= 0:
                 PermitApply.objects.filter(permit_id=permitId).update(status="finished")
-
-            sms.send(
-                "hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber],
-                reference,
-                callback=on_finish
+            print("sending")
+            response = sms.send(
+                "hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!",
+                [new_phoneNumber]
             )
+
+            if response:
+                print(":: response ::", response)
+                id = response['SMSMessageData']['Recipients'][0]['messageId']
+                print(":: message ID ::", id)
+
+                create_payment.reference = id
+                create_payment.save()
+
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:permit-dashboard')
         else:
@@ -719,7 +727,10 @@ def permit_pay_details(request, ref):
             if new_balance <= 0:
                 PermitApply.objects.filter(permit_id=permitId).update(status="finished")
 
-            sms.send("hey " + full_name + ", you have successfully paid " + str(fee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
+            sms.send(
+                "hey " + full_name + ", you have successfully paid " + str(fee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber],
+                callback=on_finish
+            )
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(fee) + " successfully!")
             return redirect('loan:permit-payment-details')
         elif result == 'SUCCESSFUL' and statuss == 'paid':
@@ -1240,7 +1251,7 @@ def manual_add_boda_pay(request):
             reference = uuid.uuid4()
             transaction_id = "manual pay"
             boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
-            BodaWeeklyPay.objects.create(
+            create_payment = BodaWeeklyPay.objects.create(
                 boda_id = bodaId,
                 boda_firstName = boda_obj.boda_guy_firstName,
                 boda_lastName = boda_obj.boda_guy_lastName,
@@ -1264,17 +1275,19 @@ def manual_add_boda_pay(request):
             api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
-
-            custom_params = {
-                "id": bodaId,
-                "reference": reference,
-            }
-            sms.send(
-                "hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber],
-                reference,
-                callback=on_finish,
-                
+            response = sms.send(
+                "hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!",
+                [new_phoneNumber]
             )
+
+            if response:
+                print(":: response ::", response)
+                id = response['SMSMessageData']['Recipients'][0]['messageId']
+                print(":: message ID ::", id)
+
+                create_payment.reference = id
+                create_payment.save()
+                
             messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:boda-dashboard')
         else:

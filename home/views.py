@@ -295,14 +295,13 @@ def sms(request):
             status = callback_data.get('status')
             network_code = callback_data.get('networkCode')
             
-            new_phoneNumber = ''.join(filter(str.isdigit, phone_number))
             network_status = ""
             if int(network_code) == 64110:
                 network_status = "MTN UGANDA"
             else:
                 network_status = "AIRTEL UGANDA"
 
-            get_boda_details = BodaWeeklyPay.objects.filter(phone_number=new_phoneNumber).first()
+            get_boda_details = BodaWeeklyPay.objects.filter(reference=message_id).first()
             
             if get_boda_details:
                 first_name = get_boda_details.boda_firstName
@@ -312,7 +311,7 @@ def sms(request):
                 SmsCallBack.objects.create(
                     first_name = first_name,
                     last_name = last_name,
-                    phone_number = new_phoneNumber,
+                    phone_number = phone_number,
                     amount = amount,
                     network = network_status,
                     status = status
