@@ -642,17 +642,7 @@ def manual_add_payment(request):
             if new_balance <= 0:
                 PermitApply.objects.filter(permit_id=permitId).update(status="finished")
 
-            custom_params = {
-                "full name": full_name,
-                "amount": paymentFee,
-                "new_balance": new_balance
-            }
-            sms.send(
-                "hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], 
-                callback=on_finish,
-                enqueue=True,
-                parameters=custom_params
-            )
+            sms.send("hey " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your " + service + " permit service and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!", [new_phoneNumber], callback=on_finish)
             messages.info(request, "user with Permit ID " + permitId + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:permit-dashboard')
         else:

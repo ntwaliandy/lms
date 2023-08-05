@@ -289,13 +289,15 @@ def sms(request):
             callback_data = request.POST
             
             print("Received Callback Data:", callback_data)
+            phone_number = callback_data.get('phoneNumber')
+            retry_count = callback_data.get('retryCount')
+            message_id = callback_data.get('id')
+            status = callback_data.get('status')
+            network_code = callback_data.get('networkCode')
 
-            custom_params = callback_data.getlist('parameters[]')
-            custom_params_dict = dict(item.split('=') for item in custom_params)
-            full_name = custom_params_dict.get('full_name')
-
-            print(":: full name ::", full_name)
-
+            print(phone_number)
+            print(message_id)
+            print(network_code)
             return JsonResponse({'status': 'success'})
         
         except Exception as e:
