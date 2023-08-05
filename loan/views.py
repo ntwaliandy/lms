@@ -624,7 +624,7 @@ def manual_add_payment(request):
             )
 
             username = "EREMIT"
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
+            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -698,7 +698,7 @@ def permit_pay_details(request, ref):
 
         elif result == 'SUCCESSFUL' and statuss == 'pending':
             username = "EREMIT"
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
+            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -1257,7 +1257,7 @@ def manual_add_boda_pay(request):
             BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
             # sms
             username = "EREMIT"
-            api_key = "ecc0e2d4f576d07a7fe6b2268b1f0937d2c9a0a1949ed60036d2a5ca6c44826d"
+            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
