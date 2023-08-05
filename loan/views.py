@@ -8,7 +8,7 @@ from random import randint
 from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from home.models import Apply, GroupApply, PermitApply, Support
+from home.models import Apply, GroupApply, PermitApply, SmsCallBack, Support
 from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
 from django.db.models import Sum
 from django.contrib import messages
@@ -1420,3 +1420,11 @@ def boda_details(request, bodaId):
     }
 
     return render(request, "boda_details.html", context)
+
+def sms_statuses(request):
+    get_insights = reversed(SmsCallBack.objects.all())
+
+    context = {
+        "SMSz": get_insights
+    }
+    return render(request, "sms.html", context)
