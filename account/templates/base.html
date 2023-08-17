@@ -227,7 +227,7 @@
                 </div>
             </li>
 
-            {% if request.user.username == "BRENDAR" %}
+            
             <!-- BODA category -->
             <li class="nav-item">
                 <div class="dropdown">
@@ -325,12 +325,14 @@
                                 </div>
                             </a>
 
+                            {% if request.user.username == "BRENDAR" %}
                             <!-- add boda payment -->
                             <a href="{% url 'loan:add-boda-pay' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Add Boda Weekly Pay</div>
                                 </div>
                             </a>
+                            {% endif %}
 
                             <!-- this week stats -->
                             <a href="{% url 'loan:weekly-logs' %}" class="d-block m-b-10">
@@ -356,7 +358,6 @@
                     </div>
                 </div>
             </li>
-            {% endif %}
 
             <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle" href="#"   role="button" data-toggle="dropdown"
