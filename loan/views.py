@@ -1124,6 +1124,10 @@ def add_boda(request):
 
         print(gua3_ninPic)
 
+        date_of_application = data.get("date_of_application", None)
+        parsedDate = datetime.now()
+        if date_of_application and date_of_application != "":
+            parsedDate = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
         try:
 
 
@@ -1152,6 +1156,7 @@ def add_boda(request):
                 guarantor3_number=gua3_phone,
                 guarantor3_nin=gua3_nin,
                 guarantor3_nin_picture=gua3_ninPic,
+                date_of_application=parsedDate
             )
             messages.success(request, boda_firstName + " " + boda_lastName + " Added successfully")
 
