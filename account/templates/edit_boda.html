@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <section class="admin-content">
+                <div class=" bg-dark m-b-30 bg-stars">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                                {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <h1><span class="js-greeting"></span>, {{ user }} </h1>
+                                <p class="opacity-75">
+                                    EDIT BODA <br>
+                                </p>
+
+                            </div>
+                            <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container pull-up">
+
+                    <!-- // Normal content -->
+                   
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card m-b-30">
+                                    <div class="card-header">
+                                        <h5 class="m-b-0">
+                                            Edit Boda Details Page
+                                        </h5>
+                                        <p class="m-b-0 text-muted">
+                                            Standard form
+                                        </p>
+                                    </div>
+                                    <div class="card-body ">
+                                        <form action="{% url 'loan:edit-boda' boda.boda_id %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-row">
+
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">client Name</label>
+                                                    <input type="text" class="form-control client_name" value="{{boda.boda_guy_firstName}} {{boda.boda_guy_lastName}}" id="manual_client_name" disabled>
+                                                    <div class="text-muted" id="manual_client_res"></div>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Boda Date of application *</label>
+                                                    <input type="text" class="form-control date_of_application" name="date_of_application" value="{{boda.date_of_application}}">
+                                                    <small class="text-muted">put the date of application</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                </div>
+
+            </section>
+
+            <script>
+                
+                document.addEventListener("DOMContentLoaded", function () {
+                    flatpickr(".date_of_application", {
+                        enableTime: true,
+                        dateFormat: "M. j, Y, h:i K",
+                    });
+                });
+            </script>
+    
+    {% endblock %}

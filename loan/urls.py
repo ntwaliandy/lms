@@ -55,5 +55,6 @@ urlpatterns = [
     path('weekly-logs', views.weekly_logs, name="weekly-logs"),
     path('full-boda-logs', views.full_week_logs, name="full-week-logs"),
     re_path(r'^boda-details/(?P<bodaId>[0-9]+)/$', views.boda_details, name='boda-detail'),
-    path('sms-status', views.sms_statuses, name="sms-statuses")
+    path('sms-status', views.sms_statuses, name="sms-statuses"),
+    re_path(r'^edit-boda/(?P<bodaId>[0-9]+)/$', views.edit_boda, name="edit-boda")
 ]

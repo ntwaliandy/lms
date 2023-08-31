@@ -1428,3 +1428,31 @@ def sms_statuses(request):
         "SMSz": get_insights
     }
     return render(request, "sms.html", context)
+
+
+def edit_boda(request, bodaId):
+    boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
+    context = {}
+    if boda_obj:
+        context.update({
+            "boda": boda_obj
+        })
+
+    if request.method == "POST":
+        data = request.POST
+        date_of_application = data.get("date_of_application", None)
+
+        if date_of_application:
+            parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
+            boda_obj.date_of_application = parsed_date
+            boda_obj.save()
+
+            messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s date of pay has been updated!!"))
+            return redirect('loan:boda-dashboard')
+        
+        else:
+            messages.info(request, 'there is something wrong!!!')
+            return render(request, "edit_boda.html", context)
+
+
+    return render(request, "edit_boda.html", context)

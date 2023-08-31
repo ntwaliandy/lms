@@ -64,6 +64,7 @@
                                                     <th>FULL AMOUNT</th>
                                                     <th>CURRENT DEPOSIT</th>
                                                     <th>CURRENT BALANCE</th>
+                                                    <th>Edit</th>
                                                     <th>View Files</th>
                                                 </tr>
                                                 </thead>
@@ -79,6 +80,10 @@
                                                                 <td>{{cl.final_amount}}</td>
                                                                 <td>{{cl.deposits}}</td>
                                                                 <td>{{cl.balance}}</td>
+                                                                <td>
+                                                                    <a class='btn btn-success' href="{% url 'loan:edit-boda' cl.boda_id %}">Edit</a>
+                                                                
+                                                                </td>
                                                                 <td>
                                                                     <a class='btn btn-success' href="{% url 'loan:boda-detail' cl.boda_id %}">Check</a>
                                                                 
