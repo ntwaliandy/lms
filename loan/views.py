@@ -1174,13 +1174,13 @@ def add_boda(request):
 
 def boda_dashboard(request):
     if request.user.is_superuser:
-        boda_monday = BodaApply.objects.filter(day_of_the_week="Monday").all()
-        boda_tuesday = BodaApply.objects.filter(day_of_the_week="Tuesday").all()
-        boda_wednesday = BodaApply.objects.filter(day_of_the_week="Wednesday").all()
-        boda_thursday = BodaApply.objects.filter(day_of_the_week="Thursday").all()
-        boda_friday = BodaApply.objects.filter(day_of_the_week="Friday").all()
-        boda_saturday = BodaApply.objects.filter(day_of_the_week="Saturday").all()
-        boda_sunday = BodaApply.objects.filter(day_of_the_week="Sunday").all()
+        boda_monday = BodaApply.objects.filter(day_of_the_week="Monday", status="ACTIVE").all()
+        boda_tuesday = BodaApply.objects.filter(day_of_the_week="Tuesday", status="ACTIVE").all()
+        boda_wednesday = BodaApply.objects.filter(day_of_the_week="Wednesday", status="ACTIVE").all()
+        boda_thursday = BodaApply.objects.filter(day_of_the_week="Thursday", status="ACTIVE").all()
+        boda_friday = BodaApply.objects.filter(day_of_the_week="Friday", status="ACTIVE").all()
+        boda_saturday = BodaApply.objects.filter(day_of_the_week="Saturday", status="ACTIVE").all()
+        boda_sunday = BodaApply.objects.filter(day_of_the_week="Sunday", status="ACTIVE").all()
 
         context = {
             "boda_mon": reversed(boda_monday),
@@ -1209,26 +1209,26 @@ def search_client_boda(request):
         if request.method == 'POST':
             data = request.POST
             search_entry = data['client_search']
-            if BodaApply.objects.filter(boda_guy_firstName=search_entry).first():
-                client = BodaApply.objects.filter(boda_guy_firstName=search_entry).all()
+            if BodaApply.objects.filter(boda_guy_firstName=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_guy_firstName=search_entry, status="ACTIVE").all()
                 context = {
                     "client": client
                 }
                 return render(request, "search_client_boda.html", context)
-            elif BodaApply.objects.filter(boda_guy_lastName=search_entry).first():
-                client = BodaApply.objects.filter(boda_guy_lastName=search_entry).all()
+            elif BodaApply.objects.filter(boda_guy_lastName=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_guy_lastName=search_entry, status="ACTIVE").all()
                 context = {
                     "client": client
                 }
                 return render(request, "search_client_boda.html", context)
-            elif BodaApply.objects.filter(phone_number=search_entry).first():
-                client = BodaApply.objects.filter(phone_number=search_entry).all()
+            elif BodaApply.objects.filter(phone_number=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(phone_number=search_entry, status="ACTIVE").all()
                 context = {
                     "client": client
                 }
                 return render(request, "search_client_boda.html", context)
-            elif BodaApply.objects.filter(boda_numberPlate=search_entry).first():
-                client = BodaApply.objects.filter(boda_numberPlate=search_entry).all()
+            elif BodaApply.objects.filter(boda_numberPlate=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_numberPlate=search_entry, status="ACTIVE").all()
                 context = {
                     "client": client
                 }
@@ -1309,20 +1309,20 @@ def search_boda_trigger(request):
             data = request.POST
             search_entry = data.get('client_search', False)
             print(search_entry)
-            if BodaApply.objects.filter(boda_guy_firstName=search_entry).first():
-                client = BodaApply.objects.filter(boda_guy_firstName=search_entry).all()
+            if BodaApply.objects.filter(boda_guy_firstName=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_guy_firstName=search_entry, status="ACTIVE").all()
 
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse ({"status": "success", "data": data})
-            elif BodaApply.objects.filter(boda_guy_lastName=search_entry).first():
-                client = BodaApply.objects.filter(boda_guy_lastName=search_entry).all()
+            elif BodaApply.objects.filter(boda_guy_lastName=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_guy_lastName=search_entry, status="ACTIVE").all()
 
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
                 return JsonResponse({"status": "success", "data": data})
-            elif BodaApply.objects.filter(boda_numberPlate=search_entry).first():
-                client = BodaApply.objects.filter(boda_numberPlate=search_entry).all()
+            elif BodaApply.objects.filter(boda_numberPlate=search_entry, status="ACTIVE").first():
+                client = BodaApply.objects.filter(boda_numberPlate=search_entry, status="ACTIVE").all()
 
                 serialized_data = serialize("json", client)
                 data = json.loads(serialized_data)
@@ -1342,8 +1342,8 @@ def weekly_logs(request):
         today = datetime.today()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week).order_by('latest_dateOfPay').all()
-        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week)).order_by('date_of_application').all()
+        weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week, status="ACTIVE").order_by('latest_dateOfPay').all()
+        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week), status="ACTIVE").order_by('date_of_application').all()
         context = {
             "paid": reversed(weekly_paid_bodas),
             "unpaid": reversed(weekly_unpaid_bodas),
@@ -1461,3 +1461,44 @@ def edit_boda(request, bodaId):
 
 
     return render(request, "edit_boda.html", context)
+
+
+# make boda Active/InActive
+def change_boda_status(request, boda_id):
+    if request.user.is_superuser:
+            data = request.POST
+            if boda_id:
+                boda_object = BodaApply.objects.filter(boda_id=boda_id).first()
+                boda_status = boda_object.status
+                new_status = "ACTIVE"
+                if boda_status == "ACTIVE":
+                    new_status = "INACTIVE"
+
+                boda_object.status = new_status
+
+                boda_object.save()
+
+                messages.success(request, 'Boda status updated successfully!')
+
+            else: 
+                messages.error(request, 'failed to update boda status!')
+
+            return redirect('loan:boda-dashboard')
+    else:
+        return redirect('account:user_login')
+
+
+
+
+def archived_boda(request):
+    if request.user.is_superuser:
+        bodas = BodaApply.objects.filter(status="INACTIVE").all()
+
+        context = {
+            "client": bodas,
+            "archived": True
+        }
+        return render(request, "search_client_boda.html", context)
+
+    else:
+        return redirect('account:user_login')

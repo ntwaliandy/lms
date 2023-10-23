@@ -1,3 +1,6 @@
 db.sqlite3
-
+/account/__pycache__/
+/home/__pycache__/
+/lms/__pycache__/
+/loan/__pycache__/
 /myenv

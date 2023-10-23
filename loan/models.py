@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from datetime import datetime, timedelta
 # Create your models here.
@@ -77,6 +78,7 @@ class BodaApply(models.Model):
     nin_number = models.CharField(max_length=30, default='null')
     nin_picture = models.FileField(null=True, blank=True, default=None)
     work_stage = models.CharField(max_length=30, default='null')
+    status = models.CharField(max_length=10, default="ACTIVE")
 
     guarantor1_name = models.CharField(max_length=30, default='null')
     guarantor1_stage_name = models.CharField(max_length=30, default='null')

@@ -24,7 +24,7 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                                <h1>{{cl.first_name}} Permit details</h1>
+                                <h1>Permit details</h1>
                                 <p class="opacity-75">
                                     Review permit applications
                                 </p>
@@ -53,7 +53,7 @@
                                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                                 
                                     <div class="col-md-12 m-b-30">
-                                        <h5>Completed Permits</h5>
+                                        <h5>Searched Records</h5>
                                         <div class="table-responsive">
                                             <table class="table align-td-middle table-card table-striped">
                                                 <thead>
@@ -64,6 +64,7 @@
                                                     <th>FULL AMOUNT</th>
                                                     <th>CURRENT DEPOSIT</th>
                                                     <th>CURRENT BALANCE</th>
+                                                    <th>ARCHIVE</th>
                                                     <th>Edit</th>
                                                     <th>View Files</th>
                                                 </tr>
@@ -80,6 +81,17 @@
                                                                 <td>{{cl.final_amount}}</td>
                                                                 <td>{{cl.deposits}}</td>
                                                                 <td>{{cl.balance}}</td>
+                                                                {% if archived %}
+                                                                    <td>
+                                                                        <a class='btn btn-primary' href="{% url 'loan:change-boda-status' cl.boda_id %}">ACTIVATE</a>
+                                                                    
+                                                                    </td>
+                                                                {% else %}
+                                                                    <td>
+                                                                        <a class='btn btn-danger' href="{% url 'loan:change-boda-status' cl.boda_id %}">INACTIVE</a>
+                                                                    
+                                                                    </td>
+                                                                {% endif %}
                                                                 <td>
                                                                     <a class='btn btn-success' href="{% url 'loan:edit-boda' cl.boda_id %}">Edit</a>
                                                                 
