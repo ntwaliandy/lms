@@ -1123,6 +1123,7 @@ def add_boda(request):
         gua3_ninPic = request.FILES.get('gua3_nin_picture')
 
         print(gua3_ninPic)
+        print(":: gua2_phone ::", gua2_phone)
 
         date_of_application = data.get("date_of_application", None)
         parsedDate = datetime.now()

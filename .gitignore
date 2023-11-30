@@ -3,4 +3,9 @@ db.sqlite3
 /home/__pycache__/
 /lms/__pycache__/
 /loan/__pycache__/
+/account/migrations/__pycache__/
+/home/migrations/__pycache__/
+/lms/migrations/__pycache__/
+/loan/migrations/__pycache__/
 /myenv
+/media
