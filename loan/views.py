@@ -24,6 +24,9 @@ from django.core.serializers import serialize
 import csv
 from django.db.models import Count
 
+username = "coinpesa"
+api_key = "9524b55a947a1446c502e3e4b92555f8df68bf8bfb3898cf8a72526592c542ee"
+
 def dashboard(request):
     if request.user.is_superuser:
         applied_loans = Apply.objects.count()
@@ -623,8 +626,6 @@ def manual_add_payment(request):
                 admin = username
             )
 
-            username = "EREMIT"
-            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -709,8 +710,6 @@ def permit_pay_details(request, ref):
             return redirect('loan:permit-payment-details')
 
         elif result == 'SUCCESSFUL' and statuss == 'pending':
-            username = "EREMIT"
-            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
 
@@ -1277,8 +1276,6 @@ def manual_add_boda_pay(request):
             full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
             BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
             # sms
-            username = "EREMIT"
-            api_key = "3160dc9dc8511fdce649c7f3521f9f55a04327ca99d817874364c46a3a3434de"
             africastalking.initialize(username, api_key)
             sms = africastalking.SMS
             response = sms.send(
