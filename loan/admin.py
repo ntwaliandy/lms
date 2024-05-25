@@ -7,8 +7,8 @@ class permitAddPaymentAdmin(admin.ModelAdmin):
     search_fields = ["permit_id", "payment_fee", "phone_number", "status", "reference", "date", "transaction_id"]
 
 class BodaBodaAdmin(admin.ModelAdmin):
-    list_display = ("boda_guy_firstName", "boda_guy_lastName", "boda_numberPlate", "weekly_pay", "deposits", "balance", "final_amount")
-    search_fields = ["boda_guy_firstName", "boda_guy_lastName", "boda_numberPlate", "weekly_pay", "deposits", "balance", "final_amount"]
+    list_display = ("boda_guy_firstName", "boda_guy_lastName", "boda_numberPlate", "status", "weekly_pay", "deposits", "balance", "final_amount")
+    search_fields = ["boda_guy_firstName", "boda_guy_lastName", "boda_numberPlate", "status", "weekly_pay", "deposits", "balance", "final_amount"]
 
 class BodaWeeklyAdmin(admin.ModelAdmin):
     list_display = ("boda_id", "boda_firstName", "boda_lastName", "payment_fee", "date")
