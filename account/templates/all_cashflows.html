@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block content %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <section class="admin-content">
+        <div class=" bg-dark m-b-30 bg-stars">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                        {% for message in messages %}
+                                    <div class="alert alert-border-info  alert-dismissible fade show" role="alert">
+                                        <div class="d-flex">
+                                            <div class="icon">
+                                                <i class="icon mdi mdi-alert-octagram"></i>
+                                            </div>
+                                            <div class="content text-dark">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                        <h1>Expenditures & Collections</h1>
+                        <p class="opacity-75">
+                            All company expenditures and collections
+                        </p>
+                        <p class="opacity-75">
+                            You can easily search by date and see the records on that day.
+                        </p>
+                        <form action="{% url 'loan:cashflows' %}" method="get">
+                            {% csrf_token %}
+                            <div class="form-group col-md-7">
+                                <label for="inputPassword4">Search By Date:</label>
+                                <input type="text" class="form-control date_search" name="date_search" required placeholder="click to select date">
+                                <small class="text-muted">Search reacrds by date</small>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Search Record</button>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container pull-up">
+            <div class="row">
+
+                <!-- Content goes here -->
+                <div class="col-lg-8">
+                    <nav class="nav nav-pills nav-justified m-b-80">
+                        <a class="btn btn-primary" href="{% url 'loan:add-cashflow' %}">Add Daily Expenditure & Collections</a>
+                    </nav>
+                </div>
+                <div class="col-lg-12">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="monday" role="tabpanel" aria-labelledby="home-tab">
+                        
+                            <div class="col-md-12 m-b-30">
+                                <h5>Daily CashFlow</h5>
+                                <div class="table-responsive">
+                                    <table class="table align-td-middle table-card table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>DATE</th>
+                                            <th>EXPENDITURE</th>
+                                            <th>COLLECTIONS</th>
+                                            <th>BANKED BALANCE</th>
+                                            <th>Note</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if cashflows %}
+                                            {% for cashflow in cashflows %}
+                                                <tr>
+                                                    <td>{{cashflow.date}}</td>
+                                                    <td>{{cashflow.expenditures}}</td>
+                                                    <td>{{cashflow.collections}}</td>
+                                                    <td>{{cashflow.banked_balance}}</td>
+                                                    <td>{{cashflow.note}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>No record yet!</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+                
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".date_search", {
+                enableTime: true,
+                dateFormat: "M. j, Y, h:i K",
+                defaultDate: new Date(),
+            });
+        });
+    </script>
+
+    {% endblock %}

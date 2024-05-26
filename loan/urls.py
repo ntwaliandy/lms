@@ -1,3 +1,4 @@
+from os import name
 from django.urls import path, re_path
 from . import views
 
@@ -58,5 +59,10 @@ urlpatterns = [
     path('sms-status', views.sms_statuses, name="sms-statuses"),
     re_path(r'^edit-boda/(?P<bodaId>[0-9]+)/$', views.edit_boda, name="edit-boda"),
     re_path(r'^change-boda-status/(?P<boda_id>[0-9]+)/$', views.change_boda_status, name="change-boda-status"),
-    path('archived-boda', views.archived_boda, name="archived-boda")
+    path('archived-boda', views.archived_boda, name="archived-boda"),
+    path('cashflows', views.cashflows, name="cashflows"),
+    path('add-cashflow', views.addCashFlow, name="add-cashflow"),
+    path('advanced-information', views.advancedBodaInformation, name="advanced-information"),
+    path('add-information', views.addBodainformation, name="add-information"),
+    re_path(r'^edit-boda-information/(?P<NumberPlate>(.*))/$', views.editBodaInformation, name="edit-boda-information")
 ]

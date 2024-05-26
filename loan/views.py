@@ -9,7 +9,7 @@ from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, SmsCallBack, Support
-from .models import AddPayment, AddPermitPayment, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
+from .models import AddPayment, AddPermitPayment, BodaInformation, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
 from django.db.models import Sum
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -1447,7 +1447,20 @@ def edit_boda(request, bodaId):
     if request.method == "POST":
         data = request.POST
         date_of_application = data.get("date_of_application", None)
+        firstName = data.get("firstName", None)
+        lastName = data.get("lastName", None)
+        fullAmount = data.get("fullAmount", None)
+        deposits = data.get("deposits", None)
+        balance = data.get("balance", None)
 
+        boda_obj.boda_guy_firstName = firstName
+        boda_obj.boda_guy_lastName = lastName
+        boda_obj.final_amount = fullAmount
+        boda_obj.deposits = deposits
+        boda_obj.balance = balance
+
+        boda_obj.save()
+        
         if date_of_application:
             parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
             boda_obj.date_of_application = parsed_date
@@ -1493,7 +1506,11 @@ def change_boda_status(request, boda_id):
 
 def archived_boda(request):
     if request.user.is_superuser:
-        bodas = BodaApply.objects.filter(status="INACTIVE").all()
+        bodaPlate = request.GET.get("search_boda", None)
+        if bodaPlate:
+            bodas = BodaApply.objects.filter(boda_numberPlate=bodaPlate, status="INACTIVE").all()
+        else:
+            bodas = BodaApply.objects.filter(status="INACTIVE").all()
 
         context = {
             "client": bodas,
@@ -1503,3 +1520,144 @@ def archived_boda(request):
 
     else:
         return redirect('account:user_login')
+
+
+def cashflows(request):
+    if request.user.is_superuser:
+        date_search = request.GET.get("date_search", None)
+        if date_search:
+            parsedDate = datetime.strptime(date_search, '%b. %d, %Y, %I:%M %p').date()
+            all_cashflows = CashFlow.objects.filter(date__date=parsedDate).all()
+        else:
+            all_cashflows = CashFlow.objects.all()
+        context = {
+            "cashflows": all_cashflows
+        }
+        return render(request, "all_cashflows.html", context)
+    
+    else:
+        return redirect('account:user_login')
+    
+def addCashFlow(request):
+    if request.user.is_superuser:
+        if request.method == "GET":
+            return render(request, "add_cashflow.html")
+        
+        if request.method == "POST":
+            data = request.POST
+            expenditures = data.get("expenditure", None)
+            collections = data.get("collection", None)
+            banked_amount = data.get("banked_amount", None)
+            note = data.get("note", None)
+            dateOfEntry = data.get("date_of_cashflow", None)
+
+            parsedDate = datetime.now()
+            if dateOfEntry and dateOfEntry != "":
+                parsedDate = datetime.strptime(dateOfEntry, '%b. %d, %Y, %I:%M %p')
+
+            create_record = CashFlow.objects.create(
+               expenditures=expenditures,
+               collections=collections,
+               banked_balance=banked_amount,
+               note=note,
+               date=parsedDate
+            )
+
+            messages.success(request, "Expenditures & Collections Added successfully")
+            return redirect("loan:cashflows")
+        
+    else:
+        return redirect('account:user_login')
+    
+
+def advancedBodaInformation(request):
+    if request.user.is_superuser:
+        if request.method == "GET":
+            numberPlate = request.GET.get("boda_search", None)
+            if numberPlate:
+                bodas = BodaInformation.objects.filter(numberPlate=numberPlate).all()
+            else:
+                bodas = BodaInformation.objects.all()
+
+            context = {
+                "bodas": bodas
+            }
+            return render(request, "boda_informations.html", context)
+        
+    else:
+        return redirect('account:user_login')
+    
+
+def addBodainformation(request):
+    if request.user.is_superuser:
+        if request.method == "GET":
+            all_bodas = BodaApply.objects.all()
+            context = {
+                "all_bodas": all_bodas
+            }
+            return render(request, "add_information.html", context)
+        
+        if request.method == "POST":
+            data = request.POST
+            BodaBodaNumberPlate = data.get("BodaBoda", None)
+            rider = data.get("rider", None)
+            amountBought = data.get("amountBought", None)
+            whereBought = data.get("whereBought", None)
+            LogBookNames = data.get("LogBookNames", None)
+            demandedAmount = data.get("demandedAmount", None)
+            isCompleted = data.get("isCompleted", None)
+            is_complete = False
+            if isCompleted == "True":
+                is_complete = True
+
+            add_record = BodaInformation.objects.create(
+                numberPlate=BodaBodaNumberPlate,
+                rider=rider,
+                amountBought=amountBought,
+                whereBought=whereBought,
+                LogBookNames=LogBookNames,
+                demandedAmount=demandedAmount,
+                isCompleted=is_complete
+            )
+
+            messages.success(request, "Boda Information added successfully.")
+            return redirect("loan:advanced-information")
+        
+def editBodaInformation(request, NumberPlate):
+    if request.user.is_superuser:
+        if request.method == "GET":
+            bodaInfo = BodaInformation.objects.filter(numberPlate=NumberPlate).first()
+            all_bodas = BodaApply.objects.all()
+            context = {
+                "all_bodas": all_bodas,
+                "bodaInfo": bodaInfo
+            }
+            return render(request, "edit_boda_information.html", context)
+        
+        if request.method == "POST":
+            data = request.POST
+            BodaBodaNumberPlate = data.get("BodaBoda", None)
+            rider = data.get("rider", None)
+            amountBought = data.get("amountBought", None)
+            whereBought = data.get("whereBought", None)
+            LogBookNames = data.get("LogBookNames", None)
+            demandedAmount = data.get("demandedAmount", None)
+            isCompleted = data.get("isCompleted", None)
+            is_complete = False
+            if isCompleted == "True":
+                is_complete = True
+
+            get_InfoRecord = BodaInformation.objects.filter(numberPlate=NumberPlate).first()
+            if get_InfoRecord:
+                get_InfoRecord.numberPlate = BodaBodaNumberPlate
+                get_InfoRecord.rider = rider
+                get_InfoRecord.amountBought = amountBought
+                get_InfoRecord.whereBought = whereBought
+                get_InfoRecord.LogBookNames = LogBookNames
+                get_InfoRecord.demandedAmount = demandedAmount
+                get_InfoRecord.isCompleted = is_complete
+
+                get_InfoRecord.save()
+
+            messages.success(request, "Boda Information updated successfully.")
+            return redirect("loan:advanced-information")

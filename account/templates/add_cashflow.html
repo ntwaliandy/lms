@@ -28,7 +28,7 @@
                                 {% endfor %}
                                 <h1><span class="js-greeting"></span>, {{ user }} </h1>
                                 <p class="opacity-75">
-                                    EDIT BODA <br>
+                                    ADD DAILY EXPENDITURE & COLLECTIONS <br>
                                 </p>
 
                             </div>
@@ -48,51 +48,37 @@
                                 <div class="card m-b-30">
                                     <div class="card-header">
                                         <h5 class="m-b-0">
-                                            Edit Boda Details Page
+                                            Add Today's Expenditure & Collections
                                         </h5>
                                         <p class="m-b-0 text-muted">
                                             Standard form
                                         </p>
                                     </div>
                                     <div class="card-body ">
-                                        <form action="{% url 'loan:edit-boda' boda.boda_id %}" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             <div class="form-row">
-                                                <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">Number Plate</label>
-                                                    <input type="text" class="form-control numberPlate" name="numberPlate" value="{{boda.boda_numberPlate}}" disabled>
-                                                    <div class="text-muted" id="manual_client_res"></div>
-                                                </div>
 
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">client First Name</label>
-                                                    <input type="text" class="form-control" name="firstName" value="{{boda.boda_guy_firstName}}">
+                                                    <label for="inputPassword4">Expenditure *</label>
+                                                    <input type="number" class="form-control" name="expenditure" required>
                                                 </div>
-
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">client Last Name</label>
-                                                    <input type="text" class="form-control" name="lastName" value="{{boda.boda_guy_lastName}}">
+                                                    <label for="inputPassword4">Collections *</label>
+                                                    <input type="number" class="form-control" name="collection" required>
                                                 </div>
-
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">client Final Amount</label>
-                                                    <input type="text" class="form-control" name="fullAmount" value="{{boda.final_amount}}">
+                                                    <label for="inputPassword4">Banked Amount *</label>
+                                                    <input type="number" class="form-control" name="banked_amount" required>
                                                 </div>
-
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">client Deposits</label>
-                                                    <input type="text" class="form-control" name="deposits" value="{{boda.deposits}}">
+                                                    <label for="inputPassword4">Note (Any Additional note you want to add)</label>
+                                                    <textarea type="tex" class="form-control" name="note"></textarea>
                                                 </div>
-
                                                 <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">client Balance</label>
-                                                    <input type="text" class="form-control" name="balance" value="{{boda.balance}}">
-                                                </div>
-
-                                                <div class="form-group col-md-12">
-                                                    <label for="inputPassword4">Boda Date of application *</label>
-                                                    <input type="text" class="form-control date_of_application" name="date_of_application" value="{{boda.date_of_application}}">
-                                                    <small class="text-muted">put the date of application</small>
+                                                    <label for="inputPassword4">Date of entry *</label>
+                                                    <input type="text" class="form-control date_of_cashflow" name="date_of_cashflow">
+                                                    <small class="text-muted">put the date of entry</small>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -111,9 +97,10 @@
             <script>
                 
                 document.addEventListener("DOMContentLoaded", function () {
-                    flatpickr(".date_of_application", {
+                    flatpickr(".date_of_cashflow", {
                         enableTime: true,
                         dateFormat: "M. j, Y, h:i K",
+                        defaultDate: new Date(),
                     });
                 });
             </script>

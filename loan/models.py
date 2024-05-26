@@ -129,3 +129,27 @@ class BodaWeeklyPay(models.Model):
     def __str__(self):
         return 'Boda Weekly Pay ' + str(self.payment_fee) + ' by ' + self.boda_firstName + " " + self.boda_lastName
 
+# expenditures and collections
+class CashFlow(models.Model):
+    cash_id = models.CharField(max_length=200, default=random_string)
+    expenditures = models.DecimalField(max_digits=20, decimal_places=2, default='0')
+    collections = models.DecimalField(max_digits=20, decimal_places=2, default='0')
+    banked_balance = models.DecimalField(max_digits=20, decimal_places=2, default='0')
+    note = models.TextField()
+    date = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return 'Banked => ' + str(self.banked_balance) + "UGX On " + str(self.date)
+    
+
+class BodaInformation(models.Model):
+    numberPlate = models.CharField(max_length=200, default="")
+    rider = models.CharField(max_length=200, default="")
+    amountBought = models.DecimalField(max_digits=20, decimal_places=2, default='0')
+    whereBought = models.CharField(max_length=200, default="")
+    LogBookNames = models.CharField(max_length=200, default="")
+    demandedAmount = models.DecimalField(max_digits=20, decimal_places=2, default='0')
+    isCompleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.rider) + " with " + str(self.numberPlate)

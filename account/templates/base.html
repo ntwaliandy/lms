@@ -164,7 +164,7 @@
         <ul class="nav align-items-center">
             
             <!-- Permit Category -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <div class="dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-24px mdi-format-list-bulleted"></i>
                         <span class="notification-counter"></span>
@@ -225,7 +225,7 @@
 
                     </div>
                 </div>
-            </li>
+            </li> -->
 
             
             <!-- BODA category -->
@@ -241,76 +241,6 @@
                         </div>
                         <div class="notification-events bg-gray-300">
                             <div class="text-overline m-b-5">All categories</div>
-                            <!-- <a href="{% url 'loan:dashboard' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Dashboard</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:manage-loans' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-convert"></i> Manage Single Loans</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:manage_group_loans' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-switch "></i> Manage Group Loans</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:add-payment' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-plus "></i> Single Add payments</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:payment-record' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-check "></i> single payments Records</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:group-add-payment' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-multiple-plus"></i> group Add payments</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:group-payment-record' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-multiple-check "></i> group payments records</div>
-                                </div>
-                            </a>
-                            <a href="{% url 'loan:loan-logs' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-plus "></i> (Daily, Weekly, Monthly) Logs</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:all-clients' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-card-details "></i> All clients</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:staff' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-account-network "></i> Staff contacts</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:complaints' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-airballoon "></i> Help</div>
-                                </div>
-                            </a>
-
-                            <a href="{% url 'loan:send-report' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-airballoon "></i> Export</div>
-                                </div>
-                            </a> -->
 
                             <!-- boda dashboard -->
                             <a href="{% url 'loan:boda-dashboard' %}" class="d-block m-b-10">
@@ -338,6 +268,20 @@
                             <a href="{% url 'loan:weekly-logs' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> This week Stats</div>
+                                </div>
+                            </a>
+
+                            <!-- this cashflows -->
+                            <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Expenditures & Collections</div>
+                                </div>
+                            </a>
+
+                            <!-- this advanced information -->
+                            <a href="{% url 'loan:advanced-information' %}" class="d-block m-b-10">
+                                <div class="card">
+                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Boda Advanced Information</div>
                                 </div>
                             </a>
 

@@ -24,11 +24,21 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                                <h1>Permit details</h1>
+                                <h1>Archived Bodas</h1>
                                 <p class="opacity-75">
                                     Review boda applications
                                 </p>
-                                    
+                                <form action="{% url 'loan:archived-boda' %}" method="get">
+                                    {% csrf_token %}
+                                    <div class="form-group col-md-7">
+                                        <label for="inputPassword4">Search By Number Plate:</label>
+                                        <input type="text" class="form-control search_boda" name="search_boda" required placeholder="">
+                                        <small class="text-muted">Search record by number plate</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary">Search Record</button>
+                                    </div>
+                                </form> 
 
                             </div>
                             <div class="col-md-4 m-auto text-white p-t-40 p-b-90">
