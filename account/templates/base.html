@@ -271,7 +271,7 @@
                                 </div>
                             </a>
 
-                            {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                            {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                                 <!-- this cashflows -->
                                 <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
                                     <div class="card">

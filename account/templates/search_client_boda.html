@@ -93,7 +93,7 @@
                                                                 <td>{{cl.final_amount}}</td>
                                                                 <td>{{cl.deposits}}</td>
                                                                 <td>{{cl.balance}}</td>
-                                                                {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                                                                {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                                                                     {% if archived %}
                                                                         <td>
                                                                             <a class='btn btn-primary' href="{% url 'loan:change-boda-status' cl.boda_id %}">ACTIVATE</a>
@@ -110,7 +110,7 @@
                                                                         <td></td>
                                                                 {% endif %}
                                                                 
-                                                                {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                                                                {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                                                                     <td>
                                                                         <a class='btn btn-success' href="{% url 'loan:edit-boda' cl.boda_id %}">Edit</a>
                                                                     
