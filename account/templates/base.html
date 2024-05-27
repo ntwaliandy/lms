@@ -255,7 +255,7 @@
                                 </div>
                             </a>
 
-                            {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                            {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                             <!-- add boda payment -->
                             <a href="{% url 'loan:add-boda-pay' %}" class="d-block m-b-10">
                                 <div class="card">
