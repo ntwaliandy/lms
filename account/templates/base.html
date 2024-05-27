@@ -255,7 +255,7 @@
                                 </div>
                             </a>
 
-                            {% if request.user.username == "BRENDAR" %}
+                            {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
                             <!-- add boda payment -->
                             <a href="{% url 'loan:add-boda-pay' %}" class="d-block m-b-10">
                                 <div class="card">
@@ -271,20 +271,22 @@
                                 </div>
                             </a>
 
-                            <!-- this cashflows -->
-                            <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Expenditures & Collections</div>
-                                </div>
-                            </a>
+                            {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                                <!-- this cashflows -->
+                                <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
+                                    <div class="card">
+                                        <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Expenditures & Collections</div>
+                                    </div>
+                                </a>
 
-                            <!-- this advanced information -->
-                            <a href="{% url 'loan:advanced-information' %}" class="d-block m-b-10">
-                                <div class="card">
-                                    <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Boda Advanced Information</div>
-                                </div>
-                            </a>
-
+                                <!-- this advanced information -->
+                                <a href="{% url 'loan:advanced-information' %}" class="d-block m-b-10">
+                                    <div class="card">
+                                        <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Boda Advanced Information</div>
+                                    </div>
+                                </a>
+                            {% endif %}
+                            
                             <!-- full logs -->
                             <a href="{% url 'loan:full-week-logs' %}" class="d-block m-b-10">
                                 <div class="card">

@@ -24,7 +24,7 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                                <h1>Archived Bodas</h1>
+                                <h1>Bodas Details</h1>
                                 <p class="opacity-75">
                                     Review boda applications
                                 </p>
@@ -93,21 +93,31 @@
                                                                 <td>{{cl.final_amount}}</td>
                                                                 <td>{{cl.deposits}}</td>
                                                                 <td>{{cl.balance}}</td>
-                                                                {% if archived %}
+                                                                {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
+                                                                    {% if archived %}
+                                                                        <td>
+                                                                            <a class='btn btn-primary' href="{% url 'loan:change-boda-status' cl.boda_id %}">ACTIVATE</a>
+                                                                        
+                                                                        </td>
+                                                                    {% else %}
+                                                                        <td>
+                                                                            <a class='btn btn-danger' href="{% url 'loan:change-boda-status' cl.boda_id %}">INACTIVE</a>
+                                                                        
+                                                                        </td>
+                                                                    {% endif %}
+                                                                
+                                                                {% else %}
+                                                                        <td></td>
+                                                                {% endif %}
+                                                                
+                                                                {% if request.user.username == "BRENDAR" || request.user.username == "loan250" %}
                                                                     <td>
-                                                                        <a class='btn btn-primary' href="{% url 'loan:change-boda-status' cl.boda_id %}">ACTIVATE</a>
+                                                                        <a class='btn btn-success' href="{% url 'loan:edit-boda' cl.boda_id %}">Edit</a>
                                                                     
                                                                     </td>
                                                                 {% else %}
-                                                                    <td>
-                                                                        <a class='btn btn-danger' href="{% url 'loan:change-boda-status' cl.boda_id %}">INACTIVE</a>
-                                                                    
-                                                                    </td>
+                                                                    <td></td>
                                                                 {% endif %}
-                                                                <td>
-                                                                    <a class='btn btn-success' href="{% url 'loan:edit-boda' cl.boda_id %}">Edit</a>
-                                                                
-                                                                </td>
                                                                 <td>
                                                                     <a class='btn btn-success' href="{% url 'loan:boda-detail' cl.boda_id %}">Check</a>
                                                                 
