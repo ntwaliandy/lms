@@ -64,5 +64,6 @@ urlpatterns = [
     path('add-cashflow', views.addCashFlow, name="add-cashflow"),
     path('advanced-information', views.advancedBodaInformation, name="advanced-information"),
     path('add-information', views.addBodainformation, name="add-information"),
-    re_path(r'^edit-boda-information/(?P<NumberPlate>(.*))/$', views.editBodaInformation, name="edit-boda-information")
+    re_path(r'^edit-boda-information/(?P<NumberPlate>(.*))/$', views.editBodaInformation, name="edit-boda-information"),
+    re_path(r'^resend-boda-sms/(?P<transID>(.*))/$', views.resend_boda_sms, name="resend-boda-sms")
 ]

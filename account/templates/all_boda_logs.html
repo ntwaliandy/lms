@@ -65,6 +65,7 @@
                                                     <th>Amount</th>
                                                     <th>Transction ID</th>
                                                     <th>date of pay</th>
+                                                    <th>Resend SMS</th>
                                                 </tr>
                                                 </thead>
                                               
@@ -76,6 +77,9 @@
                                                                 <td>{{res.payment_fee}} Ugx</td>
                                                                 <td>{{res.transaction_id}}</td>
                                                                 <td>{{res.date}}</td>
+                                                                <td>
+                                                                    <a href="{% url 'loan:resend-boda-sms' res.id %}" class="btn btn-primary" style="color: white;">RESEND</a>
+                                                                </td>
                                                                 
                                                             </tr>
                                                         {% endfor %}
@@ -104,6 +108,7 @@
                                                         <th>Amount</th>
                                                         <th>Transction ID</th>
                                                         <th>date of pay</th>
+                                                        <th>Resend SMS</th>
                                                     </tr>
                                                     </thead>
                                                   
@@ -115,7 +120,9 @@
                                                                 <td>{{res.payment_fee}} Ugx</td>
                                                                 <td>{{res.transaction_id}}</td>
                                                                 <td>{{res.date}}</td>
-                                                                
+                                                                <td>
+                                                                    <a href="{% url 'loan:resend-boda-sms' res.id %}" class="btn btn-primary" style="color: white;">RESEND</a>
+                                                                </td>
                                                             </tr>
                                                         {% endfor %}
                                                         {% else %}

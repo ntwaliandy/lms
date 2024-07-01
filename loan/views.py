@@ -1661,3 +1661,41 @@ def editBodaInformation(request, NumberPlate):
 
             messages.success(request, "Boda Information updated successfully.")
             return redirect("loan:advanced-information")
+        
+
+def resend_boda_sms(request, transID):
+    get_payment = BodaWeeklyPay.objects.filter(id=transID).first()
+    if not get_payment:
+        messages.error(request, "Payment Not found.")
+        return redirect("loan:full-week-logs")
+
+    new_phoneNumber = "+" + get_payment.phone_number
+    full_name = get_payment.boda_firstName + " " + get_payment.boda_lastName
+    paymentFee = get_payment.payment_fee
+    bodaId = get_payment.boda_id
+
+    boda_object = BodaApply.objects.filter(boda_id=bodaId).first()
+    if not boda_object:
+        messages.error(request, "Boda Boda Not found.")
+        return redirect("loan:full-week-logs")
+    
+    new_balance = boda_object.balance
+    date = get_payment.date
+    # sms
+    africastalking.initialize(username, api_key)
+    sms = africastalking.SMS
+    response = sms.send(
+        "hello, " + full_name + ", you successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd on " + str(date) + " and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!",
+        [new_phoneNumber]
+    )
+
+    if response:
+        print(":: response ::", response)
+        id = response['SMSMessageData']['Recipients'][0]['messageId']
+        print(":: message ID ::", id)
+
+        get_payment.reference = id
+        get_payment.save()
+        
+    messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
+    return redirect('loan:boda-dashboard')
