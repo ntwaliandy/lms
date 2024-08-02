@@ -1343,13 +1343,28 @@ def weekly_logs(request):
         today = datetime.today()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
+
+        start_of_last_week = start_of_week - timedelta(days=7)
+        end_of_last_week = start_of_week - timedelta(days=1)
+
+        start_of_last_2weeks = start_of_last_week - timedelta(days=7)
+        end_of_last_2week = start_of_last_week - timedelta(days=1)
+
         weekly_paid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week, status="ACTIVE").order_by('latest_dateOfPay').all()
-        weekly_unpaid_bodas = BodaApply.objects.filter(~Q(latest_dateOfPay__gte=start_of_week, latest_dateOfPay__lte=end_of_week), status="ACTIVE").order_by('date_of_application').all()
+        
+        # Unpaid bodas for the current week
+        weekly_unpaid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_last_week, latest_dateOfPay__lte=end_of_last_week, status="ACTIVE").order_by('latest_dateOfPay').all()
+        
+        # Unpaid bodas for the past two weeks excluding the current week
+        two_weeks_unpaid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_last_2weeks, latest_dateOfPay__lte=end_of_last_2week, status="ACTIVE").order_by('latest_dateOfPay').all()
+
         context = {
-            "paid": reversed(weekly_paid_bodas),
-            "unpaid": reversed(weekly_unpaid_bodas),
+            "paid": weekly_paid_bodas,
+            "unpaid": weekly_unpaid_bodas,
             "len_paid": len(weekly_paid_bodas),
-            "len_unpaid": len(weekly_unpaid_bodas)
+            "len_unpaid": len(weekly_unpaid_bodas),
+            "two_weeks_unpaid_bodas": two_weeks_unpaid_bodas,
+            "len_two_weeks_unpaid_bodas": len(two_weeks_unpaid_bodas)
         }
         return render(request, "boda_paid_weekly_logs.html", context)
     
