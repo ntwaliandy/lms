@@ -1356,7 +1356,7 @@ def weekly_logs(request):
         weekly_unpaid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_last_week, latest_dateOfPay__lte=end_of_last_week, status="ACTIVE").order_by('latest_dateOfPay').all()
         
         # Unpaid bodas for the past two weeks excluding the current week
-        two_weeks_unpaid_bodas = BodaApply.objects.filter(latest_dateOfPay__gte=start_of_last_2weeks, latest_dateOfPay__lte=end_of_last_2week, status="ACTIVE").order_by('latest_dateOfPay').all()
+        two_weeks_unpaid_bodas = BodaApply.objects.filter(latest_dateOfPay__lte=end_of_last_2week, status="ACTIVE").order_by('latest_dateOfPay').all()
 
         context = {
             "paid": weekly_paid_bodas,
