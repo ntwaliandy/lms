@@ -24,11 +24,15 @@ from django.core.serializers import serialize
 import csv
 from django.db.models import Count
 
-username = "GROWTHADVISORY"
+username = "EREMIT"
 # coinpesa
 # api_key = "9524b55a947a1446c502e3e4b92555f8df68bf8bfb3898cf8a72526592c542ee"
 # growthAdvisory
-api_key= "724dde1a958257ccabe75aab3ed45eca16ceff0661ccb9e030a954fe3ab18be1"
+# api_key= "724dde1a958257ccabe75aab3ed45eca16ceff0661ccb9e030a954fe3ab18be1"
+
+# EREMIT
+api_key = "6bb070897456f5542764a71f046e1a7193af097e1b07b15d1b4efafd87986701"
+
 
 def dashboard(request):
     if request.user.is_superuser:

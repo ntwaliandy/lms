@@ -9,7 +9,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-touch-fullscreen" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
-        <title>Money Access Uganda</title>
+        <title>Breniel Logistics Ltd Uganda</title>
         <link rel="icon" type="image/x-icon" href="{% static 'assets/img/logo.svg' %}"/>
         <link rel="icon" href="{% static 'assets/img/logo.svg' %}" type="image/png" sizes="16x16">
         <link rel='stylesheet' href="{% static 'assets1/vendor/pace/pace.css' %}"/>
@@ -271,7 +271,7 @@
                                 </div>
                             </a>
 
-                            {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
+                            <!-- {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %} -->
                                 <!-- this cashflows -->
                                 <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
                                     <div class="card">
@@ -285,7 +285,7 @@
                                         <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> Boda Advanced Information</div>
                                     </div>
                                 </a>
-                            {% endif %}
+                            <!-- {% endif %} -->
                             
                             <!-- full logs -->
                             <a href="{% url 'loan:full-week-logs' %}" class="d-block m-b-10">
