@@ -31,7 +31,10 @@ username = "EREMIT"
 # api_key= "724dde1a958257ccabe75aab3ed45eca16ceff0661ccb9e030a954fe3ab18be1"
 
 # EREMIT
-api_key = "6bb070897456f5542764a71f046e1a7193af097e1b07b15d1b4efafd87986701"
+# api_key = "6bb070897456f5542764a71f046e1a7193af097e1b07b15d1b4efafd87986701"
+
+# ESMS API KEY
+api_key = "00ba89e455ffa08ec3716239d212c8c4788e35238833cbc7ee33774447d7ded81c07e88d3e17b580de709bc60fadc429"
 
 
 def dashboard(request):
@@ -1280,22 +1283,14 @@ def manual_add_boda_pay(request):
             new_balance = single_boda.final_amount - latest_deposit
 
             new_phoneNumber = "+" + phoneNumber
+            first_name = single_boda.boda_guy_firstName
             full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
             BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
-            # sms
-            africastalking.initialize(username, api_key)
-            sms = africastalking.SMS
-            response = sms.send(
-                "hello, " + full_name + ", you have successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!",
-                [new_phoneNumber]
-            )
 
-            if response:
-                print(":: response ::", response)
-                id = response['SMSMessageData']['Recipients'][0]['messageId']
-                print(":: message ID ::", id)
+            response = send_boda_sms(first_name, paymentFee, datetime.today(), new_balance, new_phoneNumber)
 
-                create_payment.reference = id
+            if response and response['id']:
+                create_payment.reference = response['id']
                 create_payment.save()
                 
             messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
@@ -1689,6 +1684,7 @@ def resend_boda_sms(request, transID):
         return redirect("loan:full-week-logs")
 
     new_phoneNumber = "+" + get_payment.phone_number
+    first_name = get_payment.boda_firstName
     full_name = get_payment.boda_firstName + " " + get_payment.boda_lastName
     paymentFee = get_payment.payment_fee
     bodaId = get_payment.boda_id
@@ -1700,21 +1696,34 @@ def resend_boda_sms(request, transID):
     
     new_balance = boda_object.balance
     date = get_payment.date
-    # sms
-    africastalking.initialize(username, api_key)
-    sms = africastalking.SMS
-    response = sms.send(
-        "hello, " + full_name + ", you successfully paid " + str(paymentFee) + "UGX for your BODA BODA SERVICE at Breniel logistics ltd on " + str(date) + " and your outstanding balance is " + str(new_balance) + "UGX. Thank you!!!",
-        [new_phoneNumber]
-    )
+    response = send_boda_sms(first_name, paymentFee, date, new_balance, new_phoneNumber)
 
-    if response:
-        print(":: response ::", response)
-        id = response['SMSMessageData']['Recipients'][0]['messageId']
-        print(":: message ID ::", id)
-
-        get_payment.reference = id
+    if response and response['id']:
+        get_payment.reference = response['id']
         get_payment.save()
         
     messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
     return redirect('loan:boda-dashboard')
+
+
+def send_boda_sms(full_name, paymentFee, date, new_balance, new_phoneNumber):
+    conn = http.client.HTTPSConnection("app.esmsuganda.com")
+
+    headersList = {
+    "Accept": "*/*",
+    "Authorization": "Bearer " + api_key,
+    "Content-Type": "application/json" 
+    }
+
+    payload = json.dumps({
+    "number": new_phoneNumber,
+    "message": "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
+    })
+
+    conn.request("POST", "/api/v1/send-sms", payload, headersList)
+    response = conn.getresponse()
+    result = response.read()
+    data = result.decode("utf-8")
+    data = json.loads(data)
+    print(":: data ::", data)
+    return data
