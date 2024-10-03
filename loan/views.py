@@ -1707,23 +1707,24 @@ def resend_boda_sms(request, transID):
 
 
 def send_boda_sms(full_name, paymentFee, date, new_balance, new_phoneNumber):
-    conn = http.client.HTTPSConnection("app.esmsuganda.com")
+    url = "https://app.esmsuganda.com/api/v1/send-sms"
 
-    headersList = {
-    "Accept": "*/*",
-    "Authorization": "Bearer " + api_key,
-    "Content-Type": "application/json" 
+    headers = {
+        "Accept": "*/*",
+        "Authorization": "Bearer " + api_key,
+        "Content-Type": "application/json"
     }
 
-    payload = json.dumps({
-    "number": new_phoneNumber,
-    "message": "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
-    })
+    payload = {
+        "number": new_phoneNumber,
+        "message": "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
+    }
 
-    conn.request("POST", "/api/v1/send-sms", payload, headersList)
-    response = conn.getresponse()
-    result = response.read()
-    data = result.decode("utf-8")
-    data = json.loads(data)
+    # Send the POST request
+    response = requests.post(url, headers=headers, json=payload)
+
+    # Parse the response as JSON
+    data = response.json()
+
     print(":: data ::", data)
     return data
