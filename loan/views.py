@@ -1287,11 +1287,16 @@ def manual_add_boda_pay(request):
             full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
             BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
 
-            response = send_boda_sms(first_name, paymentFee, datetime.today(), new_balance, new_phoneNumber)
+            try:
+                response = send_boda_sms(first_name, paymentFee, datetime.today(), new_balance, new_phoneNumber)
 
-            if response and response['id']:
-                create_payment.reference = response['id']
-                create_payment.save()
+                if response and response['id']:
+                    create_payment.reference = response['id']
+                    create_payment.save()
+
+            except Exception as e:
+                print(str(e))
+                pass
                 
             messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
             return redirect('loan:boda-dashboard')
@@ -1696,11 +1701,15 @@ def resend_boda_sms(request, transID):
     
     new_balance = boda_object.balance
     date = get_payment.date
-    response = send_boda_sms(first_name, paymentFee, date, new_balance, new_phoneNumber)
+    try:
+        response = send_boda_sms(first_name, paymentFee, date, new_balance, new_phoneNumber)
 
-    if response and response['id']:
-        get_payment.reference = response['id']
-        get_payment.save()
+        if response and response['id']:
+            get_payment.reference = response['id']
+            get_payment.save()
+    except Exception as e:
+        print(str(e))
+        pass
         
     messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
     return redirect('loan:boda-dashboard')
