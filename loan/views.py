@@ -1137,7 +1137,7 @@ def add_boda(request):
         date_of_application = data.get("date_of_application", None)
         parsedDate = datetime.now()
         if date_of_application and date_of_application != "":
-            parsedDate = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
+            parsedDate = datetime.strptime(date_of_application, '%Y-%m-%d %H:%M')
         try:
 
 
