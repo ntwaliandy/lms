@@ -34,7 +34,7 @@ username = "EREMIT"
 # api_key = "6bb070897456f5542764a71f046e1a7193af097e1b07b15d1b4efafd87986701"
 
 # ESMS API KEY
-api_key = "00ba89e455ffa08ec3716239d212c8c4788e35238833cbc7ee33774447d7ded81c07e88d3e17b580de709bc60fadc429"
+api_key = "c155994b2b8a797901f5a1aeb29dcfc3b1b6f7c8631f484a046bffce7b010bd3402fee21f0c513723818c017259ff6f8"
 
 
 def dashboard(request):
