@@ -1138,6 +1138,11 @@ def add_boda(request):
         parsedDate = datetime.now()
         if date_of_application and date_of_application != "":
             parsedDate = datetime.strptime(date_of_application, '%Y-%m-%d %H:%M')
+
+        today = datetime.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        start_of_last_week = start_of_week - timedelta(days=6)
+        
         try:
 
 
@@ -1166,7 +1171,8 @@ def add_boda(request):
                 guarantor3_number=gua3_phone,
                 guarantor3_nin=gua3_nin,
                 guarantor3_nin_picture=gua3_ninPic,
-                date_of_application=parsedDate
+                date_of_application=parsedDate,
+                latest_dateOfPay=start_of_last_week,
             )
             messages.success(request, boda_firstName + " " + boda_lastName + " Added successfully")
 
