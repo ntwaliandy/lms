@@ -1477,26 +1477,31 @@ def edit_boda(request, bodaId):
         fullAmount = data.get("fullAmount", None)
         deposits = data.get("deposits", None)
         balance = data.get("balance", None)
+        bodaNumberPlate = data.get("numberPlate", None)
 
         boda_obj.boda_guy_firstName = firstName
         boda_obj.boda_guy_lastName = lastName
         boda_obj.final_amount = fullAmount
         boda_obj.deposits = deposits
         boda_obj.balance = balance
+        boda_obj.boda_numberPlate = bodaNumberPlate
+        
+        try:
+            if date_of_application:
+                parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
+                boda_obj.date_of_application = parsed_date
+
+        except Exception as e:
+            print(":: e ::", str(e))
 
         boda_obj.save()
-        
-        if date_of_application:
-            parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
-            boda_obj.date_of_application = parsed_date
-            boda_obj.save()
 
-            messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s date of pay has been updated!!"))
-            return redirect('loan:boda-dashboard')
+        messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s date of pay has been updated!!"))
+        return redirect('loan:boda-dashboard')
         
-        else:
-            messages.info(request, 'there is something wrong!!!')
-            return render(request, "edit_boda.html", context)
+    else:
+        messages.info(request, 'there is something wrong!!!')
+        return render(request, "edit_boda.html", context)
 
 
     return render(request, "edit_boda.html", context)
@@ -1668,6 +1673,7 @@ def editBodaInformation(request, NumberPlate):
             LogBookNames = data.get("LogBookNames", None)
             demandedAmount = data.get("demandedAmount", None)
             isCompleted = data.get("isCompleted", None)
+            
             is_complete = False
             if isCompleted == "True":
                 is_complete = True
