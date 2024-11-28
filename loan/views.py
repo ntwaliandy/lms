@@ -24,17 +24,14 @@ from django.core.serializers import serialize
 import csv
 from django.db.models import Count
 
-username = "EREMIT"
-# coinpesa
-# api_key = "9524b55a947a1446c502e3e4b92555f8df68bf8bfb3898cf8a72526592c542ee"
-# growthAdvisory
-# api_key= "724dde1a958257ccabe75aab3ed45eca16ceff0661ccb9e030a954fe3ab18be1"
+# username = "EREMIT"
 
-# EREMIT
-# api_key = "6bb070897456f5542764a71f046e1a7193af097e1b07b15d1b4efafd87986701"
+# AT API KEY
+api_key = "atsk_9e6afc19b040e7f6a8924f1d12b66c3ec6ee283609a3901cb2c3443e257e6010b1165c10"
+username = "breniel"
 
 # ESMS API KEY
-api_key = "c155994b2b8a797901f5a1aeb29dcfc3b1b6f7c8631f484a046bffce7b010bd3402fee21f0c513723818c017259ff6f8"
+# api_key = "c155994b2b8a797901f5a1aeb29dcfc3b1b6f7c8631f484a046bffce7b010bd3402fee21f0c513723818c017259ff6f8"
 
 
 def dashboard(request):
@@ -1728,24 +1725,31 @@ def resend_boda_sms(request, transID):
 
 
 def send_boda_sms(full_name, paymentFee, date, new_balance, new_phoneNumber):
-    url = "https://app.esmsuganda.com/api/v1/send-sms"
+    # url = "https://app.esmsuganda.com/api/v1/send-sms"
 
-    headers = {
-        "Accept": "*/*",
-        "Authorization": "Bearer " + api_key,
-        "Content-Type": "application/json"
-    }
+    # headers = {
+    #     "Accept": "*/*",
+    #     "Authorization": "Bearer " + api_key,
+    #     "Content-Type": "application/json"
+    # }
+    message = "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
+    # payload = {
+    #     "number": new_phoneNumber,
+    #     "message": message
+    # }
 
-    payload = {
-        "number": new_phoneNumber,
-        "message": "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
-    }
+    # # Send the POST request
+    # response = requests.post(url, headers=headers, json=payload)
 
-    # Send the POST request
-    response = requests.post(url, headers=headers, json=payload)
+    # # Parse the response as JSON
+    # data = response.json()
 
-    # Parse the response as JSON
-    data = response.json()
+    # print(":: data ::", data)
 
+    # AT INTERGRATION
+    africastalking.initialize(username, api_key)
+    sms = africastalking.SMS
+    receipient = [new_phoneNumber]
+    data = sms.send(message, receipient)
     print(":: data ::", data)
     return data
