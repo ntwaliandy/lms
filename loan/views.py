@@ -29,6 +29,7 @@ from django.db.models import Count
 # AT API KEY
 api_key = "atsk_9e6afc19b040e7f6a8924f1d12b66c3ec6ee283609a3901cb2c3443e257e6010b1165c10"
 username = "breniel"
+yolasms_apiKey = "DNlh3cFmJyXO96gsM9xf2360zk797Y2qRuSh31o4a82Hj3gAKc05r78Izlgr1BzD"
 
 # ESMS API KEY
 # api_key = "c155994b2b8a797901f5a1aeb29dcfc3b1b6f7c8631f484a046bffce7b010bd3402fee21f0c513723818c017259ff6f8"
@@ -1293,10 +1294,6 @@ def manual_add_boda_pay(request):
             try:
                 response = send_boda_sms(first_name, paymentFee, datetime.today(), new_balance, new_phoneNumber)
 
-                if response and response['id']:
-                    create_payment.reference = response['id']
-                    create_payment.save()
-
             except Exception as e:
                 print(str(e))
                 pass
@@ -1713,9 +1710,6 @@ def resend_boda_sms(request, transID):
     try:
         response = send_boda_sms(first_name, paymentFee, date, new_balance, new_phoneNumber)
 
-        if response and response['id']:
-            get_payment.reference = response['id']
-            get_payment.save()
     except Exception as e:
         print(str(e))
         pass
@@ -1725,31 +1719,19 @@ def resend_boda_sms(request, transID):
 
 
 def send_boda_sms(full_name, paymentFee, date, new_balance, new_phoneNumber):
-    # url = "https://app.esmsuganda.com/api/v1/send-sms"
-
-    # headers = {
-    #     "Accept": "*/*",
-    #     "Authorization": "Bearer " + api_key,
-    #     "Content-Type": "application/json"
-    # }
     message = "Hi " + full_name + ", paid " + str(paymentFee) + "UGX for BODA at Breniel on " + str(date.date()) + ". Bal: " + str(new_balance) + "UGX."
-    # payload = {
-    #     "number": new_phoneNumber,
-    #     "message": message
-    # }
+    url = "https://yoolasms.com/api/v1/send"
+    payload = json.dumps({
+        "phone": new_phoneNumber,
+        "message": message,
+        "api_key": yolasms_apiKey
+    })
+    headers = {
+        'Content-Type': 'application/json',
+        'Cookie': str(uuid.uuid4())
+    }
+    response = requests.post(url, headers=headers, data=payload)
+    print(":: response.text ::", response.text)
+    print(":: response obj ::", response)
 
-    # # Send the POST request
-    # response = requests.post(url, headers=headers, json=payload)
-
-    # # Parse the response as JSON
-    # data = response.json()
-
-    # print(":: data ::", data)
-
-    # AT INTERGRATION
-    africastalking.initialize(username, api_key)
-    sms = africastalking.SMS
-    receipient = [new_phoneNumber]
-    data = sms.send(message, receipient)
-    print(":: data ::", data)
-    return data
+    return response
