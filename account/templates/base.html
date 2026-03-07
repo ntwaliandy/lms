@@ -314,11 +314,13 @@
                                 </div>
                             </a>
                             <!-- Cash Boda Sales -->
+                            {% if request.user.username == "BRENDA" or request.user.username == "KAGEMBE" or request.user.username == "loan250" %}
                             <a href="{% url 'loan:boda-inventory' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-garage"></i> Boda Inventory</div>
                                 </div>
                             </a>
+                            {% endif %}
                             <!-- Impounded Bikes -->
                             <a href="{% url 'loan:impounded-list' %}" class="d-block m-b-10">
                                 <div class="card">
