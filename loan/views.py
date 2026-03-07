@@ -9,7 +9,7 @@ from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, SmsCallBack, Support
-from .models import AddPayment, AddPermitPayment, BodaInformation, CashBodaSale, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
+from .models import AddPayment, AddPermitPayment, BodaInformation, BodaInventory, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
 from django.db.models import Sum, Q
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -1904,83 +1904,231 @@ def boda_analysis_detail(request, bodaId):
     })
 
 
-# ── Cash Boda Sales ──────────────────────────────────────────────────────────
+# ── Boda Inventory ──────────────────────────────────────────────────────────
 
-def cash_boda_list(request):
+def boda_inventory_list(request):
     if not request.user.is_superuser:
         return redirect('account:admin-login')
 
-    search_query = request.GET.get('q', '').strip()
-    sales = CashBodaSale.objects.order_by('-date_sold', '-created_at')
-
-    if search_query:
-        sales = sales.filter(
-            Q(client_full_name__icontains=search_query) |
-            Q(phone_number__icontains=search_query) |
-            Q(number_plate__icontains=search_query) |
-            Q(id_number__icontains=search_query)
-        )
+    in_stock = BodaInventory.objects.filter(status=BodaInventory.STATUS_IN_STOCK).order_by('-date_purchased')
+    sold_cash = BodaInventory.objects.filter(status=BodaInventory.STATUS_SOLD_CASH).order_by('-date_sold')
+    on_loan = BodaInventory.objects.filter(status=BodaInventory.STATUS_LOAN).order_by('-created_at')
 
     from decimal import Decimal
-    total_sales = sales.count()
-    total_revenue = sales.aggregate(t=Sum('amount_sold_for'))['t'] or Decimal('0')
-    total_cost = sales.aggregate(t=Sum('amount_bought_at'))['t'] or Decimal('0')
-    total_profit = total_revenue - total_cost
+    total_invested = BodaInventory.objects.aggregate(t=Sum('amount_bought_at'))['t'] or Decimal('0')
+    total_cash_revenue = BodaInventory.objects.filter(status=BodaInventory.STATUS_SOLD_CASH).aggregate(t=Sum('amount_sold_for'))['t'] or Decimal('0')
+    total_cash_cost = BodaInventory.objects.filter(status=BodaInventory.STATUS_SOLD_CASH).aggregate(t=Sum('amount_bought_at'))['t'] or Decimal('0')
+    total_profit = total_cash_revenue - total_cash_cost
 
-    return render(request, 'cash_boda_list.html', {
-        'sales': sales,
-        'search_query': search_query,
-        'total_sales': total_sales,
-        'total_revenue': total_revenue,
-        'total_cost': total_cost,
+    return render(request, 'boda_inventory_list.html', {
+        'in_stock': in_stock,
+        'sold_cash': sold_cash,
+        'on_loan': on_loan,
+        'in_stock_count': in_stock.count(),
+        'sold_cash_count': sold_cash.count(),
+        'on_loan_count': on_loan.count(),
+        'total_invested': total_invested,
         'total_profit': total_profit,
     })
 
 
-def add_cash_boda(request):
+def add_boda_inventory(request):
     if not request.user.is_superuser:
         return redirect('account:admin-login')
 
     if request.method == 'POST':
         data = request.POST
-        client_full_name = data.get('client_full_name', '').strip()
-        phone_number = data.get('phone_number', '').strip()
-        id_number = data.get('id_number', '').strip()
         number_plate = data.get('number_plate', '').strip()
+        boda_type = data.get('boda_type', '').strip()
+        chassis_no = data.get('chassis_no', '').strip()
+        engine_no = data.get('engine_no', '').strip()
+        colour = data.get('colour', '').strip()
         amount_bought_at = data.get('amount_bought_at', '0') or '0'
-        amount_sold_for = data.get('amount_sold_for', '0') or '0'
-        date_sold = data.get('date_sold', '')
+        date_purchased = data.get('date_purchased', '')
         notes = data.get('notes', '').strip()
 
         try:
             from decimal import Decimal
             from datetime import datetime as dt
-            parsed_date = dt.strptime(date_sold, '%Y-%m-%d').date() if date_sold else date.today()
-
-            CashBodaSale.objects.create(
-                client_full_name=client_full_name,
-                phone_number=phone_number,
-                id_number=id_number,
+            parsed_date = dt.strptime(date_purchased, '%Y-%m-%d').date() if date_purchased else date.today()
+            BodaInventory.objects.create(
                 number_plate=number_plate,
+                boda_type=boda_type,
+                chassis_no=chassis_no,
+                engine_no=engine_no,
+                colour=colour,
                 amount_bought_at=Decimal(amount_bought_at),
-                amount_sold_for=Decimal(amount_sold_for),
-                date_sold=parsed_date,
+                date_purchased=parsed_date,
                 notes=notes,
             )
-            messages.success(request, "Cash boda sale for " + client_full_name + " (" + number_plate + ") recorded successfully!")
-            return redirect('loan:cash-boda-list')
+            messages.success(request, "Boda " + number_plate + " recorded in inventory successfully!")
+            return redirect('loan:boda-inventory')
         except Exception as e:
             print(str(e))
-            messages.error(request, "Error saving record. Please check all fields and try again.")
-            return redirect('loan:add-cash-boda')
+            messages.error(request, "Error saving. Please check all fields and try again.")
+            return redirect('loan:add-boda-inventory')
 
-    return render(request, 'add_cash_boda.html')
+    return render(request, 'add_boda_inventory.html')
+
+
+def mark_cash_sale(request, inv_id):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    inventory = get_object_or_404(BodaInventory, id=inv_id)
+
+    if inventory.status != BodaInventory.STATUS_IN_STOCK:
+        messages.error(request, "This boda is no longer in stock and cannot be marked as a cash sale.")
+        return redirect('loan:boda-inventory')
+
+    if request.method == 'POST':
+        data = request.POST
+        buyer_name = data.get('buyer_name', '').strip()
+        buyer_phone = data.get('buyer_phone', '').strip()
+        buyer_id = data.get('buyer_id', '').strip()
+        buyer_address = data.get('buyer_address', '').strip()
+        boda_type = data.get('boda_type', '').strip()
+        colour = data.get('colour', '').strip()
+        chassis_no = data.get('chassis_no', '').strip()
+        engine_no = data.get('engine_no', '').strip()
+        amount_sold_for = data.get('amount_sold_for', '0') or '0'
+        date_sold_str = data.get('date_sold', '')
+
+        try:
+            from decimal import Decimal
+            from datetime import datetime as dt
+            parsed_date = dt.strptime(date_sold_str, '%Y-%m-%d').date() if date_sold_str else date.today()
+            inventory.status = BodaInventory.STATUS_SOLD_CASH
+            inventory.buyer_name = buyer_name
+            inventory.buyer_phone = buyer_phone
+            inventory.buyer_id = buyer_id
+            inventory.buyer_address = buyer_address
+            inventory.boda_type = boda_type
+            inventory.colour = colour
+            inventory.chassis_no = chassis_no
+            inventory.engine_no = engine_no
+            inventory.amount_sold_for = Decimal(amount_sold_for)
+            inventory.date_sold = parsed_date
+            inventory.save()
+            messages.success(request, "Boda " + inventory.number_plate + " marked as sold to " + buyer_name + ".")
+            return redirect('loan:boda-inventory')
+        except Exception as e:
+            print(str(e))
+            messages.error(request, "Error saving. Please check all fields.")
+            return redirect('loan:mark-cash-sale', inv_id=inv_id)
+
+    return render(request, 'mark_cash_sale.html', {'inventory': inventory})
+
+
+def mark_loan(request, inv_id):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    inventory = get_object_or_404(BodaInventory, id=inv_id)
+
+    if inventory.status != BodaInventory.STATUS_IN_STOCK:
+        messages.error(request, "This boda is no longer in stock.")
+        return redirect('loan:boda-inventory')
+
+    if request.method == 'POST':
+        data = request.POST
+        boda_firstName = data.get('boda_first_name', '').strip()
+        boda_lastName = data.get('boda_last_name', '').strip()
+        boda_amount = data.get('boda_amount', '0') or '0'
+        boda_weeklyPay = data.get('boda_weekly_pay', '0') or '0'
+        boda_initialPayment = data.get('boda_initial_payment', '0') or '0'
+        boda_phone = data.get('boda_phone_number', '').strip()
+        boda_nin = data.get('boda_nin_number', '').strip()
+        boda_ninPic = request.FILES.get('boda_nin_picture')
+        boda_stage = data.get('boda_work_stage', '')
+        gua1_name = data.get('gua1_name', '')
+        gua1_stage = data.get('gua1_stage_name', '')
+        gua1_phone = data.get('gua1_phone_number', '')
+        gua1_nin = data.get('gua1_nin_number', '')
+        gua1_ninPic = request.FILES.get('gua1_nin_picture')
+        gua2_name = data.get('gua2_name', '')
+        gua2_stage = data.get('gua2_stage_name', '')
+        gua2_phone = data.get('gua2_phone_number', '')
+        gua2_nin = data.get('gua2_nin_number', '')
+        gua2_ninPic = request.FILES.get('gua2_nin_picture')
+        gua3_name = data.get('gua3_name', '')
+        gua3_stage = data.get('gua3_stage_name', '')
+        gua3_phone = data.get('gua3_phone_number', '')
+        gua3_nin = data.get('gua3_nin_number', '')
+        gua3_ninPic = request.FILES.get('gua3_nin_picture')
+        date_of_application = data.get('date_of_application', '')
+
+        try:
+            from decimal import Decimal
+            parsedDate = datetime.now()
+            if date_of_application:
+                parsedDate = datetime.strptime(date_of_application, '%Y-%m-%d %H:%M')
+
+            today_dt = datetime.today()
+            start_of_week = today_dt - timedelta(days=today_dt.weekday())
+            start_of_last_week = start_of_week - timedelta(days=6)
+
+            initial_payment_decimal = Decimal(str(boda_initialPayment))
+
+            boda_obj = BodaApply.objects.create(
+                boda_guy_firstName=boda_firstName,
+                boda_guy_lastName=boda_lastName,
+                boda_numberPlate=inventory.number_plate,
+                final_amount=boda_amount,
+                initial_payment=initial_payment_decimal,
+                deposits=initial_payment_decimal,
+                weekly_pay=boda_weeklyPay,
+                phone_number=boda_phone,
+                nin_number=boda_nin,
+                nin_picture=boda_ninPic,
+                work_stage=boda_stage,
+                guarantor1_name=gua1_name,
+                guarantor1_stage_name=gua1_stage,
+                guarantor1_number=gua1_phone,
+                guarantor1_nin=gua1_nin,
+                guarantor1_nin_picture=gua1_ninPic,
+                guarantor2_name=gua2_name,
+                guarantor2_stage_name=gua2_stage,
+                guarantor2_number=gua2_phone,
+                guarantor2_nin=gua2_nin,
+                guarantor2_nin_picture=gua2_ninPic,
+                guarantor3_name=gua3_name,
+                guarantor3_stage_name=gua3_stage,
+                guarantor3_number=gua3_phone,
+                guarantor3_nin=gua3_nin,
+                guarantor3_nin_picture=gua3_ninPic,
+                date_of_application=parsedDate,
+                latest_dateOfPay=start_of_last_week,
+            )
+
+            if initial_payment_decimal > 0:
+                BodaWeeklyPay.objects.create(
+                    boda_id=boda_obj.boda_id,
+                    boda_firstName=boda_firstName,
+                    boda_lastName=boda_lastName,
+                    payment_fee=initial_payment_decimal,
+                    phone_number=boda_phone,
+                    reference=uuid.uuid4(),
+                    transaction_id="initial payment",
+                    status="paid",
+                )
+
+            inventory.status = BodaInventory.STATUS_LOAN
+            inventory.boda_apply_id = boda_obj.boda_id
+            inventory.save()
+
+            messages.success(request, "Boda " + inventory.number_plate + " assigned to loan for " + boda_firstName + " " + boda_lastName + ".")
+            return redirect('loan:boda-inventory')
+        except Exception as e:
+            print(str(e))
+            messages.error(request, "Error: " + str(e))
+            return redirect('loan:mark-loan', inv_id=inv_id)
+
+    return render(request, 'mark_loan.html', {'inventory': inventory})
 
 
 def search_boda_plate(request):
-    """AJAX — returns matching number plates from BodaApply for the autocomplete."""
     if request.method == 'POST':
-        import json as json_mod
         query = request.POST.get('plate_query', '').strip()
         results = []
         if query:

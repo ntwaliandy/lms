@@ -69,8 +69,10 @@ urlpatterns = [
     path('boda-analysis', views.boda_analysis, name="boda-analysis"),
     re_path(r'^boda-analysis/(?P<bodaId>[0-9]+)/$', views.boda_analysis_detail, name="boda-analysis-detail"),
 
-    # cash boda sales
-    path('cash-boda', views.cash_boda_list, name="cash-boda-list"),
-    path('add-cash-boda', views.add_cash_boda, name="add-cash-boda"),
+    # boda inventory
+    path('boda-inventory', views.boda_inventory_list, name="boda-inventory"),
+    path('add-boda-inventory', views.add_boda_inventory, name="add-boda-inventory"),
+    re_path(r'^mark-cash-sale/(?P<inv_id>[0-9]+)/$', views.mark_cash_sale, name="mark-cash-sale"),
+    re_path(r'^mark-loan/(?P<inv_id>[0-9]+)/$', views.mark_loan, name="mark-loan"),
     path('search-boda-plate', views.search_boda_plate, name="search-boda-plate"),
 ]

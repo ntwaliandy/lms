@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'loan:boda-inventory' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Inventory</a>
+                    <h1>Send Boda to Loan</h1>
+                    <p class="opacity-75">
+                        Assigning plate <strong>{{ inventory.number_plate }}</strong> to a boda loan.
+                        Fill in the applicant and guarantor details below.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+        <form action="{% url 'loan:mark-loan' inventory.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+
+                <!-- Applicant details -->
+                <div class="col-lg-6">
+                    <div class="card m-b-30">
+                        <div class="card-header">
+                            <h5 class="m-b-0">Applicant Details</h5>
+                            <p class="m-b-0 text-muted">Number plate is pre-filled from inventory</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Number Plate</label>
+                                    <input type="text" class="form-control" value="{{ inventory.number_plate }}" disabled>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>First Name *</label>
+                                    <input type="text" class="form-control" name="boda_first_name" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Last Name *</label>
+                                    <input type="text" class="form-control" name="boda_last_name" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Full Amount (UGX) *</label>
+                                    <input type="text" class="form-control" name="boda_amount" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Weekly Pay (UGX) *</label>
+                                    <input type="text" class="form-control" name="boda_weekly_pay" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Initial Payment (UGX)</label>
+                                    <input type="text" class="form-control" name="boda_initial_payment" value="0">
+                                    <small class="text-muted">First upfront payment — leave 0 if none</small>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Phone Number *</label>
+                                    <input type="text" class="form-control" name="boda_phone_number" required placeholder="e.g. 256775000000">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN Number *</label>
+                                    <input type="text" class="form-control" name="boda_nin_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>ID Picture</label>
+                                    <input type="file" class="form-control" name="boda_nin_picture">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Work Stage</label>
+                                    <input type="text" class="form-control" name="boda_work_stage">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Date of Application</label>
+                                    <input type="text" class="form-control date_of_application" name="date_of_application">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guarantors -->
+                <div class="col-lg-6">
+
+                    <!-- Guarantor 1 -->
+                    <div class="card m-b-30">
+                        <div class="card-header"><h5 class="m-b-0">1st Guarantor</h5></div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Full Name *</label>
+                                    <input type="text" class="form-control" name="gua1_name" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Stage Name</label>
+                                    <input type="text" class="form-control" name="gua1_stage_name">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Phone *</label>
+                                    <input type="text" class="form-control" name="gua1_phone_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN *</label>
+                                    <input type="text" class="form-control" name="gua1_nin_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN Picture</label>
+                                    <input type="file" class="form-control" name="gua1_nin_picture">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guarantor 2 -->
+                    <div class="card m-b-30">
+                        <div class="card-header"><h5 class="m-b-0">2nd Guarantor</h5></div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Full Name *</label>
+                                    <input type="text" class="form-control" name="gua2_name" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Stage Name</label>
+                                    <input type="text" class="form-control" name="gua2_stage_name">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Phone *</label>
+                                    <input type="text" class="form-control" name="gua2_phone_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN *</label>
+                                    <input type="text" class="form-control" name="gua2_nin_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN Picture</label>
+                                    <input type="file" class="form-control" name="gua2_nin_picture">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guarantor 3 -->
+                    <div class="card m-b-30">
+                        <div class="card-header"><h5 class="m-b-0">3rd Guarantor</h5></div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Full Name *</label>
+                                    <input type="text" class="form-control" name="gua3_name" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Stage Name</label>
+                                    <input type="text" class="form-control" name="gua3_stage_name">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Phone *</label>
+                                    <input type="text" class="form-control" name="gua3_phone_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN *</label>
+                                    <input type="text" class="form-control" name="gua3_nin_number" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>NIN Picture</label>
+                                    <input type="file" class="form-control" name="gua3_nin_picture">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-warning form-control" style="font-size:16px;">Assign to Loan</button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date_of_application", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        defaultDate: new Date()
+    });
+});
+</script>
+{% endblock %}

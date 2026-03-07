@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'loan:boda-inventory' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Inventory</a>
+                    <h1>Record Boda Purchase</h1>
+                    <p class="opacity-75">Log a new boda the business has purchased. You can assign it later.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Purchase Details</h5>
+                        <p class="m-b-0 text-muted">Fields marked * are required</p>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'loan:add-boda-inventory' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Number Plate *</label>
+                                    <input type="text" class="form-control" name="number_plate" required placeholder="e.g. UAX 123B">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Boda Type</label>
+                                    <input type="text" class="form-control" name="boda_type" placeholder="e.g. TVS, Bajaj, Hero">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Colour</label>
+                                    <input type="text" class="form-control" name="colour" placeholder="e.g. Red">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Chassis No</label>
+                                    <input type="text" class="form-control" name="chassis_no" placeholder="Chassis number">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Engine No</label>
+                                    <input type="text" class="form-control" name="engine_no" placeholder="Engine number">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Amount Bought At (UGX) *</label>
+                                    <input type="text" class="form-control" name="amount_bought_at" required placeholder="e.g. 3500000">
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Date Purchased *</label>
+                                    <input type="text" class="form-control date_purchased" name="date_purchased" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Notes</label>
+                                    <textarea class="form-control" name="notes" rows="2" placeholder="Any additional notes (optional)"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success form-control">Save Purchase</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date_purchased", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        defaultDate: new Date()
+    });
+});
+</script>
+{% endblock %}

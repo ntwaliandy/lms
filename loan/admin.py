@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AddPayment, BodaInformation, CashFlow, GroupAddPayment, Replies, AddPermitPayment, FileUpload, BodaApply, BodaWeeklyPay
+from .models import AddPayment, BodaInformation, BodaInventory, CashFlow, GroupAddPayment, Replies, AddPermitPayment, FileUpload, BodaApply, BodaWeeklyPay
 
 
 class permitAddPaymentAdmin(admin.ModelAdmin):
@@ -22,6 +22,12 @@ class BodaInfoAdmin(admin.ModelAdmin):
     list_display = ("numberPlate", "rider", "amountBought", "whereBought", "LogBookNames", "demandedAmount", "isCompleted")
     search_fields = ["numberPlate", "rider", "amountBought", "whereBought", "LogBookNames", "demandedAmount", "isCompleted"]
 
+class BodaInventoryAdmin(admin.ModelAdmin):
+    list_display = ("number_plate", "boda_type", "colour", "chassis_no", "engine_no", "amount_bought_at", "date_purchased", "status", "buyer_name", "amount_sold_for", "date_sold", "boda_apply_id")
+    list_filter = ("status",)
+    search_fields = ["number_plate", "boda_type", "chassis_no", "engine_no", "buyer_name", "buyer_phone", "buyer_id", "boda_apply_id"]
+    readonly_fields = ("created_at",)
+
 # Register your models here.
 admin.site.register(AddPayment)
 admin.site.register(GroupAddPayment)
@@ -32,3 +38,4 @@ admin.site.register(BodaApply, BodaBodaAdmin)
 admin.site.register(BodaWeeklyPay, BodaWeeklyAdmin)
 admin.site.register(CashFlow, CashFlowAdmin)
 admin.site.register(BodaInformation, BodaInfoAdmin)
+admin.site.register(BodaInventory, BodaInventoryAdmin)

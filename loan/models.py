@@ -157,20 +157,42 @@ class BodaInformation(models.Model):
         return str(self.rider) + " with " + str(self.numberPlate)
 
 
-# Cash Boda Sales — separate from loan bodas
-class CashBodaSale(models.Model):
-    client_full_name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    id_number = models.CharField(max_length=50, blank=True, default='')
+# Boda Inventory — bodas the business purchases, can be sold cash or assigned to a loan
+class BodaInventory(models.Model):
+    STATUS_IN_STOCK = 'IN_STOCK'
+    STATUS_SOLD_CASH = 'SOLD_CASH'
+    STATUS_LOAN = 'LOAN'
+    STATUS_CHOICES = [
+        (STATUS_IN_STOCK, 'In Stock'),
+        (STATUS_SOLD_CASH, 'Sold - Cash'),
+        (STATUS_LOAN, 'Gone to Loan'),
+    ]
+
     number_plate = models.CharField(max_length=20)
+    boda_type = models.CharField(max_length=100, blank=True, default='')
+    chassis_no = models.CharField(max_length=100, blank=True, default='')
+    engine_no = models.CharField(max_length=100, blank=True, default='')
+    colour = models.CharField(max_length=50, blank=True, default='')
     amount_bought_at = models.DecimalField(max_digits=14, decimal_places=2, default='0')
-    amount_sold_for = models.DecimalField(max_digits=14, decimal_places=2, default='0')
-    date_sold = models.DateField(default=datetime.now)
+    date_purchased = models.DateField(default=datetime.now)
     notes = models.TextField(blank=True, default='')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_IN_STOCK)
+
+    # Filled when status = SOLD_CASH
+    buyer_name = models.CharField(max_length=100, blank=True, default='')
+    buyer_phone = models.CharField(max_length=20, blank=True, default='')
+    buyer_id = models.CharField(max_length=50, blank=True, default='')
+    buyer_address = models.CharField(max_length=200, blank=True, default='')
+    amount_sold_for = models.DecimalField(max_digits=14, decimal_places=2, default='0')
+    date_sold = models.DateField(null=True, blank=True)
+
+    # Filled when status = LOAN
+    boda_apply_id = models.CharField(max_length=200, blank=True, default='')
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def profit(self):
         return self.amount_sold_for - self.amount_bought_at
 
     def __str__(self):
-        return self.client_full_name + " — " + self.number_plate
+        return self.number_plate + " (" + self.status + ")"
