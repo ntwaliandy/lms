@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <h1>Impounded Bikes</h1>
+                    <p class="opacity-75">Track boda motorcycles seized from clients who failed to pay.</p>
+
+                    <div class="d-flex align-items-center">
+                        <form action="{% url 'loan:impounded-list' %}" method="get" class="flex-grow-1 mr-3">
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-md-8 m-0">
+                                    <input type="text" class="form-control" name="q" value="{{ search_query }}" placeholder="Search by plate, client name, phone...">
+                                </div>
+                                <div class="form-group col-md-2 m-0 pl-2">
+                                    <button class="btn btn-primary form-control">Search</button>
+                                </div>
+                                {% if search_query %}
+                                <div class="form-group col-md-2 m-0 pl-2">
+                                    <a href="{% url 'loan:impounded-list' %}" class="btn btn-secondary form-control">Clear</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </form>
+                        <a href="{% url 'loan:add-impounded' %}" class="btn btn-danger" style="white-space:nowrap;">+ Record Impound</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+
+        <!-- Summary cards -->
+        <div class="row m-b-30">
+            <div class="col-md-4">
+                <div class="card text-center p-3" style="border-left: 4px solid #dc3545;">
+                    <h5 class="text-muted">Currently Held</h5>
+                    <h2 class="text-danger">{{ held_count }}</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3" style="border-left: 4px solid #28a745;">
+                    <h5 class="text-muted">Returned</h5>
+                    <h2 class="text-success">{{ returned_count }}</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3" style="border-left: 4px solid #ffc107;">
+                    <h5 class="text-muted">Total Amount Demanded (held)</h5>
+                    <h3 class="text-warning">{{ total_demanded|floatformat:0 }} <small style="font-size:13px;">UGX</small></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="col-lg-12">
+            <nav class="nav nav-pills nav-justified m-b-30">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#held-tab" role="tab"
+                   style="background:#dc3545; color:#fff; font-weight:600; border-radius:6px; margin:0 4px;">
+                    Being Held <span class="badge badge-light ml-1" style="color:#dc3545;">{{ held_count }}</span>
+                </a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#returned-tab" role="tab"
+                   style="background:#e9ecef; color:#333; font-weight:600; border-radius:6px; margin:0 4px;">
+                    Returned <span class="badge badge-secondary ml-1">{{ returned_count }}</span>
+                </a>
+            </nav>
+        </div>
+
+        <style>
+            .nav-pills .nav-link:not(.active) { background:#e9ecef !important; color:#333 !important; }
+            tbody tr { cursor: pointer; }
+            tbody tr:hover { background: rgba(220,53,69,0.06) !important; }
+        </style>
+
+        <div class="tab-content">
+
+            <!-- HELD -->
+            <div class="tab-pane fade show active" id="held-tab" role="tabpanel">
+                <div class="card m-b-30">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="m-0">Currently Held Bikes</h5>
+                        <a href="{% url 'loan:add-impounded' %}" class="btn btn-sm btn-danger">+ Record Impound</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-td-middle table-card table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>NUMBER PLATE</th>
+                                        <th>CLIENT</th>
+                                        <th>PHONE</th>
+                                        <th>DATE IMPOUNDED</th>
+                                        <th>DAYS HELD</th>
+                                        <th>DIFFERENCE</th>
+                                        <th>AMOUNT DEMANDED</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if held %}
+                                        {% for bike in held %}
+                                        <tr class="imp-row"
+                                            data-plate="{{ bike.number_plate }}"
+                                            data-client="{{ bike.client_name }}"
+                                            data-phone="{{ bike.client_phone }}"
+                                            data-date-impounded="{{ bike.date_impounded|date:'d M Y' }}"
+                                            data-days="{{ bike.days_held }}"
+                                            data-deficit="{{ bike.deficit_at_impound|floatformat:0 }}"
+                                            data-demanded="{{ bike.amount_demanded|floatformat:0 }}"
+                                            data-reason="{{ bike.reason }}"
+                                            data-status="BEING HELD"
+                                            data-boda-id="{{ bike.boda_id }}">
+                                            <td>{{ forloop.counter }}</td>
+                                            <td><span class="badge badge-danger" style="font-size:14px;">{{ bike.number_plate }}</span></td>
+                                            <td><strong>{{ bike.client_name }}</strong></td>
+                                            <td>{{ bike.client_phone }}</td>
+                                            <td>{{ bike.date_impounded|date:"d M Y" }}</td>
+                                            <td>
+                                                <span class="badge {% if bike.days_held > 14 %}badge-danger{% elif bike.days_held > 7 %}badge-warning{% else %}badge-secondary{% endif %}">
+                                                    {{ bike.days_held }} day{{ bike.days_held|pluralize }}
+                                                </span>
+                                            </td>
+                                            <td class="text-danger font-weight-bold">{{ bike.deficit_at_impound|floatformat:0 }} UGX</td>
+                                            <td class="text-warning font-weight-bold">{{ bike.amount_demanded|floatformat:0 }} UGX</td>
+                                            <td>
+                                                <a href="{% url 'loan:return-impounded' bike.id %}" class="btn btn-sm btn-success" onclick="event.stopPropagation()">Mark Returned</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr><td colspan="9" class="text-center text-muted p-4">No bikes currently held.</td></tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RETURNED -->
+            <div class="tab-pane fade" id="returned-tab" role="tabpanel">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-0">Returned Bikes</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-td-middle table-card table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>NUMBER PLATE</th>
+                                        <th>CLIENT</th>
+                                        <th>PHONE</th>
+                                        <th>IMPOUNDED</th>
+                                        <th>RETURNED</th>
+                                        <th>DAYS HELD</th>
+                                        <th>DIFFERENCE</th>
+                                        <th>DEMANDED</th>
+                                        <th>RETURN NOTES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if returned %}
+                                        {% for bike in returned %}
+                                        <tr class="imp-row"
+                                            data-plate="{{ bike.number_plate }}"
+                                            data-client="{{ bike.client_name }}"
+                                            data-phone="{{ bike.client_phone }}"
+                                            data-date-impounded="{{ bike.date_impounded|date:'d M Y' }}"
+                                            data-date-returned="{{ bike.date_returned|date:'d M Y' }}"
+                                            data-days="{{ bike.days_held }}"
+                                            data-deficit="{{ bike.deficit_at_impound|floatformat:0 }}"
+                                            data-demanded="{{ bike.amount_demanded|floatformat:0 }}"
+                                            data-reason="{{ bike.reason }}"
+                                            data-return-notes="{{ bike.return_notes }}"
+                                            data-status="RETURNED"
+                                            data-boda-id="{{ bike.boda_id }}">
+                                            <td>{{ forloop.counter }}</td>
+                                            <td><span class="badge badge-success" style="font-size:14px;">{{ bike.number_plate }}</span></td>
+                                            <td><strong>{{ bike.client_name }}</strong></td>
+                                            <td>{{ bike.client_phone }}</td>
+                                            <td>{{ bike.date_impounded|date:"d M Y" }}</td>
+                                            <td>{{ bike.date_returned|date:"d M Y" }}</td>
+                                            <td><span class="badge badge-secondary">{{ bike.days_held }} day{{ bike.days_held|pluralize }}</span></td>
+                                            <td class="text-danger">{{ bike.deficit_at_impound|floatformat:0 }}</td>
+                                            <td>{{ bike.amount_demanded|floatformat:0 }}</td>
+                                            <td>{{ bike.return_notes|truncatechars:30|default:"—" }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr><td colspan="10" class="text-center text-muted p-4">No returned bikes yet.</td></tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Details Modal -->
+<div class="modal fade" id="impDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" id="imp-modal-header" style="background:#dc3545;">
+                <h5 class="modal-title text-white">Impounded Bike Details</h5>
+                <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase m-b-10">Bike & Client</h6>
+                        <table class="table table-sm table-bordered">
+                            <tr><th>Number Plate</th><td id="im-plate"></td></tr>
+                            <tr><th>Client</th><td id="im-client"></td></tr>
+                            <tr><th>Phone</th><td id="im-phone"></td></tr>
+                            <tr><th>Boda ID</th><td id="im-boda-id"></td></tr>
+                            <tr><th>Status</th><td><span id="im-status" class="badge"></span></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase m-b-10">Impound Details</h6>
+                        <table class="table table-sm table-bordered">
+                            <tr><th>Date Impounded</th><td id="im-date-imp"></td></tr>
+                            <tr><th>Date Returned</th><td id="im-date-ret"></td></tr>
+                            <tr><th>Days Held</th><td id="im-days"></td></tr>
+                                            <tr><th>Difference at Impound</th><td id="im-deficit" class="text-danger font-weight-bold"></td></tr>
+                            <tr><th>Amount Demanded</th><td id="im-demanded" class="text-warning font-weight-bold"></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-12 mt-2" id="im-reason-block">
+                        <h6 class="text-muted text-uppercase m-b-5">Reason</h6>
+                        <p id="im-reason" class="text-dark"></p>
+                    </div>
+                    <div class="col-md-12" id="im-return-block" style="display:none;">
+                        <h6 class="text-muted text-uppercase m-b-5">Return Notes</h6>
+                        <p id="im-return-notes" class="text-dark"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="imp-modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.imp-row').forEach(function (row) {
+        row.addEventListener('click', function () {
+            var d = row.dataset;
+
+            document.getElementById('im-plate').textContent    = d.plate || '—';
+            document.getElementById('im-client').textContent   = d.client || '—';
+            document.getElementById('im-phone').textContent    = d.phone || '—';
+            document.getElementById('im-boda-id').textContent  = d.bodaId || '—';
+            document.getElementById('im-date-imp').textContent = d.dateImpounded || '—';
+            document.getElementById('im-date-ret').textContent = d.dateReturned || '—';
+            document.getElementById('im-days').textContent     = (d.days || '0') + ' day(s)';
+            document.getElementById('im-deficit').textContent  = (d.deficit || '0') + ' UGX';
+            document.getElementById('im-demanded').textContent = (d.demanded || '0') + ' UGX';
+            document.getElementById('im-reason').textContent   = d.reason || '—';
+
+            var statusEl = document.getElementById('im-status');
+            if (d.status === 'RETURNED') {
+                statusEl.textContent = 'RETURNED';
+                statusEl.className = 'badge badge-success';
+                document.getElementById('imp-modal-header').style.background = '#28a745';
+                document.getElementById('im-return-block').style.display = 'block';
+                document.getElementById('im-return-notes').textContent = d.returnNotes || '—';
+            } else {
+                statusEl.textContent = 'BEING HELD';
+                statusEl.className = 'badge badge-danger';
+                document.getElementById('imp-modal-header').style.background = '#dc3545';
+                document.getElementById('im-return-block').style.display = 'none';
+            }
+
+            document.getElementById('imp-modal-footer').innerHTML =
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>';
+
+            $('#impDetailModal').modal('show');
+        });
+    });
+});
+</script>
+{% endblock %}

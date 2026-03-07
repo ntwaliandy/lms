@@ -75,4 +75,10 @@ urlpatterns = [
     re_path(r'^mark-cash-sale/(?P<inv_id>[0-9]+)/$', views.mark_cash_sale, name="mark-cash-sale"),
     re_path(r'^mark-loan/(?P<inv_id>[0-9]+)/$', views.mark_loan, name="mark-loan"),
     path('search-boda-plate', views.search_boda_plate, name="search-boda-plate"),
+
+    # impounded bikes
+    path('impounded', views.impounded_list, name="impounded-list"),
+    path('add-impounded', views.add_impounded, name="add-impounded"),
+    re_path(r'^return-impounded/(?P<imp_id>[0-9]+)/$', views.return_impounded, name="return-impounded"),
+    path('boda-deficit-info', views.boda_deficit_info, name="boda-deficit-info"),
 ]

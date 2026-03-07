@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'loan:impounded-list' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Impounded Bikes</a>
+                    <h1>Return Bike to Client</h1>
+                    <p class="opacity-75">
+                        Plate: <strong>{{ bike.number_plate }}</strong> &nbsp;|&nbsp;
+                        Client: <strong>{{ bike.client_name }}</strong> &nbsp;|&nbsp;
+                        Days held: <strong>{{ bike.days_held }}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+        <div class="row">
+            <div class="col-lg-6">
+
+                <!-- Impound summary -->
+                <div class="card m-b-30" style="border-left: 4px solid #dc3545;">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase m-b-10">Impound Summary</h6>
+                        <table class="table table-sm table-bordered m-0">
+                            <tr><th>Number Plate</th><td>{{ bike.number_plate }}</td></tr>
+                            <tr><th>Client</th><td>{{ bike.client_name }}</td></tr>
+                            <tr><th>Phone</th><td>{{ bike.client_phone|default:"—" }}</td></tr>
+                            <tr><th>Date Impounded</th><td>{{ bike.date_impounded|date:"d M Y" }}</td></tr>
+                            <tr><th>Days Held</th><td><strong>{{ bike.days_held }}</strong></td></tr>
+                            <tr><th>Difference at Impound</th><td class="text-danger font-weight-bold">{{ bike.deficit_at_impound|floatformat:0 }} UGX</td></tr>
+                            <tr><th>Amount Demanded</th><td class="text-warning font-weight-bold">{{ bike.amount_demanded|floatformat:0 }} UGX</td></tr>
+                            {% if bike.reason %}
+                            <tr><th>Reason</th><td>{{ bike.reason }}</td></tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Return form -->
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Record Return</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'loan:return-impounded' bike.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Date Returned *</label>
+                                    <input type="text" class="form-control date_returned" name="date_returned" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Return Notes</label>
+                                    <textarea class="form-control" name="return_notes" rows="3"
+                                        placeholder="e.g. Client paid the demanded amount, bike returned in good condition..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success form-control">Confirm Return</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date_returned", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        defaultDate: new Date()
+    });
+});
+</script>
+{% endblock %}

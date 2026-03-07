@@ -9,7 +9,7 @@ from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, SmsCallBack, Support
-from .models import AddPayment, AddPermitPayment, BodaInformation, BodaInventory, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
+from .models import AddPayment, AddPermitPayment, BodaInformation, BodaInventory, CashFlow, FileUpload, GroupAddPayment, ImpoundedBike, Replies, BodaApply, BodaWeeklyPay
 from django.db.models import Sum, Q
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -1893,6 +1893,17 @@ def boda_analysis_detail(request, bodaId):
     actual_weekly = sum(p.payment_fee for p in weekly_payments) or Decimal('0')
     overall_diff = actual_weekly - total_expected
 
+    # Payment period projection
+    import math
+    remaining_after_initial = boda.final_amount - initial_amount
+    if boda.weekly_pay > 0:
+        total_weeks_needed = math.ceil(float(remaining_after_initial) / float(boda.weekly_pay))
+    else:
+        total_weeks_needed = 0
+    expected_finish_date = boda.date_of_application.date() + timedelta(weeks=total_weeks_needed)
+    weeks_remaining = max(total_weeks_needed - len(weeks), 0)
+    is_overdue = today > expected_finish_date and boda.balance > 0
+
     return render(request, 'boda_analysis_detail.html', {
         'boda': boda,
         'weeks': weeks,
@@ -1901,6 +1912,10 @@ def boda_analysis_detail(request, bodaId):
         'total_paid': actual_weekly,
         'overall_diff': overall_diff,
         'overall_status': 'surplus' if overall_diff > 0 else ('deficit' if overall_diff < 0 else 'ok'),
+        'total_weeks_needed': total_weeks_needed,
+        'expected_finish_date': expected_finish_date,
+        'weeks_remaining': weeks_remaining,
+        'is_overdue': is_overdue,
     })
 
 
@@ -2138,3 +2153,167 @@ def search_boda_plate(request):
             results = list(plates)
         return JsonResponse({'status': 'success', 'data': results})
     return JsonResponse({'status': 'error'})
+
+
+# ── Boda deficit lookup (used when recording impounds) ───────────────────────
+
+def boda_deficit_info(request):
+    """Return current running deficit/surplus for a boda client (used by impound form)."""
+    if not request.user.is_superuser:
+        return JsonResponse({'status': 'error'})
+
+    boda_id = request.GET.get('boda_id', '').strip()
+    if not boda_id:
+        return JsonResponse({'status': 'error', 'message': 'No boda_id provided'})
+
+    from decimal import Decimal
+    boda = BodaApply.objects.filter(boda_id=boda_id).first()
+    if not boda:
+        return JsonResponse({'status': 'error', 'message': 'Not found'})
+
+    all_payments = list(BodaWeeklyPay.objects.filter(boda_id=boda_id).order_by('date'))
+    initial_amount, weekly_payments = _get_weekly_payments(boda, all_payments)
+
+    today = date.today()
+    start_date = boda.date_of_application.date()
+    running_balance = Decimal('0')
+    current = start_date
+
+    while current <= today:
+        week_end = current + timedelta(days=6)
+        week_paid = sum(
+            p.payment_fee for p in weekly_payments
+            if current <= p.date.date() <= week_end
+        ) or Decimal('0')
+        running_balance += Decimal(str(week_paid)) - boda.weekly_pay
+        current += timedelta(days=7)
+
+    return JsonResponse({
+        'status': 'success',
+        'deficit': str(running_balance),   # negative = deficit, positive = surplus
+        'plate': boda.boda_numberPlate,
+        'name': boda.boda_guy_firstName + ' ' + boda.boda_guy_lastName,
+        'phone': boda.phone_number,
+    })
+
+
+# ── Impounded Bikes ───────────────────────────────────────────────────────────
+
+def impounded_list(request):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    search_query = request.GET.get('q', '').strip()
+
+    held = ImpoundedBike.objects.filter(status=ImpoundedBike.STATUS_HELD).order_by('-date_impounded')
+    returned = ImpoundedBike.objects.filter(status=ImpoundedBike.STATUS_RETURNED).order_by('-date_returned')
+
+    if search_query:
+        held = held.filter(
+            Q(number_plate__icontains=search_query) |
+            Q(client_name__icontains=search_query) |
+            Q(client_phone__icontains=search_query) |
+            Q(boda_id__icontains=search_query)
+        )
+        returned = returned.filter(
+            Q(number_plate__icontains=search_query) |
+            Q(client_name__icontains=search_query) |
+            Q(client_phone__icontains=search_query)
+        )
+
+    from decimal import Decimal
+    total_demanded = ImpoundedBike.objects.filter(
+        status=ImpoundedBike.STATUS_HELD
+    ).aggregate(t=Sum('amount_demanded'))['t'] or Decimal('0')
+
+    return render(request, 'impounded_list.html', {
+        'held': held,
+        'returned': returned,
+        'held_count': held.count(),
+        'returned_count': returned.count(),
+        'total_demanded': total_demanded,
+        'search_query': search_query,
+    })
+
+
+def add_impounded(request):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    if request.method == 'POST':
+        data = request.POST
+        boda_id = data.get('boda_id', '').strip()
+        number_plate = data.get('number_plate', '').strip()
+        client_name = data.get('client_name', '').strip()
+        client_phone = data.get('client_phone', '').strip()
+        date_impounded = data.get('date_impounded', '')
+        amount_demanded = data.get('amount_demanded', '0') or '0'
+        deficit_at_impound = data.get('deficit_at_impound', '0') or '0'
+        reason = data.get('reason', '').strip()
+
+        try:
+            from decimal import Decimal
+            from datetime import datetime as dt
+            parsed_date = dt.strptime(date_impounded, '%Y-%m-%d').date() if date_impounded else date.today()
+            ImpoundedBike.objects.create(
+                boda_id=boda_id,
+                number_plate=number_plate,
+                client_name=client_name,
+                client_phone=client_phone,
+                date_impounded=parsed_date,
+                amount_demanded=Decimal(amount_demanded),
+                deficit_at_impound=Decimal(deficit_at_impound),
+                reason=reason,
+            )
+            messages.success(request, "Boda " + number_plate + " (" + client_name + ") recorded as impounded.")
+            return redirect('loan:impounded-list')
+        except Exception as e:
+            print(str(e))
+            messages.error(request, "Error saving. Please check all fields.")
+            return redirect('loan:add-impounded')
+
+    # Pre-fill from boda_id query param if coming from boda dashboard
+    prefill_boda_id = request.GET.get('boda_id', '')
+    prefill = {}
+    if prefill_boda_id:
+        boda = BodaApply.objects.filter(boda_id=prefill_boda_id).first()
+        if boda:
+            prefill = {
+                'boda_id': boda.boda_id,
+                'number_plate': boda.boda_numberPlate,
+                'client_name': boda.boda_guy_firstName + ' ' + boda.boda_guy_lastName,
+                'client_phone': boda.phone_number,
+                'deficit': boda.balance,
+            }
+    return render(request, 'add_impounded.html', {'prefill': prefill})
+
+
+def return_impounded(request, imp_id):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    bike = get_object_or_404(ImpoundedBike, id=imp_id)
+
+    if bike.status != ImpoundedBike.STATUS_HELD:
+        messages.error(request, "This bike has already been returned.")
+        return redirect('loan:impounded-list')
+
+    if request.method == 'POST':
+        data = request.POST
+        date_returned = data.get('date_returned', '')
+        return_notes = data.get('return_notes', '').strip()
+        try:
+            from datetime import datetime as dt
+            parsed_date = dt.strptime(date_returned, '%Y-%m-%d').date() if date_returned else date.today()
+            bike.status = ImpoundedBike.STATUS_RETURNED
+            bike.date_returned = parsed_date
+            bike.return_notes = return_notes
+            bike.save()
+            messages.success(request, "Boda " + bike.number_plate + " marked as returned to " + bike.client_name + ".")
+            return redirect('loan:impounded-list')
+        except Exception as e:
+            print(str(e))
+            messages.error(request, "Error saving. Please try again.")
+            return redirect('loan:return-impounded', imp_id=imp_id)
+
+    return render(request, 'return_impounded.html', {'bike': bike})

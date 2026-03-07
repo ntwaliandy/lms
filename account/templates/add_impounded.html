@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'loan:impounded-list' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Impounded Bikes</a>
+                    <h1>Record Impounded Bike</h1>
+                    <p class="opacity-75">Log a boda seized from a client who failed to pay.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Impound Details</h5>
+                        <p class="m-b-0 text-muted">Fields marked * are required</p>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'loan:add-impounded' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-row">
+
+                                <div class="col-md-12 m-b-10">
+                                    <h6 class="text-muted text-uppercase">Search Boda Client (optional)</h6>
+                                    <small class="text-muted">Type to find an existing boda client and auto-fill the fields below.</small>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <input type="text" class="form-control" id="boda_search_input" placeholder="Search by name or number plate...">
+                                    <div id="boda_search_results" class="list-group mt-1" style="position:absolute; z-index:1000; width:90%; display:none;"></div>
+                                </div>
+
+                                <input type="hidden" name="boda_id" id="boda_id_field" value="{{ prefill.boda_id }}">
+
+                                <div class="col-md-12 m-b-5 m-t-5"><hr></div>
+
+                                <div class="form-group col-md-12">
+                                    <label>Number Plate *</label>
+                                    <input type="text" class="form-control" name="number_plate" id="field_plate" required value="{{ prefill.number_plate }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Client Full Name *</label>
+                                    <input type="text" class="form-control" name="client_name" id="field_name" required value="{{ prefill.client_name }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Client Phone</label>
+                                    <input type="text" class="form-control" name="client_phone" id="field_phone" value="{{ prefill.client_phone }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Difference at Time of Impound (UGX)</label>
+                                    <input type="text" class="form-control" name="deficit_at_impound" id="field_deficit" value="{{ prefill.deficit|default:'0' }}" placeholder="0">
+                                    <small class="text-muted" id="deficit_hint">
+                                        Auto-filled when a boda client is selected — negative = deficit, positive = surplus
+                                    </small>
+                                    <div id="deficit_badge" class="mt-1" style="display:none;"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Amount Demanded for Release (UGX) *</label>
+                                    <input type="text" class="form-control" name="amount_demanded" required placeholder="0">
+                                    <small class="text-muted">Amount required before returning the bike</small>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Date Impounded *</label>
+                                    <input type="text" class="form-control date_impounded" name="date_impounded" required>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label>Reason / Notes</label>
+                                    <textarea class="form-control" name="reason" rows="3" placeholder="Brief description of why the bike was impounded..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-danger form-control">Record Impound</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    flatpickr(".date_impounded", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        defaultDate: new Date()
+    });
+
+    // Live boda search autocomplete
+    var searchInput = document.getElementById('boda_search_input');
+    var resultsBox  = document.getElementById('boda_search_results');
+
+    searchInput.addEventListener('input', function () {
+        var q = searchInput.value.trim();
+        if (q.length < 2) { resultsBox.style.display = 'none'; return; }
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'loan:search-boda' %}",
+            data: { csrfmiddlewaretoken: "{{ csrf_token }}", client_search: q },
+            success: function (response) {
+                resultsBox.innerHTML = '';
+                if (response.status === 'success' && response.data.length > 0) {
+                    response.data.forEach(function (item) {
+                        var f = item.fields;
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'list-group-item list-group-item-action';
+                        btn.innerHTML = '<strong>' + f.boda_numberPlate + '</strong> — ' +
+                            f.boda_guy_firstName + ' ' + f.boda_guy_lastName +
+                            ' <small class="text-muted">(' + f.phone_number + ')</small>';
+                        btn.addEventListener('click', function () {
+                            document.getElementById('boda_id_field').value  = f.boda_id;
+                            document.getElementById('field_plate').value    = f.boda_numberPlate;
+                            document.getElementById('field_name').value     = f.boda_guy_firstName + ' ' + f.boda_guy_lastName;
+                            document.getElementById('field_phone').value    = f.phone_number;
+                            // fetch calculated running balance/deficit
+                            fetchDeficit(f.boda_id);
+                            resultsBox.style.display = 'none';
+                            searchInput.value = f.boda_guy_firstName + ' ' + f.boda_guy_lastName;
+                        });
+                        resultsBox.appendChild(btn);
+                    });
+                    resultsBox.style.display = 'block';
+                } else {
+                    resultsBox.style.display = 'none';
+                }
+            }
+        });
+    });
+
+    function fetchDeficit(bodaId) {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'loan:boda-deficit-info' %}",
+            data: { boda_id: bodaId },
+            success: function (res) {
+                if (res.status === 'success') {
+                    var val = parseFloat(res.deficit);
+                    document.getElementById('field_deficit').value = val.toFixed(0);
+                    var badge = document.getElementById('deficit_badge');
+                    badge.style.display = 'block';
+                    if (val < 0) {
+                        badge.innerHTML = '<span class="badge badge-danger" style="font-size:13px;">Deficit: ' + Math.abs(val).toLocaleString() + ' UGX behind</span>';
+                    } else if (val > 0) {
+                        badge.innerHTML = '<span class="badge badge-success" style="font-size:13px;">Surplus: ' + val.toLocaleString() + ' UGX ahead</span>';
+                    } else {
+                        badge.innerHTML = '<span class="badge badge-secondary" style="font-size:13px;">Up to date</span>';
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!searchInput.contains(e.target) && !resultsBox.contains(e.target)) {
+            resultsBox.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

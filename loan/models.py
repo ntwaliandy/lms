@@ -196,3 +196,37 @@ class BodaInventory(models.Model):
 
     def __str__(self):
         return self.number_plate + " (" + self.status + ")"
+
+
+# Impounded Bikes — bodas seized from clients who failed to pay
+class ImpoundedBike(models.Model):
+    STATUS_HELD = 'HELD'
+    STATUS_RETURNED = 'RETURNED'
+    STATUS_CHOICES = [
+        (STATUS_HELD, 'Being Held'),
+        (STATUS_RETURNED, 'Returned'),
+    ]
+
+    boda_id = models.CharField(max_length=200, blank=True, default='')
+    number_plate = models.CharField(max_length=20)
+    client_name = models.CharField(max_length=100)
+    client_phone = models.CharField(max_length=20, blank=True, default='')
+    date_impounded = models.DateField(default=datetime.now)
+    amount_demanded = models.DecimalField(max_digits=14, decimal_places=2, default='0')
+    deficit_at_impound = models.DecimalField(max_digits=14, decimal_places=2, default='0')
+    reason = models.TextField(blank=True, default='')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_HELD)
+
+    # Filled when returned
+    date_returned = models.DateField(null=True, blank=True)
+    return_notes = models.TextField(blank=True, default='')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def days_held(self):
+        from datetime import date as d
+        end = self.date_returned if self.date_returned else d.today()
+        return (end - self.date_impounded).days
+
+    def __str__(self):
+        return self.number_plate + " — " + self.client_name + " (" + self.status + ")"

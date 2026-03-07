@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AddPayment, BodaInformation, BodaInventory, CashFlow, GroupAddPayment, Replies, AddPermitPayment, FileUpload, BodaApply, BodaWeeklyPay
+from .models import AddPayment, BodaInformation, BodaInventory, CashFlow, GroupAddPayment, ImpoundedBike, Replies, AddPermitPayment, FileUpload, BodaApply, BodaWeeklyPay
 
 
 class permitAddPaymentAdmin(admin.ModelAdmin):
@@ -28,6 +28,12 @@ class BodaInventoryAdmin(admin.ModelAdmin):
     search_fields = ["number_plate", "boda_type", "chassis_no", "engine_no", "buyer_name", "buyer_phone", "buyer_id", "boda_apply_id"]
     readonly_fields = ("created_at",)
 
+class ImpoundedBikeAdmin(admin.ModelAdmin):
+    list_display = ("number_plate", "client_name", "client_phone", "date_impounded", "deficit_at_impound", "amount_demanded", "status", "date_returned", "days_held")
+    list_filter = ("status",)
+    search_fields = ["number_plate", "client_name", "client_phone", "boda_id"]
+    readonly_fields = ("created_at",)
+
 # Register your models here.
 admin.site.register(AddPayment)
 admin.site.register(GroupAddPayment)
@@ -39,3 +45,4 @@ admin.site.register(BodaWeeklyPay, BodaWeeklyAdmin)
 admin.site.register(CashFlow, CashFlowAdmin)
 admin.site.register(BodaInformation, BodaInfoAdmin)
 admin.site.register(BodaInventory, BodaInventoryAdmin)
+admin.site.register(ImpoundedBike, ImpoundedBikeAdmin)

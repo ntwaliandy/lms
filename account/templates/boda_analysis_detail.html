@@ -13,8 +13,34 @@
                         Plate: <strong>{{ boda.boda_numberPlate }}</strong> &nbsp;|&nbsp;
                         Phone: <strong>{{ boda.phone_number }}</strong> &nbsp;|&nbsp;
                         Weekly Pay: <strong>{{ boda.weekly_pay|floatformat:0 }} UGX</strong> &nbsp;|&nbsp;
+                        Full Amount: <strong>{{ boda.final_amount|floatformat:0 }} UGX</strong> &nbsp;|&nbsp;
                         Started: <strong>{{ boda.date_of_application|date:"d M Y" }}</strong>
                     </p>
+                    <!-- Payment period summary -->
+                    <div class="d-flex flex-wrap" style="gap:12px; margin-top:8px;">
+                        <span class="badge badge-light p-2" style="font-size:13px;">
+                            <i class="mdi mdi-calendar-range"></i>
+                            Total Period: <strong>{{ total_weeks_needed }} week{{ total_weeks_needed|pluralize }}</strong>
+                        </span>
+                        <span class="badge badge-light p-2" style="font-size:13px;">
+                            <i class="mdi mdi-calendar-check"></i>
+                            Expected Finish: <strong>{{ expected_finish_date|date:"d M Y" }}</strong>
+                        </span>
+                        {% if is_overdue %}
+                        <span class="badge badge-danger p-2" style="font-size:13px;">
+                            <i class="mdi mdi-alert"></i> OVERDUE — past expected finish date
+                        </span>
+                        {% elif weeks_remaining > 0 %}
+                        <span class="badge badge-warning p-2" style="font-size:13px;">
+                            <i class="mdi mdi-clock-outline"></i>
+                            {{ weeks_remaining }} week{{ weeks_remaining|pluralize }} remaining
+                        </span>
+                        {% else %}
+                        <span class="badge badge-success p-2" style="font-size:13px;">
+                            <i class="mdi mdi-check-circle"></i> Within payment period
+                        </span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -24,25 +50,41 @@
 
         <!-- Summary cards -->
         <div class="row m-b-30">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card text-center p-3" style="border-left: 4px solid #6c757d;">
                     <h5 class="text-muted">Total Expected</h5>
                     <h3>{{ total_expected|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
-                    <small class="text-muted">{{ weeks|length }} week(s)</small>
+                    <small class="text-muted">{{ weeks|length }} week(s) elapsed</small>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card text-center p-3" style="border-left: 4px solid #6f42c1;">
                     <h5 class="text-muted">Initial Payment</h5>
                     <h3 class="text-primary">{{ initial_amount|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
                     <small class="text-muted">excluded from weekly tracking</small>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card text-center p-3" style="border-left: 4px solid #007bff;">
                     <h5 class="text-muted">Weekly Paid</h5>
                     <h3>{{ total_paid|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
                     <small class="text-muted">regular weekly payments only</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #fd7e14;">
+                    <h5 class="text-muted">Payment Period</h5>
+                    <h3>{{ total_weeks_needed }} <small class="text-muted" style="font-size:14px;">week{{ total_weeks_needed|pluralize }}</small></h3>
+                    <small class="text-muted">
+                        Finish by: <strong>{{ expected_finish_date|date:"d M Y" }}</strong>
+                    </small><br>
+                    {% if is_overdue %}
+                        <span class="badge badge-danger">OVERDUE</span>
+                    {% elif weeks_remaining > 0 %}
+                        <span class="badge badge-warning">{{ weeks_remaining }} wk{{ weeks_remaining|pluralize }} left</span>
+                    {% else %}
+                        <span class="badge badge-success">On track</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-3">
