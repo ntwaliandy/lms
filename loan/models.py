@@ -71,6 +71,7 @@ class BodaApply(models.Model):
     boda_guy_lastName = models.CharField(max_length=40, default='null')
     boda_numberPlate = models.CharField(max_length=10, default='null')
     final_amount = models.DecimalField(max_digits=12, decimal_places=2, default='0')
+    initial_payment = models.DecimalField(max_digits=12, decimal_places=2, default='0')
     deposits = models.DecimalField(max_digits=12, decimal_places=2, default='0')
     balance = models.DecimalField(max_digits=12, decimal_places=2, default='0')
     weekly_pay = models.DecimalField(max_digits=12, decimal_places=2, default='0')
@@ -108,7 +109,8 @@ class BodaApply(models.Model):
         # Save the day of the week to the second field
         self.day_of_the_week= day_of_week
         # always saving the balance
-        self.balance = int(self.final_amount) - int(self.deposits)
+        from decimal import Decimal
+        self.balance = Decimal(str(self.final_amount)) - Decimal(str(self.deposits))
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -153,3 +155,22 @@ class BodaInformation(models.Model):
 
     def __str__(self):
         return str(self.rider) + " with " + str(self.numberPlate)
+
+
+# Cash Boda Sales — separate from loan bodas
+class CashBodaSale(models.Model):
+    client_full_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20)
+    id_number = models.CharField(max_length=50, blank=True, default='')
+    number_plate = models.CharField(max_length=20)
+    amount_bought_at = models.DecimalField(max_digits=14, decimal_places=2, default='0')
+    amount_sold_for = models.DecimalField(max_digits=14, decimal_places=2, default='0')
+    date_sold = models.DateField(default=datetime.now)
+    notes = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def profit(self):
+        return self.amount_sold_for - self.amount_bought_at
+
+    def __str__(self):
+        return self.client_full_name + " — " + self.number_plate

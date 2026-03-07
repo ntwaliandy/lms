@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <h1>Boda Payment Analysis</h1>
+                    <p class="opacity-75">Overview of each boda client's payment progress — deficits and surpluses.</p>
+
+                    <form action="{% url 'loan:boda-analysis' %}" method="get">
+                        <div class="form-row align-items-end">
+                            <div class="form-group col-md-8 m-0">
+                                <input type="text" class="form-control" name="q" value="{{ search_query }}" placeholder="Search by name, number plate or phone...">
+                            </div>
+                            <div class="form-group col-md-2 m-0 pl-2">
+                                <button class="btn btn-primary form-control">Search</button>
+                            </div>
+                            {% if search_query %}
+                            <div class="form-group col-md-2 m-0 pl-2">
+                                <a href="{% url 'loan:boda-analysis' %}" class="btn btn-secondary form-control">Clear</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+
+        <!-- Summary cards -->
+        <div class="row m-b-30">
+            <div class="col-md-3">
+                <div class="card text-center p-3">
+                    <h4 class="text-muted">Total Clients</h4>
+                    <h2>{{ total_count }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #dc3545;">
+                    <h4 class="text-muted">In Deficit</h4>
+                    <h2 class="text-danger">{{ deficit_count }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #28a745;">
+                    <h4 class="text-muted">In Surplus</h4>
+                    <h2 class="text-success">{{ surplus_count }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #17a2b8;">
+                    <h4 class="text-muted">Up to Date</h4>
+                    <h2 class="text-info">{{ ok_count }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main table -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">
+                            All Boda Clients
+                            {% if search_query %}<small class="text-muted"> — results for "{{ search_query }}"</small>{% endif %}
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-td-middle table-card table-striped m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>CLIENT</th>
+                                            <th>PLATE</th>
+                                            <th>PHONE</th>
+                                            <th>WEEKLY PAY</th>
+                                            <th>INITIAL PMT</th>
+                                            <th>WEEKS</th>
+                                            <th>EXPECTED</th>
+                                            <th>WEEKLY PAID</th>
+                                            <th>DIFFERENCE</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if analysis %}
+                                            {% for item in analysis %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td><strong>{{ item.boda.boda_guy_firstName }} {{ item.boda.boda_guy_lastName }}</strong></td>
+                                                <td>{{ item.boda.boda_numberPlate }}</td>
+                                                <td>{{ item.boda.phone_number }}</td>
+                                                <td>{{ item.boda.weekly_pay|floatformat:0 }}</td>
+                                                <td>
+                                                    {% if item.initial_amount %}
+                                                        <span class="text-primary font-weight-bold">{{ item.initial_amount|floatformat:0 }}</span>
+                                                    {% else %}
+                                                        <span class="text-muted">—</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ item.weeks_elapsed }}</td>
+                                                <td>{{ item.expected_total|floatformat:0 }}</td>
+                                                <td>{{ item.actual_weekly|floatformat:0 }}</td>
+                                                <td>
+                                                    {% if item.diff_status == 'deficit' %}
+                                                        <span class="text-danger font-weight-bold">{{ item.difference|floatformat:0 }}</span>
+                                                    {% elif item.diff_status == 'surplus' %}
+                                                        <span class="text-success font-weight-bold">+{{ item.difference|floatformat:0 }}</span>
+                                                    {% else %}
+                                                        <span class="text-info font-weight-bold">0</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if item.diff_status == 'deficit' %}
+                                                        <span class="badge badge-danger">DEFICIT</span>
+                                                    {% elif item.diff_status == 'surplus' %}
+                                                        <span class="badge badge-success">SURPLUS</span>
+                                                    {% else %}
+                                                        <span class="badge badge-info">UP TO DATE</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'loan:boda-analysis-detail' item.boda.boda_id %}" class="btn btn-sm btn-primary">Details</a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="12" class="text-center text-muted p-4">
+                                                    {% if search_query %}No results found for "{{ search_query }}"{% else %}No active boda clients found.{% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

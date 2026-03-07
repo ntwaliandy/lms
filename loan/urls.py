@@ -65,5 +65,12 @@ urlpatterns = [
     path('advanced-information', views.advancedBodaInformation, name="advanced-information"),
     path('add-information', views.addBodainformation, name="add-information"),
     re_path(r'^edit-boda-information/(?P<NumberPlate>(.*))/$', views.editBodaInformation, name="edit-boda-information"),
-    re_path(r'^resend-boda-sms/(?P<transID>(.*))/$', views.resend_boda_sms, name="resend-boda-sms")
+    re_path(r'^resend-boda-sms/(?P<transID>(.*))/$', views.resend_boda_sms, name="resend-boda-sms"),
+    path('boda-analysis', views.boda_analysis, name="boda-analysis"),
+    re_path(r'^boda-analysis/(?P<bodaId>[0-9]+)/$', views.boda_analysis_detail, name="boda-analysis-detail"),
+
+    # cash boda sales
+    path('cash-boda', views.cash_boda_list, name="cash-boda-list"),
+    path('add-cash-boda', views.add_cash_boda, name="add-cash-boda"),
+    path('search-boda-plate', views.search_boda_plate, name="search-boda-plate"),
 ]

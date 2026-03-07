@@ -4,6 +4,8 @@
     {% block content %}
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <section class="admin-content">
                 <div class=" bg-dark m-b-30 bg-stars">
                     <div class="container">
@@ -77,6 +79,11 @@
                                                     <input type="text" class="form-control" name="payment_fee" required placeholder="forexample:- 3000">
                                                     <small class="text-muted">put the amount he/she is supposed to pay.</small>
                                                 </div>
+                                                <div class="form-group col-md-12">
+                                                    <label for="inputPassword4">Payment Date *</label>
+                                                    <input type="text" class="form-control pay_date" name="pay_date" required>
+                                                    <small class="text-muted">Date the payment was made (defaults to today)</small>
+                                                </div>
                                             </div>
                                             <div class="form-group">
                                                 <button class="btn btn-primary">Submit</button>
@@ -92,7 +99,14 @@
             </section>
 
             <script>
-                
+                document.addEventListener("DOMContentLoaded", function () {
+                    flatpickr(".pay_date", {
+                        enableTime: false,
+                        dateFormat: "Y-m-d",
+                        defaultDate: new Date()
+                    });
+                });
+
                 $(document).on("input", ".client_name", function() {
                     var clientName = document.getElementById("manual_client_name").value;
                     console.log(clientName)

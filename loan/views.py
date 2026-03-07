@@ -9,8 +9,8 @@ from time import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from home.models import Apply, GroupApply, PermitApply, SmsCallBack, Support
-from .models import AddPayment, AddPermitPayment, BodaInformation, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
-from django.db.models import Sum
+from .models import AddPayment, AddPermitPayment, BodaInformation, CashBodaSale, CashFlow, FileUpload, GroupAddPayment, Replies, BodaApply, BodaWeeklyPay
+from django.db.models import Sum, Q
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 # Create your views here.
@@ -1103,6 +1103,7 @@ def add_boda(request):
         boda_numberPlate = data.get('boda_number_plate')
         boda_amount = data.get('boda_amount')
         boda_weeklyPay = data.get('boda_weekly_pay')
+        boda_initialPayment = data.get('boda_initial_payment', '0') or '0'
         boda_phone = data.get('boda_phone_number')
         boda_nin = data.get('boda_nin_number')
         boda_ninPic = request.FILES.get('boda_nin_picture')
@@ -1142,13 +1143,16 @@ def add_boda(request):
         start_of_last_week = start_of_week - timedelta(days=6)
         
         try:
-
+            from decimal import Decimal
+            initial_payment_decimal = Decimal(str(boda_initialPayment))
 
             add_boda_guy = BodaApply.objects.create(
                 boda_guy_firstName=boda_firstName,
                 boda_guy_lastName=boda_lastName,
                 boda_numberPlate=boda_numberPlate,
                 final_amount=boda_amount,
+                initial_payment=initial_payment_decimal,
+                deposits=initial_payment_decimal,
                 weekly_pay=boda_weeklyPay,
                 phone_number=boda_phone,
                 nin_number=boda_nin,
@@ -1172,6 +1176,19 @@ def add_boda(request):
                 date_of_application=parsedDate,
                 latest_dateOfPay=start_of_last_week,
             )
+
+            if initial_payment_decimal > 0:
+                BodaWeeklyPay.objects.create(
+                    boda_id=add_boda_guy.boda_id,
+                    boda_firstName=boda_firstName,
+                    boda_lastName=boda_lastName,
+                    payment_fee=initial_payment_decimal,
+                    phone_number=boda_phone,
+                    reference=uuid.uuid4(),
+                    transaction_id="initial payment",
+                    status="paid",
+                )
+
             messages.success(request, boda_firstName + " " + boda_lastName + " Added successfully")
 
             return redirect('loan:add-boda')
@@ -1264,7 +1281,16 @@ def manual_add_boda_pay(request):
             bodaId = data.get('boda_id', 'none')
             paymentFee = data['payment_fee']
             phoneNumber = data['phone_number']
+            pay_date_str = data.get('pay_date', '')
             status = "paid"
+
+            from decimal import Decimal
+            pay_date = datetime.today()
+            if pay_date_str:
+                try:
+                    pay_date = datetime.strptime(pay_date_str, '%Y-%m-%d')
+                except Exception:
+                    pay_date = datetime.today()
 
             print(bodaId)
             reference = uuid.uuid4()
@@ -1279,20 +1305,21 @@ def manual_add_boda_pay(request):
                 reference = reference,
                 transaction_id = transaction_id,
                 status = status,
+                date = pay_date,
             )
 
             single_boda = boda_obj
 
-            latest_deposit = single_boda.deposits + int(paymentFee)
+            latest_deposit = single_boda.deposits + Decimal(str(paymentFee))
             new_balance = single_boda.final_amount - latest_deposit
 
             new_phoneNumber = "+" + phoneNumber
             first_name = single_boda.boda_guy_firstName
             full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
-            BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=datetime.today())
+            BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=pay_date)
 
             try:
-                response = send_boda_sms(first_name, paymentFee, datetime.today(), new_balance, new_phoneNumber)
+                response = send_boda_sms(first_name, paymentFee, pay_date, new_balance, new_phoneNumber)
 
             except Exception as e:
                 print(str(e))
@@ -1470,16 +1497,18 @@ def edit_boda(request, bodaId):
         lastName = data.get("lastName", None)
         fullAmount = data.get("fullAmount", None)
         deposits = data.get("deposits", None)
-        balance = data.get("balance", None)
+        weekly_pay = data.get("weekly_pay", None)
         bodaNumberPlate = data.get("numberPlate", None)
 
         boda_obj.boda_guy_firstName = firstName
         boda_obj.boda_guy_lastName = lastName
         boda_obj.final_amount = fullAmount
         boda_obj.deposits = deposits
-        boda_obj.balance = balance
         boda_obj.boda_numberPlate = bodaNumberPlate
-        
+
+        if weekly_pay:
+            boda_obj.weekly_pay = weekly_pay
+
         try:
             if date_of_application:
                 parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
@@ -1490,13 +1519,8 @@ def edit_boda(request, bodaId):
 
         boda_obj.save()
 
-        messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s date of pay has been updated!!"))
+        messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s record has been updated!!"))
         return redirect('loan:boda-dashboard')
-        
-    else:
-        messages.info(request, 'there is something wrong!!!')
-        return render(request, "edit_boda.html", context)
-
 
     return render(request, "edit_boda.html", context)
 
@@ -1735,3 +1759,234 @@ def send_boda_sms(full_name, paymentFee, date, new_balance, new_phoneNumber):
     print(":: response obj ::", response)
 
     return response
+
+
+# ── Boda Payment Analysis ────────────────────────────────────────────────────
+
+def _get_weekly_payments(boda, all_payments):
+    """
+    Returns (initial_payment_amount, weekly_payments_only).
+    Excludes the initial payment from weekly tracking using two rules:
+      1. transaction_id == "initial payment"  (new registrations)
+      2. first payment > weekly_pay           (legacy registrations)
+    """
+    from decimal import Decimal
+
+    # Separate out the explicit initial payment record
+    explicit_initial = [p for p in all_payments if p.transaction_id == "initial payment"]
+    regular = [p for p in all_payments if p.transaction_id != "initial payment"]
+
+    # For legacy bodas: if no explicit initial payment, check if first record > weekly_pay
+    if not explicit_initial and regular:
+        first = regular[0]
+        if first.payment_fee > boda.weekly_pay:
+            explicit_initial = [first]
+            regular = regular[1:]
+
+    initial_amount = sum(p.payment_fee for p in explicit_initial) or Decimal('0')
+    return initial_amount, regular
+
+
+def boda_analysis(request):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    search_query = request.GET.get('q', '').strip()
+
+    boda_list = BodaApply.objects.filter(status="ACTIVE").order_by('-date_of_application')
+
+    if search_query:
+        boda_list = boda_list.filter(
+            Q(boda_guy_firstName__icontains=search_query) |
+            Q(boda_guy_lastName__icontains=search_query) |
+            Q(boda_numberPlate__icontains=search_query) |
+            Q(phone_number__icontains=search_query)
+        )
+
+    today = date.today()
+    from decimal import Decimal
+    analysis = []
+
+    for boda in boda_list:
+        all_payments = list(BodaWeeklyPay.objects.filter(boda_id=boda.boda_id).order_by('date'))
+        initial_amount, weekly_payments = _get_weekly_payments(boda, all_payments)
+
+        start_date = boda.date_of_application.date()
+        days_elapsed = (today - start_date).days
+        weeks_elapsed = max(days_elapsed // 7, 0)
+
+        expected_total = Decimal(str(weeks_elapsed)) * boda.weekly_pay
+        actual_weekly = sum(p.payment_fee for p in weekly_payments) or Decimal('0')
+        difference = actual_weekly - expected_total
+
+        analysis.append({
+            'boda': boda,
+            'weeks_elapsed': weeks_elapsed,
+            'expected_total': expected_total,
+            'initial_amount': initial_amount,
+            'actual_weekly': actual_weekly,
+            'difference': difference,
+            'diff_status': 'surplus' if difference > 0 else ('deficit' if difference < 0 else 'ok'),
+        })
+
+    deficit_count = sum(1 for a in analysis if a['diff_status'] == 'deficit')
+    surplus_count = sum(1 for a in analysis if a['diff_status'] == 'surplus')
+    ok_count = sum(1 for a in analysis if a['diff_status'] == 'ok')
+
+    return render(request, 'boda_analysis.html', {
+        'analysis': analysis,
+        'search_query': search_query,
+        'total_count': len(analysis),
+        'deficit_count': deficit_count,
+        'surplus_count': surplus_count,
+        'ok_count': ok_count,
+    })
+
+
+def boda_analysis_detail(request, bodaId):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    from decimal import Decimal
+    boda = get_object_or_404(BodaApply, boda_id=bodaId)
+    all_payments = list(BodaWeeklyPay.objects.filter(boda_id=bodaId).order_by('date'))
+
+    initial_amount, weekly_payments = _get_weekly_payments(boda, all_payments)
+
+    today = date.today()
+    start_date = boda.date_of_application.date()
+
+    weeks = []
+    running_balance = Decimal('0')
+    week_num = 1
+    current = start_date
+
+    while current <= today:
+        week_start = current
+        week_end = current + timedelta(days=6)
+
+        week_paid = sum(
+            p.payment_fee for p in weekly_payments
+            if week_start <= p.date.date() <= week_end
+        ) or Decimal('0')
+
+        expected = boda.weekly_pay
+        diff = Decimal(str(week_paid)) - expected
+        running_balance += diff
+
+        weeks.append({
+            'week_num': week_num,
+            'week_start': week_start,
+            'week_end': week_end,
+            'expected': expected,
+            'paid': week_paid,
+            'diff': diff,
+            'running_balance': running_balance,
+            'diff_status': 'surplus' if diff > 0 else ('deficit' if diff < 0 else 'ok'),
+            'balance_status': 'surplus' if running_balance > 0 else ('deficit' if running_balance < 0 else 'ok'),
+        })
+
+        current += timedelta(days=7)
+        week_num += 1
+
+    total_expected = boda.weekly_pay * len(weeks)
+    actual_weekly = sum(p.payment_fee for p in weekly_payments) or Decimal('0')
+    overall_diff = actual_weekly - total_expected
+
+    return render(request, 'boda_analysis_detail.html', {
+        'boda': boda,
+        'weeks': weeks,
+        'initial_amount': initial_amount,
+        'total_expected': total_expected,
+        'total_paid': actual_weekly,
+        'overall_diff': overall_diff,
+        'overall_status': 'surplus' if overall_diff > 0 else ('deficit' if overall_diff < 0 else 'ok'),
+    })
+
+
+# ── Cash Boda Sales ──────────────────────────────────────────────────────────
+
+def cash_boda_list(request):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    search_query = request.GET.get('q', '').strip()
+    sales = CashBodaSale.objects.order_by('-date_sold', '-created_at')
+
+    if search_query:
+        sales = sales.filter(
+            Q(client_full_name__icontains=search_query) |
+            Q(phone_number__icontains=search_query) |
+            Q(number_plate__icontains=search_query) |
+            Q(id_number__icontains=search_query)
+        )
+
+    from decimal import Decimal
+    total_sales = sales.count()
+    total_revenue = sales.aggregate(t=Sum('amount_sold_for'))['t'] or Decimal('0')
+    total_cost = sales.aggregate(t=Sum('amount_bought_at'))['t'] or Decimal('0')
+    total_profit = total_revenue - total_cost
+
+    return render(request, 'cash_boda_list.html', {
+        'sales': sales,
+        'search_query': search_query,
+        'total_sales': total_sales,
+        'total_revenue': total_revenue,
+        'total_cost': total_cost,
+        'total_profit': total_profit,
+    })
+
+
+def add_cash_boda(request):
+    if not request.user.is_superuser:
+        return redirect('account:admin-login')
+
+    if request.method == 'POST':
+        data = request.POST
+        client_full_name = data.get('client_full_name', '').strip()
+        phone_number = data.get('phone_number', '').strip()
+        id_number = data.get('id_number', '').strip()
+        number_plate = data.get('number_plate', '').strip()
+        amount_bought_at = data.get('amount_bought_at', '0') or '0'
+        amount_sold_for = data.get('amount_sold_for', '0') or '0'
+        date_sold = data.get('date_sold', '')
+        notes = data.get('notes', '').strip()
+
+        try:
+            from decimal import Decimal
+            from datetime import datetime as dt
+            parsed_date = dt.strptime(date_sold, '%Y-%m-%d').date() if date_sold else date.today()
+
+            CashBodaSale.objects.create(
+                client_full_name=client_full_name,
+                phone_number=phone_number,
+                id_number=id_number,
+                number_plate=number_plate,
+                amount_bought_at=Decimal(amount_bought_at),
+                amount_sold_for=Decimal(amount_sold_for),
+                date_sold=parsed_date,
+                notes=notes,
+            )
+            messages.success(request, "Cash boda sale for " + client_full_name + " (" + number_plate + ") recorded successfully!")
+            return redirect('loan:cash-boda-list')
+        except Exception as e:
+            print(str(e))
+            messages.error(request, "Error saving record. Please check all fields and try again.")
+            return redirect('loan:add-cash-boda')
+
+    return render(request, 'add_cash_boda.html')
+
+
+def search_boda_plate(request):
+    """AJAX — returns matching number plates from BodaApply for the autocomplete."""
+    if request.method == 'POST':
+        import json as json_mod
+        query = request.POST.get('plate_query', '').strip()
+        results = []
+        if query:
+            plates = BodaApply.objects.filter(
+                boda_numberPlate__icontains=query
+            ).values('boda_numberPlate', 'boda_guy_firstName', 'boda_guy_lastName')[:10]
+            results = list(plates)
+        return JsonResponse({'status': 'success', 'data': results})
+    return JsonResponse({'status': 'error'})

@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a href="{% url 'loan:cash-boda-list' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Cash Boda Sales</a>
+                    <h1>Record a Cash Boda Sale</h1>
+                    <p class="opacity-75">Fill in the details of the boda sold for cash.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Sale Details</h5>
+                        <p class="m-b-0 text-muted">All fields marked * are required</p>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'loan:add-cash-boda' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-row">
+
+                                <div class="form-group col-md-12">
+                                    <label>Client Full Name *</label>
+                                    <input type="text" class="form-control" name="client_full_name" required placeholder="e.g. John Doe">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Phone Number *</label>
+                                    <input type="text" class="form-control" name="phone_number" required placeholder="e.g. 256775000000">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>ID Number (NIN)</label>
+                                    <input type="text" class="form-control" name="id_number" placeholder="optional">
+                                </div>
+
+                                <!-- Number plate with autocomplete -->
+                                <div class="form-group col-md-12">
+                                    <label>Number Plate *</label>
+                                    <input type="text" class="form-control" id="plate_input" name="number_plate" required placeholder="Type to search existing plates or enter a new one">
+                                    <div id="plate_suggestions" class="list-group mt-1" style="position:absolute; z-index:1000; width:100%; max-width:500px; display:none;"></div>
+                                    <small class="text-muted">You can pick from existing boda plates or type a brand new one.</small>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Amount Bought At (UGX) *</label>
+                                    <input type="text" class="form-control" name="amount_bought_at" required placeholder="e.g. 3500000">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Amount Sold For (UGX) *</label>
+                                    <input type="text" class="form-control" name="amount_sold_for" required placeholder="e.g. 4200000">
+                                </div>
+
+                                <!-- Live profit preview -->
+                                <div class="form-group col-md-12">
+                                    <div class="card p-3" style="background:#f8f9fa;">
+                                        <small class="text-muted">Profit Preview</small>
+                                        <h5 id="profit_preview" class="m-0 text-muted">—</h5>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label>Date Sold *</label>
+                                    <input type="text" class="form-control date_sold" name="date_sold" required>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label>Notes</label>
+                                    <textarea class="form-control" name="notes" rows="2" placeholder="Any additional notes (optional)"></textarea>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success form-control">Save Sale</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    flatpickr(".date_sold", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        defaultDate: new Date()
+    });
+
+    // Live profit preview
+    function updateProfit() {
+        var bought = parseFloat(document.querySelector('[name="amount_bought_at"]').value.replace(/,/g, '')) || 0;
+        var sold   = parseFloat(document.querySelector('[name="amount_sold_for"]').value.replace(/,/g, '')) || 0;
+        var profit = sold - bought;
+        var el = document.getElementById('profit_preview');
+        if (bought === 0 && sold === 0) {
+            el.textContent = '—';
+            el.className = 'm-0 text-muted';
+        } else {
+            el.textContent = (profit >= 0 ? '+' : '') + profit.toLocaleString() + ' UGX';
+            el.className = 'm-0 font-weight-bold ' + (profit >= 0 ? 'text-success' : 'text-danger');
+        }
+    }
+    document.querySelector('[name="amount_bought_at"]').addEventListener('input', updateProfit);
+    document.querySelector('[name="amount_sold_for"]').addEventListener('input', updateProfit);
+
+    // Number plate autocomplete
+    var plateInput = document.getElementById('plate_input');
+    var suggestions = document.getElementById('plate_suggestions');
+
+    plateInput.addEventListener('input', function () {
+        var query = plateInput.value.trim();
+        if (query.length < 2) {
+            suggestions.style.display = 'none';
+            suggestions.innerHTML = '';
+            return;
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'loan:search-boda-plate' %}",
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                plate_query: query
+            },
+            success: function (response) {
+                suggestions.innerHTML = '';
+                if (response.status === 'success' && response.data.length > 0) {
+                    response.data.forEach(function (item) {
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'list-group-item list-group-item-action';
+                        btn.innerHTML = '<strong>' + item.boda_numberPlate + '</strong> &nbsp;<small class="text-muted">' + item.boda_guy_firstName + ' ' + item.boda_guy_lastName + '</small>';
+                        btn.addEventListener('click', function () {
+                            plateInput.value = item.boda_numberPlate;
+                            suggestions.style.display = 'none';
+                            suggestions.innerHTML = '';
+                        });
+                        suggestions.appendChild(btn);
+                    });
+                    suggestions.style.display = 'block';
+                } else {
+                    suggestions.style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!plateInput.contains(e.target) && !suggestions.contains(e.target)) {
+            suggestions.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

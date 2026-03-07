@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    <a href="{% url 'loan:boda-analysis' %}" class="btn btn-sm btn-outline-light m-b-10">← Back to Analysis</a>
+                    <h1>{{ boda.boda_guy_firstName }} {{ boda.boda_guy_lastName }}</h1>
+                    <p class="opacity-75">
+                        Plate: <strong>{{ boda.boda_numberPlate }}</strong> &nbsp;|&nbsp;
+                        Phone: <strong>{{ boda.phone_number }}</strong> &nbsp;|&nbsp;
+                        Weekly Pay: <strong>{{ boda.weekly_pay|floatformat:0 }} UGX</strong> &nbsp;|&nbsp;
+                        Started: <strong>{{ boda.date_of_application|date:"d M Y" }}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+
+        <!-- Summary cards -->
+        <div class="row m-b-30">
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #6c757d;">
+                    <h5 class="text-muted">Total Expected</h5>
+                    <h3>{{ total_expected|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
+                    <small class="text-muted">{{ weeks|length }} week(s)</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #6f42c1;">
+                    <h5 class="text-muted">Initial Payment</h5>
+                    <h3 class="text-primary">{{ initial_amount|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
+                    <small class="text-muted">excluded from weekly tracking</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #007bff;">
+                    <h5 class="text-muted">Weekly Paid</h5>
+                    <h3>{{ total_paid|floatformat:0 }} <small class="text-muted" style="font-size:14px;">UGX</small></h3>
+                    <small class="text-muted">regular weekly payments only</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                {% if overall_status == 'deficit' %}
+                <div class="card text-center p-3" style="border-left: 4px solid #dc3545;">
+                    <h5 class="text-muted">Overall Balance</h5>
+                    <h3 class="text-danger">{{ overall_diff|floatformat:0 }} <small style="font-size:14px;">UGX</small></h3>
+                    <small class="text-danger font-weight-bold">DEFICIT — behind on payments</small>
+                </div>
+                {% elif overall_status == 'surplus' %}
+                <div class="card text-center p-3" style="border-left: 4px solid #28a745;">
+                    <h5 class="text-muted">Overall Balance</h5>
+                    <h3 class="text-success">+{{ overall_diff|floatformat:0 }} <small style="font-size:14px;">UGX</small></h3>
+                    <small class="text-success font-weight-bold">SURPLUS — ahead of payments</small>
+                </div>
+                {% else %}
+                <div class="card text-center p-3" style="border-left: 4px solid #17a2b8;">
+                    <h5 class="text-muted">Overall Balance</h5>
+                    <h3 class="text-info">0 <small style="font-size:14px;">UGX</small></h3>
+                    <small class="text-info font-weight-bold">UP TO DATE</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Week-by-week table -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Week-by-Week Breakdown</h5>
+                        <p class="m-b-0 text-muted">Each row is one week. "Running Balance" shows the cumulative deficit or surplus up to that point.</p>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-td-middle table-card table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <th>WEEK</th>
+                                        <th>PERIOD</th>
+                                        <th>EXPECTED</th>
+                                        <th>PAID</th>
+                                        <th>THIS WEEK</th>
+                                        <th>RUNNING BALANCE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if weeks %}
+                                        {% for w in weeks %}
+                                        <tr>
+                                            <td><strong>Wk {{ w.week_num }}</strong></td>
+                                            <td>{{ w.week_start|date:"d M" }} – {{ w.week_end|date:"d M Y" }}</td>
+                                            <td>{{ w.expected|floatformat:0 }}</td>
+                                            <td>
+                                                {% if w.paid == 0 %}
+                                                    <span class="text-muted">0</span>
+                                                {% else %}
+                                                    {{ w.paid|floatformat:0 }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if w.diff_status == 'deficit' %}
+                                                    <span class="badge badge-danger">{{ w.diff|floatformat:0 }}</span>
+                                                {% elif w.diff_status == 'surplus' %}
+                                                    <span class="badge badge-success">+{{ w.diff|floatformat:0 }}</span>
+                                                {% else %}
+                                                    <span class="badge badge-info">0</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if w.balance_status == 'deficit' %}
+                                                    <span class="text-danger font-weight-bold">{{ w.running_balance|floatformat:0 }} UGX</span>
+                                                    <small class="text-danger">(behind)</small>
+                                                {% elif w.balance_status == 'surplus' %}
+                                                    <span class="text-success font-weight-bold">+{{ w.running_balance|floatformat:0 }} UGX</span>
+                                                    <small class="text-success">(ahead)</small>
+                                                {% else %}
+                                                    <span class="text-info font-weight-bold">0 UGX</span>
+                                                    <small class="text-info">(exact)</small>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted p-4">No weeks to show yet.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row m-b-30">
+            <div class="col-12">
+                <a href="{% url 'loan:boda-analysis' %}" class="btn btn-secondary">← Back to Overview</a>
+                <a href="{% url 'loan:edit-boda' boda.boda_id %}" class="btn btn-warning ml-2">Edit Client</a>
+                <a href="{% url 'loan:boda-detail' boda.boda_id %}" class="btn btn-info ml-2">Full Profile</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

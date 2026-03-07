@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="admin-content">
+    <div class="bg-dark m-b-30 bg-stars">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 m-auto text-white p-t-40 p-b-90">
+                    {% for message in messages %}
+                        <div class="alert alert-border-info alert-dismissible fade show" role="alert">
+                            <div class="d-flex">
+                                <div class="icon"><i class="icon mdi mdi-alert-octagram"></i></div>
+                                <div class="content text-dark">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <h1>Cash Boda Sales</h1>
+                    <p class="opacity-75">Records of boda motorcycles sold for cash — separate from loan bodas.</p>
+
+                    <div class="d-flex align-items-center">
+                        <form action="{% url 'loan:cash-boda-list' %}" method="get" class="flex-grow-1 mr-3">
+                            <div class="form-row align-items-end">
+                                <div class="form-group col-md-8 m-0">
+                                    <input type="text" class="form-control" name="q" value="{{ search_query }}" placeholder="Search by name, plate, phone or ID...">
+                                </div>
+                                <div class="form-group col-md-2 m-0 pl-2">
+                                    <button class="btn btn-primary form-control">Search</button>
+                                </div>
+                                {% if search_query %}
+                                <div class="form-group col-md-2 m-0 pl-2">
+                                    <a href="{% url 'loan:cash-boda-list' %}" class="btn btn-secondary form-control">Clear</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </form>
+                        <a href="{% url 'loan:add-cash-boda' %}" class="btn btn-success" style="white-space:nowrap;">+ Add Sale</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pull-up">
+
+        <!-- Summary cards -->
+        <div class="row m-b-30">
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #6c757d;">
+                    <h5 class="text-muted">Total Sales</h5>
+                    <h2>{{ total_sales }}</h2>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #dc3545;">
+                    <h5 class="text-muted">Total Cost</h5>
+                    <h3>{{ total_cost|floatformat:0 }} <small class="text-muted" style="font-size:13px;">UGX</small></h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #007bff;">
+                    <h5 class="text-muted">Total Revenue</h5>
+                    <h3>{{ total_revenue|floatformat:0 }} <small class="text-muted" style="font-size:13px;">UGX</small></h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3" style="border-left: 4px solid #28a745;">
+                    <h5 class="text-muted">Total Profit</h5>
+                    <h3 class="{% if total_profit >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ total_profit|floatformat:0 }} <small style="font-size:13px;">UGX</small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Records table -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card m-b-30">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="m-b-0">
+                            All Cash Boda Sales
+                            {% if search_query %}<small class="text-muted"> — results for "{{ search_query }}"</small>{% endif %}
+                        </h5>
+                        <a href="{% url 'loan:add-cash-boda' %}" class="btn btn-sm btn-success">+ Add New Sale</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-td-middle table-card table-striped m-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>CLIENT NAME</th>
+                                        <th>PHONE</th>
+                                        <th>ID NUMBER</th>
+                                        <th>NUMBER PLATE</th>
+                                        <th>BOUGHT AT</th>
+                                        <th>SOLD FOR</th>
+                                        <th>PROFIT</th>
+                                        <th>DATE SOLD</th>
+                                        <th>NOTES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if sales %}
+                                        {% for sale in sales %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td><strong>{{ sale.client_full_name }}</strong></td>
+                                            <td>{{ sale.phone_number }}</td>
+                                            <td>{{ sale.id_number|default:"—" }}</td>
+                                            <td><span class="badge badge-secondary">{{ sale.number_plate }}</span></td>
+                                            <td>{{ sale.amount_bought_at|floatformat:0 }}</td>
+                                            <td>{{ sale.amount_sold_for|floatformat:0 }}</td>
+                                            <td>
+                                                {% if sale.profit >= 0 %}
+                                                    <span class="text-success font-weight-bold">+{{ sale.profit|floatformat:0 }}</span>
+                                                {% else %}
+                                                    <span class="text-danger font-weight-bold">{{ sale.profit|floatformat:0 }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ sale.date_sold|date:"d M Y" }}</td>
+                                            <td>
+                                                {% if sale.notes %}
+                                                    <span title="{{ sale.notes }}" style="cursor:pointer;">
+                                                        <i class="mdi mdi-information-outline text-info"></i>
+                                                        {{ sale.notes|truncatechars:30 }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted">—</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="10" class="text-center text-muted p-4">
+                                                {% if search_query %}No results for "{{ search_query }}"{% else %}No cash boda sales recorded yet.{% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
