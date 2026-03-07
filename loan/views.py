@@ -14,6 +14,12 @@ from django.db.models import Sum, Q
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 # Create your views here.
+
+# ── Username-based permission sets ───────────────────────────────────────────
+# Usernames allowed to edit/archive boda records
+BODA_EDIT_USERS = {'BRENDA', 'loan250'}
+# Usernames allowed to add weekly boda payments
+BODA_PAY_USERS  = {'KAGEMBE', 'BRENDA', 'loan250'}
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 import requests
@@ -1227,7 +1233,9 @@ def boda_dashboard(request):
             "thur_len": len(boda_thursday),
             "fri_len": len(boda_friday),
             "sat_len": len(boda_saturday),
-            "sun_len": len(boda_sunday)
+            "sun_len": len(boda_sunday),
+            "can_edit_boda": request.user.username in BODA_EDIT_USERS,
+            "can_add_boda_pay": request.user.username in BODA_PAY_USERS,
         }
 
         return render(request, "boda_dashboard.html", context)
@@ -1275,64 +1283,63 @@ def search_client_boda(request):
 
 # manual add boda boda payment
 def manual_add_boda_pay(request):
-    if request.user.is_superuser:
-        if request.method == "POST":
-            data = request.POST
-            bodaId = data.get('boda_id', 'none')
-            paymentFee = data['payment_fee']
-            phoneNumber = data['phone_number']
-            pay_date_str = data.get('pay_date', '')
-            status = "paid"
+    if request.user.username not in BODA_PAY_USERS:
+        messages.error(request, "You do not have permission to add boda payments.")
+        return redirect('loan:boda-dashboard')
 
-            from decimal import Decimal
-            pay_date = datetime.today()
-            if pay_date_str:
-                try:
-                    pay_date = datetime.strptime(pay_date_str, '%Y-%m-%d')
-                except Exception:
-                    pay_date = datetime.today()
+    if request.method == "POST":
+        data = request.POST
+        bodaId = data.get('boda_id', 'none')
+        paymentFee = data['payment_fee']
+        phoneNumber = data['phone_number']
+        pay_date_str = data.get('pay_date', '')
+        status = "paid"
 
-            print(bodaId)
-            reference = uuid.uuid4()
-            transaction_id = "manual pay"
-            boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
-            create_payment = BodaWeeklyPay.objects.create(
-                boda_id = bodaId,
-                boda_firstName = boda_obj.boda_guy_firstName,
-                boda_lastName = boda_obj.boda_guy_lastName,
-                payment_fee = paymentFee,
-                phone_number = phoneNumber,
-                reference = reference,
-                transaction_id = transaction_id,
-                status = status,
-                date = pay_date,
-            )
-
-            single_boda = boda_obj
-
-            latest_deposit = single_boda.deposits + Decimal(str(paymentFee))
-            new_balance = single_boda.final_amount - latest_deposit
-
-            new_phoneNumber = "+" + phoneNumber
-            first_name = single_boda.boda_guy_firstName
-            full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
-            BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=pay_date)
-
+        from decimal import Decimal
+        pay_date = datetime.today()
+        if pay_date_str:
             try:
-                response = send_boda_sms(first_name, paymentFee, pay_date, new_balance, new_phoneNumber)
+                pay_date = datetime.strptime(pay_date_str, '%Y-%m-%d')
+            except Exception:
+                pay_date = datetime.today()
 
-            except Exception as e:
-                print(str(e))
-                pass
-                
-            messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
-            return redirect('loan:boda-dashboard')
-        else:
+        print(bodaId)
+        reference = uuid.uuid4()
+        transaction_id = "manual pay"
+        boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
+        create_payment = BodaWeeklyPay.objects.create(
+            boda_id = bodaId,
+            boda_firstName = boda_obj.boda_guy_firstName,
+            boda_lastName = boda_obj.boda_guy_lastName,
+            payment_fee = paymentFee,
+            phone_number = phoneNumber,
+            reference = reference,
+            transaction_id = transaction_id,
+            status = status,
+            date = pay_date,
+        )
 
-            return render(request, "manual_add_boda_pay.html")
+        single_boda = boda_obj
 
-    else:
-        return redirect('account:user_login')
+        latest_deposit = single_boda.deposits + Decimal(str(paymentFee))
+        new_balance = single_boda.final_amount - latest_deposit
+
+        new_phoneNumber = "+" + phoneNumber
+        first_name = single_boda.boda_guy_firstName
+        full_name = single_boda.boda_guy_firstName + " " + single_boda.boda_guy_lastName
+        BodaApply.objects.filter(boda_id=bodaId).update(deposits=latest_deposit, balance=new_balance, latest_dateOfPay=pay_date)
+
+        try:
+            response = send_boda_sms(first_name, paymentFee, pay_date, new_balance, new_phoneNumber)
+
+        except Exception as e:
+            print(str(e))
+            pass
+
+        messages.info(request, "user with BODA ID " + bodaId + " " + full_name + " paid " + str(paymentFee) + " successfully!")
+        return redirect('loan:boda-dashboard')
+
+    return render(request, "manual_add_boda_pay.html")
 
 # search client-boda for triggering
 def search_boda_trigger(request):
@@ -1483,6 +1490,9 @@ def sms_statuses(request):
 
 
 def edit_boda(request, bodaId):
+    if request.user.username not in BODA_EDIT_USERS:
+        messages.error(request, "You do not have permission to edit boda records.")
+        return redirect('loan:boda-dashboard')
     boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
     context = {}
     if boda_obj:
@@ -1553,21 +1563,21 @@ def change_boda_status(request, boda_id):
 
 
 def archived_boda(request):
-    if request.user.is_superuser:
-        bodaPlate = request.GET.get("search_boda", None)
-        if bodaPlate:
-            bodas = BodaApply.objects.filter(boda_numberPlate=bodaPlate, status="INACTIVE").all()
-        else:
-            bodas = BodaApply.objects.filter(status="INACTIVE").all()
+    if request.user.username not in BODA_EDIT_USERS:
+        messages.error(request, "You do not have permission to view archived boda records.")
+        return redirect('loan:boda-dashboard')
 
-        context = {
-            "client": bodas,
-            "archived": True
-        }
-        return render(request, "search_client_boda.html", context)
-
+    bodaPlate = request.GET.get("search_boda", None)
+    if bodaPlate:
+        bodas = BodaApply.objects.filter(boda_numberPlate=bodaPlate, status="INACTIVE").all()
     else:
-        return redirect('account:user_login')
+        bodas = BodaApply.objects.filter(status="INACTIVE").all()
+
+    context = {
+        "client": bodas,
+        "archived": True
+    }
+    return render(request, "search_client_boda.html", context)
 
 
 def cashflows(request):
