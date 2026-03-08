@@ -181,7 +181,7 @@
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i>Permit Dashboard</div>
                                 </div>
                             </a>
-                            {% if request.user.username == "ADMIN" or request.user.username == "BRENDAR" %}
+                            {% if request.user.username == "ADMIN" or request.user.username == "BRENDARR" %}
                             <a href="{% url 'loan:permit-add-payment' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-account-convert"></i> Permit Payment</div>
@@ -255,7 +255,7 @@
                                 </div>
                             </a>
 
-                            {% if request.user.username == "KAGEMBE" or request.user.username == "BRENDA" or request.user.username == "loan250" %}
+                            {% if request.user.username == "KAGEMBE" or request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                             <!-- add boda payment -->
                             <a href="{% url 'loan:add-boda-pay' %}" class="d-block m-b-10">
                                 <div class="card">
@@ -271,7 +271,7 @@
                                 </div>
                             </a>
 
-                            <!-- {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %} -->
+                            <!-- {% if request.user.username == "BRENDARR" or request.user.username == "loan250" %} -->
                                 <!-- this cashflows -->
                                 <a href="{% url 'loan:cashflows' %}" class="d-block m-b-10">
                                     <div class="card">
@@ -300,7 +300,7 @@
                                 </div>
                             </a>
                             <!-- ARCHIVED -->
-                            {% if request.user.username == "BRENDA" or request.user.username == "loan250" %}
+                            {% if request.user.username == "BRENDAR" or request.user.username == "loan250" %}
                             <a href="{% url 'loan:archived-boda' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-monitor-multiple"></i> ARCHIVED BODA</div>
@@ -314,7 +314,7 @@
                                 </div>
                             </a>
                             <!-- Cash Boda Sales -->
-                            {% if request.user.username == "BRENDA" or request.user.username == "KAGEMBE" or request.user.username == "loan250" %}
+                            {% if request.user.username == "BRENDAR" or request.user.username == "KAGEMBE" or request.user.username == "loan250" %}
                             <a href="{% url 'loan:boda-inventory' %}" class="d-block m-b-10">
                                 <div class="card">
                                     <div class="card-body"> <i class="mdi mdi-garage"></i> Boda Inventory</div>

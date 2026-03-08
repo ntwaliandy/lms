@@ -17,9 +17,9 @@ from django.contrib.auth import get_user_model
 
 # ── Username-based permission sets ───────────────────────────────────────────
 # Usernames allowed to edit/archive boda records
-BODA_EDIT_USERS = {'BRENDA', 'loan250'}
+BODA_EDIT_USERS = {'BRENDAR', 'loan250'}
 # Usernames allowed to add weekly boda payments
-BODA_PAY_USERS  = {'KAGEMBE', 'BRENDA', 'loan250'}
+BODA_PAY_USERS  = {'KAGEMBE', 'BRENDAR', 'loan250'}
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 import requests
