@@ -93,7 +93,7 @@
                                                                 <td>{{cl.final_amount}}</td>
                                                                 <td>{{cl.deposits}}</td>
                                                                 <td>{{cl.balance}}</td>
-                                                                {% if "True" == "True" and request.user.username == "BRENDARR" %}
+                                                                {% if request.user.username == "BRENDA" or request.user.username == "loan250" %}
                                                                     {% if archived %}
                                                                         <td>
                                                                             <a class='btn btn-primary' href="{% url 'loan:change-boda-status' cl.boda_id %}">ACTIVATE</a>
