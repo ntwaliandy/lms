@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="admin-content">
+    <div class="container p-t-40 p-b-40">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-7 col-xl-6">
+                <div class="card m-b-30">
+                    <div class="card-header">
+                        <h5 class="m-b-0">Edit Weekly Log</h5>
+                        <p class="m-b-0 text-muted">
+                            {{boda_obj.boda_guy_firstName}} {{boda_obj.boda_guy_lastName}} — {{boda_obj.boda_numberPlate}}
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'loan:edit-boda-weekly-pay' pay.id %}" method="post">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label>Payment Fee</label>
+                                <input type="text" class="form-control" name="payment_fee" value="{{pay.payment_fee}}" required>
+                                <small class="text-muted">Editing changes deposits/balance automatically.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date of Payment (optional)</label>
+                                <input type="datetime-local" class="form-control" name="pay_date" value="{{ pay.date|date:'Y-m-d\\TH:i' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <button class="btn btn-primary">Save</button>
+                                <a class="btn btn-secondary" href="{% url 'loan:boda-detail' boda_obj.boda_id %}">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

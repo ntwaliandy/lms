@@ -1471,14 +1471,114 @@ def full_week_logs(request):
 
 def boda_details(request, bodaId):
     boda_obj = get_object_or_404(BodaApply, boda_id=bodaId)
-    boda_payments = BodaWeeklyPay.objects.filter(boda_id=bodaId)
+    boda_payments = BodaWeeklyPay.objects.filter(boda_id=bodaId).order_by('-date')
     print(len(boda_payments))
     context = {
         "boda_obj": boda_obj,
-        "bodaPaymentObj": boda_payments
+        "bodaPaymentObj": boda_payments,
+        "can_edit_weekly_logs": request.user.username in BODA_EDIT_USERS
     }
 
     return render(request, "boda_details.html", context)
+
+
+def edit_boda_weekly_pay(request, pay_id: int):
+    if request.user.username not in BODA_EDIT_USERS:
+        messages.error(request, "You do not have permission to edit boda weekly payments.")
+        return redirect('loan:boda-dashboard')
+
+    pay_obj = get_object_or_404(BodaWeeklyPay, id=pay_id)
+    boda_obj = get_object_or_404(BodaApply, boda_id=pay_obj.boda_id)
+
+    if request.method == "POST":
+        from decimal import Decimal
+        data = request.POST
+        fee_raw = data.get("payment_fee", None)
+        pay_date_raw = data.get("pay_date", "").strip()
+
+        if fee_raw is None or str(fee_raw).strip() == "":
+            messages.error(request, "Payment fee is required.")
+            return redirect('loan:edit-boda-weekly-pay', pay_id=pay_id)
+
+        try:
+            old_fee = Decimal(str(pay_obj.payment_fee or "0"))
+            new_fee = Decimal(str(fee_raw))
+        except Exception:
+            messages.error(request, "Invalid payment fee.")
+            return redirect('loan:edit-boda-weekly-pay', pay_id=pay_id)
+
+        # Update payment date (optional)
+        if pay_date_raw:
+            try:
+                pay_obj.date = datetime.strptime(pay_date_raw, '%Y-%m-%dT%H:%M')
+            except Exception:
+                try:
+                    pay_obj.date = datetime.strptime(pay_date_raw, '%Y-%m-%d')
+                except Exception:
+                    messages.error(request, "Invalid payment date.")
+                    return redirect('loan:edit-boda-weekly-pay', pay_id=pay_id)
+
+        # Adjust boda deposits by delta so balance stays correct
+        delta = new_fee - old_fee
+        boda_obj.deposits = Decimal(str(boda_obj.deposits or "0")) + delta
+        if boda_obj.deposits < 0:
+            boda_obj.deposits = Decimal('0')
+
+        # Keep initial payment field consistent if this is the initial payment log
+        if pay_obj.transaction_id == "initial payment":
+            boda_obj.initial_payment = new_fee
+
+        pay_obj.payment_fee = new_fee
+
+        # Save boda first (recomputes balance), then pay
+        boda_obj.save()
+        pay_obj.save()
+
+        # latest_dateOfPay should reflect most recent payment
+        latest = BodaWeeklyPay.objects.filter(boda_id=boda_obj.boda_id).order_by('-date').first()
+        boda_obj.latest_dateOfPay = latest.date if latest else ""
+        boda_obj.save()
+
+        messages.success(request, "Weekly log updated successfully.")
+        return redirect('loan:boda-detail', bodaId=boda_obj.boda_id)
+
+    context = {
+        "pay": pay_obj,
+        "boda_obj": boda_obj,
+    }
+    return render(request, "edit_boda_weekly_pay.html", context)
+
+
+def delete_boda_weekly_pay(request, pay_id: int):
+    if request.user.username not in BODA_EDIT_USERS:
+        messages.error(request, "You do not have permission to delete boda weekly payments.")
+        return redirect('loan:boda-dashboard')
+
+    if request.method != "POST":
+        messages.error(request, "Invalid request.")
+        return redirect('loan:boda-dashboard')
+
+    from decimal import Decimal
+    pay_obj = get_object_or_404(BodaWeeklyPay, id=pay_id)
+    boda_obj = get_object_or_404(BodaApply, boda_id=pay_obj.boda_id)
+
+    fee = Decimal(str(pay_obj.payment_fee or "0"))
+    boda_obj.deposits = Decimal(str(boda_obj.deposits or "0")) - fee
+    if boda_obj.deposits < 0:
+        boda_obj.deposits = Decimal('0')
+
+    if pay_obj.transaction_id == "initial payment":
+        boda_obj.initial_payment = Decimal('0')
+
+    pay_obj.delete()
+
+    # Refresh latest_dateOfPay after deletion
+    latest = BodaWeeklyPay.objects.filter(boda_id=boda_obj.boda_id).order_by('-date').first()
+    boda_obj.latest_dateOfPay = latest.date if latest else ""
+    boda_obj.save()
+
+    messages.success(request, "Weekly log deleted successfully.")
+    return redirect('loan:boda-detail', bodaId=boda_obj.boda_id)
 
 def sms_statuses(request):
     get_insights = reversed(SmsCallBack.objects.all())
@@ -1501,6 +1601,7 @@ def edit_boda(request, bodaId):
         })
 
     if request.method == "POST":
+        from decimal import Decimal
         data = request.POST
         date_of_application = data.get("date_of_application", None)
         firstName = data.get("firstName", None)
@@ -1509,6 +1610,7 @@ def edit_boda(request, bodaId):
         deposits = data.get("deposits", None)
         weekly_pay = data.get("weekly_pay", None)
         bodaNumberPlate = data.get("numberPlate", None)
+        initial_payment_raw = data.get("initial_payment", None)
 
         boda_obj.boda_guy_firstName = firstName
         boda_obj.boda_guy_lastName = lastName
@@ -1519,6 +1621,19 @@ def edit_boda(request, bodaId):
         if weekly_pay:
             boda_obj.weekly_pay = weekly_pay
 
+        initial_payment_changed = False
+        try:
+            if initial_payment_raw is not None and str(initial_payment_raw).strip() != "":
+                old_initial = Decimal(str(boda_obj.initial_payment or "0"))
+                new_initial = Decimal(str(initial_payment_raw))
+                if new_initial != old_initial:
+                    initial_payment_changed = True
+                    old_deposits = Decimal(str(boda_obj.deposits or "0"))
+                    boda_obj.initial_payment = new_initial
+                    boda_obj.deposits = old_deposits + (new_initial - old_initial)
+        except Exception as e:
+            print(":: initial payment parse error ::", str(e))
+
         try:
             if date_of_application:
                 parsed_date = datetime.strptime(date_of_application, '%b. %d, %Y, %I:%M %p')
@@ -1528,6 +1643,27 @@ def edit_boda(request, bodaId):
             print(":: e ::", str(e))
 
         boda_obj.save()
+
+        if initial_payment_changed:
+            initial_pay_qs = BodaWeeklyPay.objects.filter(boda_id=boda_obj.boda_id, transaction_id="initial payment")
+            initial_pay_obj = initial_pay_qs.first()
+            try:
+                new_initial = Decimal(str(boda_obj.initial_payment or "0"))
+                if initial_pay_obj:
+                    initial_pay_qs.update(payment_fee=new_initial)
+                elif new_initial > 0:
+                    BodaWeeklyPay.objects.create(
+                        boda_id=boda_obj.boda_id,
+                        boda_firstName=boda_obj.boda_guy_firstName,
+                        boda_lastName=boda_obj.boda_guy_lastName,
+                        payment_fee=new_initial,
+                        phone_number=boda_obj.phone_number,
+                        reference=uuid.uuid4(),
+                        transaction_id="initial payment",
+                        status="paid",
+                    )
+            except Exception as e:
+                print(":: initial payment sync error ::", str(e))
 
         messages.info(request, str(boda_obj.boda_guy_firstName) + " " + str(boda_obj.boda_guy_lastName + "'s record has been updated!!"))
         return redirect('loan:boda-dashboard')
@@ -1569,9 +1705,9 @@ def archived_boda(request):
 
     bodaPlate = request.GET.get("search_boda", None)
     if bodaPlate:
-        bodas = BodaApply.objects.filter(boda_numberPlate=bodaPlate, status="INACTIVE").all()
+        bodas = BodaApply.objects.filter(boda_numberPlate=bodaPlate, status="INACTIVE").order_by('-date_of_application').all()
     else:
-        bodas = BodaApply.objects.filter(status="INACTIVE").all()
+        bodas = BodaApply.objects.filter(status="INACTIVE").order_by('-date_of_application').all()
 
     context = {
         "client": bodas,

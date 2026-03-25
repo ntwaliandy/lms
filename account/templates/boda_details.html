@@ -90,6 +90,10 @@
                                     <tr>
                                         <th>PAYMENT FEE</th>
                                         <th>DATE OF PAYMENT</th>
+                                        {% if can_edit_weekly_logs %}
+                                            <th>UPDATE</th>
+                                            <th>DELETE</th>
+                                        {% endif %}
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -98,6 +102,19 @@
                                             <tr>
                                                 <td>{{bd.payment_fee}}</td>
                                                 <td>{{bd.date}}</td>
+                                                {% if can_edit_weekly_logs %}
+                                                    <td>
+                                                        <a class="btn btn-success" href="{% url 'loan:edit-boda-weekly-pay' bd.id %}">Update</a>
+                                                    </td>
+                                                    <td>
+                                                        <form action="{% url 'loan:delete-boda-weekly-pay' bd.id %}" method="post" style="display:inline;">
+                                                            {% csrf_token %}
+                                                            <button class="btn btn-danger" type="submit" onclick="return confirm('Delete this weekly log? This will reduce deposits and increase balance.');">
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                {% endif %}
                                             </tr>
                                         {% endfor %}
                                     {% else %}

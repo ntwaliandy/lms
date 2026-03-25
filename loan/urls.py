@@ -66,6 +66,8 @@ urlpatterns = [
     path('add-information', views.addBodainformation, name="add-information"),
     re_path(r'^edit-boda-information/(?P<NumberPlate>(.*))/$', views.editBodaInformation, name="edit-boda-information"),
     re_path(r'^resend-boda-sms/(?P<transID>(.*))/$', views.resend_boda_sms, name="resend-boda-sms"),
+    path('boda-weekly-pay/<int:pay_id>/edit/', views.edit_boda_weekly_pay, name="edit-boda-weekly-pay"),
+    path('boda-weekly-pay/<int:pay_id>/delete/', views.delete_boda_weekly_pay, name="delete-boda-weekly-pay"),
     path('boda-analysis', views.boda_analysis, name="boda-analysis"),
     re_path(r'^boda-analysis/(?P<bodaId>[0-9]+)/$', views.boda_analysis_detail, name="boda-analysis-detail"),
 
